@@ -13,7 +13,7 @@ const studentSchema = mongoose.Schema({
   studentProfile: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'profiles',  
-  }
+  },
   school: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'students',
