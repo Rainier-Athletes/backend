@@ -10,6 +10,10 @@ const studentSchema = mongoose.Schema({
     required: true,
   },
   email: String,
+  studentProfile: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'profiles',  
+  }
   school: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'students',
