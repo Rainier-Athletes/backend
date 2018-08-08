@@ -16,7 +16,8 @@
   "jest": {
     "setupFiles": [
       "<rootDir>/src/__test__/lib/test.env.js"
-    ]
+    ],
+    "testURL": "http://localhost/"
   },
   "repository": {
     "type": "git",
