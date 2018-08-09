@@ -3,18 +3,9 @@ import HttpErrors from 'http-errors';
 import Profile from '../model/profile';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import logger from '../lib/logger';
-import Coach from '../model/coach';
-import Mentor from '../model/mentor';
-import School from '../model/school';
-import ScoreSheet from '../model/score-sheet';
-import Sport from '../model/sport';
-import Staff from '../model/staff';
-import Subject from '../model/subject';
-import Teacher from '../model/teacher';
-import Team from '../model/team';
-
-
-
+import PointTracker from '../model/point-tracker';
+import Whitelist from '../model/whitelist';
+import Account from '../model/account';
 
 const profileRouter = new Router();
 
@@ -78,36 +69,14 @@ profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, respons
       return Profile.findByIdAndRemove(request.query.id);
     })
     .then(() => {
-      return Coach.remove({ profileId: request.query.id });
+      return PointTracker.remove({ profileID: request.query.id });
     })
     .then(() => {
-      return Mentor.remove({ profileId: request.query.id });
+      return Whitelist.remove({ email: request.query.email });
     })
     .then(() => {
-      return School.remove({ profileID: request.query.id });
+      return Account.findByIdAndRemove(request.query._id);
     })
-    .then(() => {
-      return ScoreSheet.remove({ profileID: request.query.id });
-    })
-    .then(() => {
-      return Sport.remove({ profileID: request.query.id });
-    })
-    .then(() => {
-      return Staff.remove({ profileID: request.query.id });
-    })
-    .then(() => {
-      return Subject.remove({ profileID: request.query.id });
-    })
-    .then(() => {
-      return Teacher.remove({ profileID: request.query.id });
-    })
-    .then(() => {
-      Team.remove({ profileID: request.query.id });
-      return response.sendStatus(200);
-
-    })
-
-
     .catch(next);
   return undefined;
 });
