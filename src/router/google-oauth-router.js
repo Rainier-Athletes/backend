@@ -111,12 +111,29 @@ googleOAuthRouter.get('/api/v1/oauth/google', (request, response, next) => {
       }
       // no change to profile
       done = true;
+      console.log('oAuth: login complete. sending response');
       const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
       response.cookie('RaToken', raToken, cookieOptions);
       return response.redirect(process.env.CLIENT_URL);
     })
     .then((profile) => {
-      
+      if (!done) {
+        // have profile, update role and save
+        profile.role = role;
+        console.log('oAuth: updating profile', profile);
+        return profile.save();
+      }
+      return undefined;
+    })
+    .then(() => {
+      if (!done) {
+        // profile updated. send response
+        console.log('oAuth: profile updated. loging complete. returning response');
+        const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
+        response.cookie('RaToken', raToken, cookieOptions);
+        return response.redirect(process.env.CLIENT_URL);  
+      }
+      return undefined;
     })
     .catch(() => {
       // no account? Check Whitelist for the email

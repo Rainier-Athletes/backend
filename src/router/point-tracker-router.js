@@ -28,6 +28,6 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
           return response.json(scores);
         })
         .catch(next);
-      return undefined;
     });
+  return undefined;
 });
