@@ -12,7 +12,7 @@ const HASH_ROUNDS = 4;
 
 const authRouter = new Router();
 
-authRouter.post('/api/signup', (request, response, next) => {
+authRouter.post('/api/v1/signup', (request, response, next) => {
   Account.init()
     .then(() => {
       return Account.create(request.body.username, request.body.email, request.body.password);
@@ -33,7 +33,7 @@ authRouter.post('/api/signup', (request, response, next) => {
 });
 
 // update account info requires bearer token
-authRouter.put('/api/account/:update', bearerAuthMiddleware, (request, response, next) => {
+authRouter.put('/api/v1/account/:update', bearerAuthMiddleware, (request, response, next) => {
   // we won't get here unless we pass bearerAuthMiddleware so we know we'll have a valid account.
 
   if (!['email', 'pw'].includes(request.params.update)) return next(new HttpErrors(404, `AUTH-ROUTER: route not registered: /api/update/${request.params.update}`));
@@ -75,7 +75,7 @@ authRouter.put('/api/account/:update', bearerAuthMiddleware, (request, response,
   return undefined;
 });
 
-authRouter.get('/api/login', basicAuthMiddleware, (request, response, next) => {
+authRouter.get('/api/v1/login', basicAuthMiddleware, (request, response, next) => {
   let savedToken;
   // if we made it past basicAuthMiddleware we'll have a valid accont object on request.
   Account.init()
@@ -100,7 +100,7 @@ authRouter.get('/api/login', basicAuthMiddleware, (request, response, next) => {
   return undefined;
 });
 
-authRouter.delete('/api/login/DELETE', bearerAuthMiddleware, (request, response, next) => {
+authRouter.delete('/api/v1/login/DELETE', bearerAuthMiddleware, (request, response, next) => {
   // a somewhat hidden route that will allow for deletion of the
   // logged in user's account.  Should delete profile, garages,
   // etc, as well.
