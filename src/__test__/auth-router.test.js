@@ -88,6 +88,7 @@ describe('basic AUTH router login (get) tests', () => {
     try {
       const response = await superagent.get(`${apiUrl}/login`)
         .auth(username, password);
+      console.log('>>>>>>>>>>>>> response.body', response.body);
       expect(response.status).toEqual(200);
       expect(response.body.profileId).toBeTruthy();
       expect(response.body.token).toBeTruthy();

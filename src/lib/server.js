@@ -66,6 +66,9 @@ const corsOptions2 = {
     if (whitelist.indexOf(origin) !== -1) {
       console.log('server origin passes whitelist.indexOf');
       callback(null, true);
+    } else if (typeof origin === 'undefined') {
+      console.log('server origin undefined: TESTING');
+      callback(null, true);
     } else {
       console.log('server origin fails: not allowed');
       callback(new Error('Not allowed by CORS'));

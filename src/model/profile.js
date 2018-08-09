@@ -27,6 +27,11 @@ const profileSchema = mongoose.Schema({
     enum: ['admin', 'staff', 'student', 'mentor', 'teacher', 'coach', 'family'],
     default: 'coach',
   },
+  accountId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    unique: true,
+  },
   studentData: {
     scoringReports: [{
       type: mongoose.Schema.Types.ObjectId,
@@ -74,6 +79,7 @@ export default mongoose.model('Profile', profileSchema, 'profiles', skipInit);
 //   },
 //   phone: '425-643-5178',
 //   role: 'student',
+//   accountId: '1EF12348902093DECBA914',
 //   studentData: {
 //     scoringReports: ['1EF12348902093DECBA914', '1EF12348902093DECBA916', '1EF12348902093DECBA914'],
 //     coaches: ['1EF12348902093DECBA920'],
@@ -98,6 +104,7 @@ export default mongoose.model('Profile', profileSchema, 'profiles', skipInit);
 //   },
 //   phone: '425-648-2212',
 //   role: 'mentor',
+//   accountId: '1EF12348902093DECBA914',
 //   studentData: {},
 //   mentorData: {
 //     students: ['1EF12348902093DECBA914', '1EF12348902093DECBA916'],
@@ -117,6 +124,7 @@ export default mongoose.model('Profile', profileSchema, 'profiles', skipInit);
 //   },
 //   phone: '425-648-5555',
 //   role: 'teacher',
+//   accountId: '1EF12348902093DECBA914',
 //   studentData: {},
 //   mentorData: {},
 // };
