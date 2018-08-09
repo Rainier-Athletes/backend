@@ -11,7 +11,7 @@ import Vehicle from '../model/vehicle';
 
 const profileRouter = new Router();
 
-profileRouter.post('/api/profiles', bearerAuthMiddleware, (request, response, next) => {
+profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
   logger.log(logger.INFO, `.post /api/profiles req.body: ${request.body}`);
   Profile.init()
     .then(() => {
@@ -28,7 +28,7 @@ profileRouter.post('/api/profiles', bearerAuthMiddleware, (request, response, ne
   return undefined;
 });
 
-profileRouter.get(['/api/profiles', '/api/profiles/me'], bearerAuthMiddleware, (request, response, next) => {
+profileRouter.get(['/api/v1/profiles', '/api/profiles/me'], bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
 
   Profile.init()
@@ -44,7 +44,7 @@ profileRouter.get(['/api/profiles', '/api/profiles/me'], bearerAuthMiddleware, (
 });
 
 // update route
-profileRouter.put('/api/profiles', bearerAuthMiddleware, (request, response, next) => {
+profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
 
   if (!Object.keys(request.body).length) return next(new HttpErrors(400, 'PUT PROFILE ROUTER: Missing request body', { expose: false }));
@@ -63,7 +63,7 @@ profileRouter.put('/api/profiles', bearerAuthMiddleware, (request, response, nex
   return undefined;
 });
 
-profileRouter.delete('/api/profiles', bearerAuthMiddleware, (request, response, next) => {
+profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
   if (!request.query.id) return next(new HttpErrors(400, 'DELETE PROFILE ROUTER: bad query', { expose: false }));
 
   Profile.init()
