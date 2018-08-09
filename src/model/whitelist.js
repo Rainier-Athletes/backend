@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 
 const whitelistSchema = mongoose.Schema({
-  email: String, 
-  studentProfile: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'profiles',
+  email: {
+    type: String, 
+    required: true,
   }
-  first
-})
+});
+
+const skipInit = process.env.NODE_ENV === 'development';
+export default mongoose.model('Whitelist', whitelistSchema, 'whitelists', skipInit);
