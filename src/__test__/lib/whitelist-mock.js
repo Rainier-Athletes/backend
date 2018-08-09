@@ -1,7 +1,6 @@
 import faker from 'faker';
 import WhiteList from '../../model/whitelist';
-import { createProfileMockPromise, removeAllResources } from './profile-mock';
-import Profile from '../../model/profile';
+import { removeAllResources } from './profile-mock';
 
 const createWhiteListMockPromise = async () => {
   const mockData = {};
