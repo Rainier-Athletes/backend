@@ -23,7 +23,7 @@ Relationships between models can be deduced from the mock JSON below, but in bri
   - /api/v1/login
   - /api/v1/profiles?id=mongoose._id
   - /api/v1/profiles/me
-  - /api/v1/pointstracker?[id=mongoose._id | student=mongoose._id | date=tracker-date]
+  - /api/v1/pointstracker?[id=mongoose._id | studentId=mongoose._id | date=tracker-date]
     - We'll need to experiment with the date query to be sure date is formatted correctly. And that it's a valid report date (a Friday).
 
 ### PUT
