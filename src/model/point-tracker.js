@@ -34,6 +34,7 @@ const pointTrackerSchema = mongoose.Schema({
   },
   synopsisComments: {
     extraPlayingTime: String,
+    mentorGrantedPlayingTime: String,
     studentActionItems: String,
     sportsUpdate: String,
     additionalComments: String,
