@@ -19,6 +19,7 @@ Relationships between models can be deduced from the mock JSON below, but in bri
   - /api/v1/pointstracker
 
 ### GET
+	- /api/v1/oauth/google
   - /api/v1/login
   - /api/v1/profiles?id=mongoose._id
   - /api/v1/profiles/me
@@ -35,6 +36,8 @@ Relationships between models can be deduced from the mock JSON below, but in bri
   - /api/v1/pointstracker?id=mongoose._id
   
 ## Permission Roles
+
+This table may be significantly modified if we can simplify things down to just mentors as users who create students and coaches as needed.
 
  Role | Account | Profile | PointTracker 
 :---|:---:|:---:|:---:
@@ -88,6 +91,7 @@ others | - | - | -
 	},
 	"synopsisComments": {
 		"extraPlayingTime": "Jamie is working hard toward his goals. We agreed that if he achieved a small improvement this week he would get extra playing time.",
+		"mentorGrantedPlayingTime: "Three Quarters",
 		"studentActionItems": "Jamie agreed to attend 1 more tutorial in each of his classes this coming week",
 		"sportsUpdate": "Last week Jamie had a great game against the Cardinals. Had two hits and caught three fly balls!",
 		"additionalComments": ""
