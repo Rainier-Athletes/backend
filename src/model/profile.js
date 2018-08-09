@@ -54,6 +54,12 @@ const profileSchema = mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Profile',
     }],
+    gender: {
+      type: String,
+      enum: ['male', 'female'],
+      default: 'male',
+      required: true,
+    },
   },
   mentorData: {
     students: [{
@@ -87,6 +93,7 @@ export default mongoose.model('Profile', profileSchema, 'profiles', skipInit);
 //     mentor: '1EF12348902093DECBA914',
 //     teachers: ['1EF12348902093DECBA914', '1EF12348902093DECBA916', '1EF12348902093DECBA914', '1EF12348902093DECBA914', '1EF12348902093DECBA916', '1EF12348902093DECBA914', '1EF12348902093DECBA914'],
 //     family: ['1EF12348902093DECBA914', '1EF12348902093DECBA916'],
+//     gender: 'male',
 //   },
 //   mentorData: {},
 // };

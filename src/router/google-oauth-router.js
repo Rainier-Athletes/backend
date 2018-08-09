@@ -8,6 +8,7 @@ import HttpErrors from 'http-errors';
 // import Account from '../model/account';
 import logger from '../lib/logger';
 import Whitelist from '../model/whitelist';
+import Profile from '../model/profile';
 
 const GOOGLE_OAUTH_URL = 'https://www.googleapis.com/oauth2/v4/token';
 const OPEN_ID_URL = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
@@ -97,12 +98,42 @@ googleOAuthRouter.get('/api/v1/oauth/google', (request, response, next) => {
         .withCredentials();
     })
     .then((loginResult) => {
-      console.log('oAuth: login succeeded. responding with cookie and redirect');
-      done = true;
+      console.log('oAuth: login succeeded. Checking for changes to role');
       raToken = loginResult.body.token;
+      // check whitelist for change in role
+      return Whitelist.findOne({ email });
+    })
+    .then((result) => {
+      if (result.role !== role) {
+        // role changed. update profile
+        console.log('oAuth: role change detected');
+        return Profile.findOne({ email });
+      }
+      // no change to profile
+      done = true;
+      console.log('oAuth: login complete. sending response');
       const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
-      response.cookie('Lab37ServerToken', raToken, cookieOptions);
+      response.cookie('RaToken', raToken, cookieOptions);
       return response.redirect(process.env.CLIENT_URL);
+    })
+    .then((profile) => {
+      if (!done) {
+        // have profile, update role and save
+        profile.role = role;
+        console.log('oAuth: updating profile', profile);
+        return profile.save();
+      }
+      return undefined;
+    })
+    .then(() => {
+      if (!done) {
+        // profile updated. send response
+        console.log('oAuth: profile updated. loging complete. returning response');
+        const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
+        response.cookie('RaToken', raToken, cookieOptions);
+        return response.redirect(process.env.CLIENT_URL);  
+      }
+      return undefined;
     })
     .catch(() => {
       // no account? Check Whitelist for the email
@@ -138,7 +169,7 @@ googleOAuthRouter.get('/api/v1/oauth/google', (request, response, next) => {
       if (!done) {
         console.log('oAuth: profile created, sending cookie and redirecting');
         const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
-        response.cookie('Lab37ServerToken', raToken, cookieOptions);
+        response.cookie('RaToken', raToken, cookieOptions);
 
         return response.redirect(process.env.CLIENT_URL);
       }

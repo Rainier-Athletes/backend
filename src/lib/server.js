@@ -12,11 +12,8 @@ import loggerMiddleware from './middleware/logger-middleware';
 import authRouter from '../router/auth-router';
 import googleOauthRouter from '../router/google-oauth-router';
 import profileRouter from '../router/profile-router';
-import attachmentRouter from '../router/attachment-router';
-import garageRouter from '../router/garage-router';
-import vehicleRouter from '../router/vehicle-router';
-import maintenanceLogRouter from '../router/maintenance-log-router';
-
+import pointTrackerRouter from '../router/point-tracker-router';
+import pointTracker from '../model/point-tracker';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -88,10 +85,7 @@ app.use(loggerMiddleware);
 app.use(authRouter);
 app.use(googleOauthRouter);
 app.use(profileRouter);
-app.use(garageRouter);
-app.use(vehicleRouter);
-app.use(maintenanceLogRouter);
-app.use(attachmentRouter);
+app.use(pointTrackerRouter);
 
 app.all('*', (request, response, next) => {
   logger.log(logger.INFO, 'returning 404 from the catch/all route');

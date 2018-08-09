@@ -3,51 +3,46 @@ import HttpErrors from 'http-errors';
 import Whitelist from '../model/whitelist';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import logger from '../lib/logger';
-import whitelist from '../model/whitelist';
 
-const whitelistRouter = new Router(); 
+const whitelistRouter = new Router();
 
 whitelistRouter.post('/api/v1/whitelists',
-bearerAuthMiddleware, (request, response, next) => {
-  logger.log(logger.INFO, `.post /api/whitelists req.body: ${request.body}`);
-  Whitelist.init()
-    .then(() => {
-      return new Whitelist({
-        ...request.body,
-        accountId: request.account._id, 
-      }).save();
-    })
-    .then((whitelist) => {
-      logger.log(logger.INFO, `POST WHITELIST ROUTER: new email authorization with 200 code, ${JSON.stringify(whitelist)}`);
-      return response.json(whitelist);
-    })
-    .catch(next);
+  bearerAuthMiddleware, (request, response, next) => {
+    logger.log(logger.INFO, `.post /api/whitelists req.body: ${request.body}`);
+    Whitelist.init()
+      .then(() => {
+        return new Whitelist({
+          ...request.body,
+          accountId: request.account._id,
+        }).save();
+      })
+      .then((whitelist) => {
+        logger.log(logger.INFO, `POST WHITELIST ROUTER: new email authorization with 200 code, ${JSON.stringify(whitelist)}`);
+        return response.json(whitelist);
+      })
+      .catch(next);
     return undefined;
-});
+  });
 
-whitelistRouter.get(['/api/v1/whitelists', '/api/whitelists/me'], bearerAuthMiddleware, (request, response, next) => {
-  if (!request.whitelist) return next(new HttpErrors(404, 'WHITELIST ROUTER GET: whitelist not found. Missing email.', { expose: false }));
-
+whitelistRouter.get('/api/v1/whitelists', bearerAuthMiddleware, (request, response, next) => {
   Whitelist.init()
     .then(() => {
-      Whitelist.findOne({ _id: request.whitelist._id.toString() })
+      Whitelist.find()
         .then((whitelist) => {
           return response.json(whitelist);
         });
-        return undefined;
+      return undefined;
     })
     .catch(next);
-    return undefined;
+  return undefined;
 });
 
 whitelistRouter.put('/api/v1/whitelists', bearerAuthMiddleware, (request, response, next) => {
-  if (!request.whitelist) return next(new HttpErrors(404, 'WHITELIST ROUTER GET: whitelist not found. Email does not exist.', { expose: false }));
-
   if (!Object.keys(request.body).length) return next(new HttpErrors(400, 'PUT WHITELIST ROUTER: Missing request body', { expose: false }));
 
   Whitelist.init()
     .then(() => {
-      return Whitelist.findOneAndUpdate({ _id: request.whitelist._id }, request.body);
+      return Whitelist.findOneAndUpdate({ _id: request.body._id }, request.body);
     })
     .then((whitelist) => {
       return Whitelist.findOne(whitelist._id);
@@ -56,7 +51,7 @@ whitelistRouter.put('/api/v1/whitelists', bearerAuthMiddleware, (request, respon
       response.json(whitelist);
     })
     .catch(next);
-    return undefined
+  return undefined;
 });
 
 whitelistRouter.delete('/api/v1/whitelists', bearerAuthMiddleware, (request, response, next) => {
@@ -66,4 +61,6 @@ whitelistRouter.delete('/api/v1/whitelists', bearerAuthMiddleware, (request, res
     .then(() => {
       return Whitelist.findByIdAndRemove(request.query.id);
     })
-})
+    .catch(next);
+  return undefined;
+});
