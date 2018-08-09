@@ -7,6 +7,7 @@ import HttpErrors from 'http-errors';
 // import jwt from 'jsonwebtoken'; // you will DEFINITELY need this to "sign" your Google token
 // import Account from '../model/account';
 import logger from '../lib/logger';
+import Whitelist from '../model/whitelist';
 
 const GOOGLE_OAUTH_URL = 'https://www.googleapis.com/oauth2/v4/token';
 const OPEN_ID_URL = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
@@ -15,7 +16,7 @@ require('dotenv').config();
 
 const googleOAuthRouter = new Router();
 
-googleOAuthRouter.get('/api/oauth/google', (request, response, next) => {
+googleOAuthRouter.get('/api/v1/oauth/google', (request, response, next) => {
   /*
     Account.init()
       .then(() => {
@@ -57,9 +58,10 @@ googleOAuthRouter.get('/api/oauth/google', (request, response, next) => {
   let email;
   let firstName;
   let lastName;
-  const bio = 'Tell us about yourself! Edit your profile.';
-  let profileImageUrl;
-  let myGarageToken;
+  let role;
+  // const bio = 'Tell us about yourself! Edit your profile.';
+  // let profileImageUrl;
+  let raToken;
   let done = false;
   return superagent.post(GOOGLE_OAUTH_URL)
     .type('form')
@@ -88,7 +90,7 @@ googleOAuthRouter.get('/api/oauth/google', (request, response, next) => {
       password = openIDResponse.body.sub;
       firstName = openIDResponse.body.given_name;
       lastName = openIDResponse.body.family_name;
-      profileImageUrl = openIDResponse.body.picture;
+      // profileImageUrl = openIDResponse.body.picture;
 
       return superagent.get(`${process.env.API_URL}/login`)
         .auth(username, password)
@@ -97,14 +99,25 @@ googleOAuthRouter.get('/api/oauth/google', (request, response, next) => {
     .then((loginResult) => {
       console.log('oAuth: login succeeded. responding with cookie and redirect');
       done = true;
-      myGarageToken = loginResult.body.token;
+      raToken = loginResult.body.token;
       const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
-      response.cookie('Lab37ServerToken', myGarageToken, cookieOptions);
+      response.cookie('Lab37ServerToken', raToken, cookieOptions);
       return response.redirect(process.env.CLIENT_URL);
     })
     .catch(() => {
-      // no account? Create one
-      console.log('oAuth: login failed, creating account');
+      // no account? Check Whitelist for the email
+      console.log('oAuth: login failed, checking whitelist');
+      return Whitelist.findOne({ email });
+    })
+    .then((result) => {
+      console.log('oAuth: whitelist result', result);
+      if (!result) {
+        console.log('oAuth: returning status 401: Not Authorized');
+        done = true;
+        return response.sendStatus(401);
+      }
+      let { role } = result; //eslint-disable-line
+      console.log('oAuth: email found in whitelist, creating account');
       return superagent.post(`${process.env.API_URL}/signup`)
         .send({ username, email, password })
         .withCredentials();
@@ -112,11 +125,11 @@ googleOAuthRouter.get('/api/oauth/google', (request, response, next) => {
     .then((result) => {
       if (!done) {
         console.log('oAuth: create account succeeded, creating profile');
-        myGarageToken = result.body.token;
+        raToken = result.body.token;
         return superagent.post(`${process.env.API_URL}/profiles`)
-          .set('Authorization', `Bearer ${myGarageToken}`)
+          .set('Authorization', `Bearer ${raToken}`)
           .send({ 
-            firstName, lastName, bio, profileImageUrl, 
+            firstName, lastName, email, role, 
           });
       }
       return undefined;
@@ -125,7 +138,7 @@ googleOAuthRouter.get('/api/oauth/google', (request, response, next) => {
       if (!done) {
         console.log('oAuth: profile created, sending cookie and redirecting');
         const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
-        response.cookie('Lab37ServerToken', myGarageToken, cookieOptions);
+        response.cookie('Lab37ServerToken', raToken, cookieOptions);
 
         return response.redirect(process.env.CLIENT_URL);
       }

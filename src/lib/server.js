@@ -27,24 +27,24 @@ let server = null;
 //   origin: 'http://localhost:8080',
 //   credentials: true,
 // };
-const corsOptions = {
-  // origin: process.env.CORS_ORIGINS,
-  // "origin" defines what front end domains are permitted to access our API, we need to implement this to prevent any potential attacks
-  origin: (origin, cb) => {
-    console.log('server origin:', origin);
-    if (!origin) {
-      // assume Google API or Cypress
-      cb(null, true);
-    // } else if (process.env.CORS_ORIGINS.includes(origin)) {
-    } else if (origin.includes(process.env.CORS_ORIGINS)) {
-      console.log('server origin accepted by .includes code');
-      cb(null, true);
-    } else {
-      cb(new Error(`${origin} not allowed by CORS`));
-    }
-  },
-  credentials: true, // Configures the Access-Control-Allow-Credentials CORS header. Set to true to pass the header, otherwise it is omitted.
-};
+// const corsOptions = {
+//   // origin: process.env.CORS_ORIGINS,
+//   // "origin" defines what front end domains are permitted to access our API, we need to implement this to prevent any potential attacks
+//   origin: (origin, cb) => {
+//     console.log('server origin:', origin);
+//     if (!origin) {
+//       // assume Google API or Cypress
+//       cb(null, true);
+//     // } else if (process.env.CORS_ORIGINS.includes(origin)) {
+//     } else if (origin.includes(process.env.CORS_ORIGINS)) {
+//       console.log('server origin accepted by .includes code');
+//       cb(null, true);
+//     } else {
+//       cb(new Error(`${origin} not allowed by CORS`));
+//     }
+//   },
+//   credentials: true, // Configures the Access-Control-Allow-Credentials CORS header. Set to true to pass the header, otherwise it is omitted.
+// };
 // third party apps
 // app.use(cors(corsOptions));
 
@@ -65,6 +65,9 @@ const corsOptions2 = {
     console.log('server origin:', origin);
     if (whitelist.indexOf(origin) !== -1) {
       console.log('server origin passes whitelist.indexOf');
+      callback(null, true);
+    } else if (typeof origin === 'undefined') {
+      console.log('server origin undefined: TESTING');
       callback(null, true);
     } else {
       console.log('server origin fails: not allowed');
