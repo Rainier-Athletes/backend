@@ -5,8 +5,5 @@ process.env.MONGODB_URI = 'mongodb://localhost:27017/testing';
 // this string can be any random mumbo jumbo you want
 process.env.SECRET = 'Hu;asdfiwknlasgfnwkeo002222njaksdfsdoclxo89834ht25585552';
 
-// set this to true or false depending on if you want to hit the mock AWS-SDK 
-// set to false if you want to make a real API call to your bucket
-
 // remember to set your .env vars and add .env in .gitignore
 require('dotenv').config();
