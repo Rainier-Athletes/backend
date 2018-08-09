@@ -74,4 +74,4 @@ pointTrackerRouter.delete('/api/v1/pointstracker', bearerAuthMiddleware, (reques
   return undefined;
 });
 
-export default pointTrackerRouter;
+export default pointTrackerRouter; 
