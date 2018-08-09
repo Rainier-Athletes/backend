@@ -11,7 +11,6 @@ const profileSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
   },
   address: {
     street: String,
@@ -25,7 +24,7 @@ const profileSchema = mongoose.Schema({
     type: String,
     required: true,
     enum: ['admin', 'staff', 'student', 'mentor', 'teacher', 'coach', 'family'],
-    default: 'coach',
+    default: 'family',
   },
   accountId: {
     type: mongoose.Schema.Types.ObjectId,

@@ -22,12 +22,10 @@ const whitelistSchema = mongoose.Schema({
   },
   accountId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     unique: true,
   },
   profileId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     unique: true,
   },
 });

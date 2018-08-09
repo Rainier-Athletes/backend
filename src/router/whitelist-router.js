@@ -7,13 +7,12 @@ import logger from '../lib/logger';
 const whitelistRouter = new Router();
 
 whitelistRouter.post('/api/v1/whitelists',
-  bearerAuthMiddleware, (request, response, next) => {
+  (request, response, next) => {
     logger.log(logger.INFO, `.post /api/whitelists req.body: ${request.body}`);
     Whitelist.init()
       .then(() => {
         return new Whitelist({
           ...request.body,
-          accountId: request.account._id,
         }).save();
       })
       .then((whitelist) => {
@@ -64,3 +63,5 @@ whitelistRouter.delete('/api/v1/whitelists', bearerAuthMiddleware, (request, res
     .catch(next);
   return undefined;
 });
+
+export default whitelistRouter;

@@ -31,3 +31,5 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
     });
   return undefined;
 });
+
+export default pointTrackerRouter;

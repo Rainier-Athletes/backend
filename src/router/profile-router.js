@@ -12,7 +12,7 @@ import Vehicle from '../model/vehicle';
 const profileRouter = new Router();
 
 profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
-  logger.log(logger.INFO, `.post /api/profiles req.body: ${request.body}`);
+  logger.log(logger.INFO, `.post /api/v1/profiles req.body: ${request.body}`);
   Profile.init()
     .then(() => {
       return new Profile({
@@ -28,7 +28,7 @@ profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response,
   return undefined;
 });
 
-profileRouter.get(['/api/v1/profiles', '/api/profiles/me'], bearerAuthMiddleware, (request, response, next) => {
+profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
 
   Profile.init()
