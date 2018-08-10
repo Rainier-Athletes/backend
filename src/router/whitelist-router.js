@@ -13,7 +13,7 @@ whitelistRouter.post('/api/v1/whitelists', bearerAuthMiddleware,
 
     if (request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized.'));
 
-    Whitelist.init()
+    Whitelist.init() 
       .then(() => {
         return new Whitelist({
           ...request.body,
@@ -69,7 +69,7 @@ whitelistRouter.delete('/api/v1/whitelists', bearerAuthMiddleware, (request, res
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
   
   if (request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized.'));
-  
+
   if (!request.query.id) return next(new HttpErrors(400, 'DELETE WHITELIST ROUTER: bad query', { expose: false }));
 
   Whitelist.init()
