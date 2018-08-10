@@ -32,7 +32,7 @@ const profileSchema = mongoose.Schema({
     unique: true,
   },
   studentData: {
-    scoringReports: [{
+    pointTrackers: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'PointTracker',
     }],
@@ -61,6 +61,7 @@ const profileSchema = mongoose.Schema({
     },
   },
   mentorData: {
+    school: String,
     students: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Profile',
