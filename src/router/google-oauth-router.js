@@ -121,6 +121,7 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
 
     return response.redirect(process.env.CLIENT_URL);
   }
+  return undefined;
 });
 
 export default googleOAuthRouter;

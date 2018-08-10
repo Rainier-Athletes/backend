@@ -28,7 +28,49 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
           return response.json(scores);
         })
         .catch(next);
+      return undefined;
     });
+  return undefined;
+});
+
+pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
+  logger.log(logger.INFO, `.post /api/pointstracker req.body: ${request.body}`);
+  PointTracker.init()
+    .then(() => {
+      return new PointTracker({
+        ...request.body,
+        studentId: request.studentId._id,
+      }).save();
+    })
+    .then((pointstracker) => {
+      logger.log(logger.INFO, `POST POINT-TRACKER ROUTER: new point tracker created with 200 code, ${JSON.stringify(pointstracker)}`);
+      return response.json(pointstracker);
+    })
+    .catch(next);
+  return undefined;
+});
+
+pointTrackerRouter.put('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
+  if (!request.profile) return next(new HttpErrors(404, 'POINT-TRACKER ROUTER GET: Point tracker not found. Missing login info.', { expose: false }));
+
+  if (!Object.keys(request.body).length) return next(new HttpErrors(400, 'PUT POINT-TRACKER ROUTER: Missing request body', { expose: false }));
+  
+  PointTracker.init()
+    .then(() => {
+      return PointTracker.findOneAndUpdate({ _id: request.pointtracker._id }, request.body);
+    })
+    .catch(next);
+  return undefined;
+});
+
+pointTrackerRouter.delete('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
+  if (!request.query.id) return next(new HttpErrors(400, 'DELETE POINT-TRACKER ROUTER: bad query', { expose: false }));
+
+  PointTracker.init()
+    .then(() => {
+      return PointTracker.findByIdAndRemove(request.query.id);
+    })
+    .catch(next);
   return undefined;
 });
 

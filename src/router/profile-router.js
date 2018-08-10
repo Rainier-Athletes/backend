@@ -3,11 +3,9 @@ import HttpErrors from 'http-errors';
 import Profile from '../model/profile';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import logger from '../lib/logger';
-import Attachment from '../model/attachment';
-import Garage from '../model/garage';
-import MaintenanceLog from '../model/maintenance-log';
-import Vehicle from '../model/vehicle';
-
+import PointTracker from '../model/point-tracker';
+import Whitelist from '../model/whitelist';
+import Account from '../model/account';
 
 const profileRouter = new Router();
 
@@ -48,7 +46,7 @@ profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
 
   if (!Object.keys(request.body).length) return next(new HttpErrors(400, 'PUT PROFILE ROUTER: Missing request body', { expose: false }));
-  
+
   Profile.init()
     .then(() => {
       return Profile.findOneAndUpdate({ _id: request.profile._id }, { runValidators: true }, request.body);
@@ -71,17 +69,13 @@ profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, respons
       return Profile.findByIdAndRemove(request.query.id);
     })
     .then(() => {
-      return Garage.remove({ profileId: request.query.id });
+      return PointTracker.remove({ profileID: request.query.id });
     })
     .then(() => {
-      return Vehicle.remove({ profileId: request.query.id });
+      return Whitelist.remove({ email: request.query.email });
     })
     .then(() => {
-      return Attachment.remove({ profileId: request.query.id });
-    })
-    .then(() => {
-      MaintenanceLog.remove({ profileId: request.query.id });
-      return response.sendStatus(200);
+      return Account.findByIdAndRemove(request.query._id);
     })
     .catch(next);
   return undefined;
