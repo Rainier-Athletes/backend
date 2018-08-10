@@ -51,7 +51,7 @@ profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
   
   Profile.init()
     .then(() => {
-      return Profile.findOneAndUpdate({ _id: request.profile._id }, request.body);
+      return Profile.findOneAndUpdate({ _id: request.profile._id }, { runValidators: true }, request.body);
     })
     .then((profile) => {
       return Profile.findOne(profile._id);

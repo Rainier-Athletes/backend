@@ -9,7 +9,7 @@ const whitelistSchema = mongoose.Schema({
   role: {
     type: String,
     required: true,
-    enum: ['admin', 'mentor'],
+    enum: ['admin', 'mentor', 'coach', 'teacher', 'family', 'student'],
     default: 'mentor',
   },
   firstName: { 
@@ -19,14 +19,6 @@ const whitelistSchema = mongoose.Schema({
   lastName: { 
     type: String,
     required: true,
-  },
-  accountId: {
-    type: mongoose.Schema.Types.ObjectId,
-    unique: true,
-  },
-  profileId: {
-    type: mongoose.Schema.Types.ObjectId,
-    unique: true,
   },
 });
 
