@@ -26,13 +26,24 @@ profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response,
   return undefined;
 });
 
-profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
+profileRouter.get(['/api/v1/profiles', '/api/v1/profiles/me'], bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
-
+  if (request.query.id && request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized.'));
+  
+  if (request.query.id && request.profile.role === 'admin') {
+    Profile.findOne({ _id: request.query.id })
+      .then((profile) => {
+        return response.json(profile);
+      })
+      .catch(next);
+    return undefined;
+  }
+  
   Profile.init()
     .then(() => {
       Profile.findOne({ _id: request.profile._id.toString() })
         .then((profile) => {
+          delete profile.role;
           return response.json(profile);
         });
       return undefined;
