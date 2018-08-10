@@ -9,7 +9,7 @@ import logger from '../lib/logger';
 
 bearerAuth(superagent);
 
-const apiUrl = `http://localhost:${process.env.PORT}/api`;
+const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING ROUTER PROFILE', () => {
   let mockData;
@@ -194,7 +194,7 @@ describe('TESTING ROUTER PROFILE', () => {
   });
 
   describe('DELETE PROFILE ROUTE TESTING', () => {
-    test('DELETE 200 success', async () => {
+    test.only('DELETE 200 success', async () => {
       const mock = await createProfileMockPromise();
       const profile = mock.profile; /*eslint-disable-line*/
       let response;

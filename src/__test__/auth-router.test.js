@@ -8,7 +8,7 @@ import { createProfileMockPromise } from './lib/profile-mock';
 
 bearerAuth(superagent);
 
-const apiUrl = `http://localhost:${process.env.PORT}/api`;
+const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 beforeAll(async () => { await startServer(); });
 afterAll(stopServer);
 beforeEach(removeAccountMockPromise);

@@ -53,7 +53,7 @@ whitelistRouter.put('/api/v1/whitelists', bearerAuthMiddleware, (request, respon
 
   Whitelist.init()
     .then(() => {
-      return Whitelist.findOneAndUpdate({ _id: request.body._id }, request.body);
+      return Whitelist.findOneAndUpdate({ _id: request.body._id }, request.body, { runValidators: true });
     })
     .then((whitelist) => {
       return Whitelist.findOne(whitelist._id);

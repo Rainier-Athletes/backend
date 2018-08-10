@@ -3,23 +3,15 @@ import bearerAuth from 'superagent-auth-bearer';
 import faker from 'faker';
 import Account from '../model/account';
 import Profile from '../model/profile';
-import Garage from '../model/garage';
-import Vehicle from '../model/vehicle';
-import Logs from '../model/maintenance-log';
-import Attachment from '../model/attachment';
 
 import { startServer, stopServer } from '../lib/server';
 
 bearerAuth(superagent);
 
-const apiUrl = `http://localhost:${process.env.PORT}/api`;
+const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 beforeAll(async () => { await startServer(); });
 afterAll(stopServer);
 beforeEach(async () => {
-  await Attachment.remove();
-  await Logs.remove();
-  await Vehicle.remove();
-  await Garage.remove();
   await Profile.remove();
   await Account.remove();
 });
