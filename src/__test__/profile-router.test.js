@@ -194,14 +194,14 @@ describe('TESTING ROUTER PROFILE', () => {
   });
 
   describe('DELETE PROFILE ROUTE TESTING', () => {
-    test.only('DELETE 200 success', async () => {
+    test('DELETE 200 success', async () => {
       const mock = await createProfileMockPromise();
       const profile = mock.profile; /*eslint-disable-line*/
       let response;
       try {
         response = await superagent.delete(`${apiUrl}/profiles`)
           .query({ id: profile._id.toString() })
-          .authBearer(token);
+          .authBearer(mock.token);
         expect(response.status).toEqual(200);
       } catch (err) {
         expect(err).toEqual('Unexpected error on valid delete test');

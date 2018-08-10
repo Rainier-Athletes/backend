@@ -62,11 +62,14 @@ profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
 });
 
 profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
-  if (!request.query.id) return next(new HttpErrors(400, 'DELETE PROFILE ROUTER: bad query', { expose: false }));
+  if (!request.query.id) return next(new HttpErrors(400, 'DELETE PROFILE ROUTER: missing query', { expose: false }));
 
   Profile.init()
     .then(() => {
-      return Profile.findByIdAndRemove(request.profile._id);
+      return Profile.findByIdAndRemove(request.query.id);
+    })
+    .catch(() => {
+      return next(new HttpErrors(404, 'Error deleting profile.', { expose: false }));
     })
     .then(() => {
       return PointTracker.remove({ studentId: request.profile._id });
@@ -77,7 +80,12 @@ profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, respons
     .then(() => {
       return Account.findByIdAndRemove(request.account._id);
     })
-    .catch(next);
+    .then(() => {
+      return response.sendStatus(200);
+    })
+    .catch(() => {
+      logger.log(logger.ERROR, 'DELETE PROFILE ROUTER: non-fatal errors deleting child resources');
+    });
   return undefined;
 });
 
