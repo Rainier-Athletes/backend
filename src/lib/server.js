@@ -12,11 +12,8 @@ import loggerMiddleware from './middleware/logger-middleware';
 import authRouter from '../router/auth-router';
 import googleOauthRouter from '../router/google-oauth-router';
 import profileRouter from '../router/profile-router';
-import attachmentRouter from '../router/attachment-router';
-import garageRouter from '../router/garage-router';
-import vehicleRouter from '../router/vehicle-router';
-import maintenanceLogRouter from '../router/maintenance-log-router';
-
+import pointTrackerRouter from '../router/point-tracker-router';
+import whitelistRouter from '../router/whitelist-router';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,24 +24,24 @@ let server = null;
 //   origin: 'http://localhost:8080',
 //   credentials: true,
 // };
-const corsOptions = {
-  // origin: process.env.CORS_ORIGINS,
-  // "origin" defines what front end domains are permitted to access our API, we need to implement this to prevent any potential attacks
-  origin: (origin, cb) => {
-    console.log('server origin:', origin);
-    if (!origin) {
-      // assume Google API or Cypress
-      cb(null, true);
-    // } else if (process.env.CORS_ORIGINS.includes(origin)) {
-    } else if (origin.includes(process.env.CORS_ORIGINS)) {
-      console.log('server origin accepted by .includes code');
-      cb(null, true);
-    } else {
-      cb(new Error(`${origin} not allowed by CORS`));
-    }
-  },
-  credentials: true, // Configures the Access-Control-Allow-Credentials CORS header. Set to true to pass the header, otherwise it is omitted.
-};
+// const corsOptions = {
+//   // origin: process.env.CORS_ORIGINS,
+//   // "origin" defines what front end domains are permitted to access our API, we need to implement this to prevent any potential attacks
+//   origin: (origin, cb) => {
+//     console.log('server origin:', origin);
+//     if (!origin) {
+//       // assume Google API or Cypress
+//       cb(null, true);
+//     // } else if (process.env.CORS_ORIGINS.includes(origin)) {
+//     } else if (origin.includes(process.env.CORS_ORIGINS)) {
+//       console.log('server origin accepted by .includes code');
+//       cb(null, true);
+//     } else {
+//       cb(new Error(`${origin} not allowed by CORS`));
+//     }
+//   },
+//   credentials: true, // Configures the Access-Control-Allow-Credentials CORS header. Set to true to pass the header, otherwise it is omitted.
+// };
 // third party apps
 // app.use(cors(corsOptions));
 
@@ -58,13 +55,16 @@ const corsOptions = {
 
 // here's the cors docs implementation:
 // const whitelist = ['http://localhost:8080', 'http://mygarage-frontend.herokuapp.com'];
-const whitelist = JSON.parse(process.env.CORS_ORIGINS);
-console.log('server origins whitelist', whitelist);
+const originWhitelist = JSON.parse(process.env.CORS_ORIGINS);
+console.log('server origins whitelist', originWhitelist);
 const corsOptions2 = {
   origin: (origin, callback) => {
     console.log('server origin:', origin);
-    if (whitelist.indexOf(origin) !== -1) {
+    if (originWhitelist.indexOf(origin) !== -1) {
       console.log('server origin passes whitelist.indexOf');
+      callback(null, true);
+    } else if (typeof origin === 'undefined') {
+      console.log('server origin undefined: TESTING');
       callback(null, true);
     } else {
       console.log('server origin fails: not allowed');
@@ -84,11 +84,9 @@ app.use(express.json());
 app.use(loggerMiddleware);
 app.use(authRouter);
 app.use(googleOauthRouter);
+app.use(whitelistRouter);
 app.use(profileRouter);
-app.use(garageRouter);
-app.use(vehicleRouter);
-app.use(maintenanceLogRouter);
-app.use(attachmentRouter);
+app.use(pointTrackerRouter);
 
 app.all('*', (request, response, next) => {
   logger.log(logger.INFO, 'returning 404 from the catch/all route');

@@ -13,13 +13,14 @@ const createProfileMockPromise = async () => {
   const mockProfile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    location: faker.address.city(),
-    profileImageUrl: faker.random.image(),
-    accountId: mockAccountData.account._id,
+    email: faker.internet.email(),
+    role: 'student',
+    accountId: mockData.account._id.toString(),
   };
 
   const profile = await new Profile(mockProfile).save();
   mockData.profile = profile;
+  console.log('mmmmmmmmmm mockData', JSON.stringify(mockData, null, 2));
   return mockData;
 };
 

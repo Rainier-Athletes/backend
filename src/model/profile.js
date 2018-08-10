@@ -7,42 +7,130 @@ const profileSchema = mongoose.Schema({
   },
   lastName: { 
     type: String,
-    required: false,
+    required: true,
   },
-  email: String,
-  Address: {
-    Address: String,
-    Apt: String,
-    City: String,
-    State: String,
-    Zip: String,
+  email: {
+    type: String,
   },
-  profileImageUrl: String,
+  address: {
+    street: String,
+    apt: String,
+    city: String,
+    state: String,
+    zip: String,
+  },
+  phone: String,
   role: {
     type: String,
     required: true,
     enum: ['admin', 'staff', 'student', 'mentor', 'teacher', 'coach', 'family'],
-    default: 'coach',
+    default: 'family',
   },
-  studentRecords: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'students',
-  }],
-  
-  attachments: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'attachments',
-  }],
-  garages: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'garages',
-  }],
   accountId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     unique: true,
   },
+  studentData: {
+    scoringReports: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'PointTracker',
+    }],
+    coaches: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Profile',
+    }],
+    school: String,
+    mentor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Profile',
+    },
+    teachers: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Profile',
+    }],
+    family: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Profile',
+    }],
+    gender: {
+      type: String,
+      enum: ['male', 'female'],
+      default: 'male',
+      required: true,
+    },
+  },
+  mentorData: {
+    students: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Profile',
+    }],
+  },
 });
 
 const skipInit = process.env.NODE_ENV === 'development';
 export default mongoose.model('Profile', profileSchema, 'profiles', skipInit);
+
+// const mockStudentProfile = {
+//   firstName: 'Jamie',
+//   lastName: 'McPheters',
+//   email: 'jamiemcp@gmail.com',
+//   address: {
+//     street: '615 6th St',
+//     apt: 'Apt 202',
+//     city: 'Bellevue',
+//     state: 'WA',
+//     zip: '98007',
+//   },
+//   phone: '425-643-5178',
+//   role: 'student',
+//   accountId: '1EF12348902093DECBA914',
+//   studentData: {
+//     scoringReports: ['1EF12348902093DECBA914', '1EF12348902093DECBA916', '1EF12348902093DECBA914'],
+//     coaches: ['1EF12348902093DECBA920'],
+//     school: 'Odle Middle School',
+//     mentor: '1EF12348902093DECBA914',
+//     teachers: ['1EF12348902093DECBA914', '1EF12348902093DECBA916', '1EF12348902093DECBA914', '1EF12348902093DECBA914', '1EF12348902093DECBA916', '1EF12348902093DECBA914', '1EF12348902093DECBA914'],
+//     family: ['1EF12348902093DECBA914', '1EF12348902093DECBA916'],
+//     gender: 'male',
+//   },
+//   mentorData: {},
+// };
+
+// const mockMentorProfile = {
+//   firstName: 'Ryan',
+//   lastName: 'Smithers',
+//   email: 'ryan@rainierathletes.com',
+//   address: {
+//     street: '1714 147th Ave SE',
+//     apt: '',
+//     city: 'Bellevue',
+//     state: 'WA',
+//     zip: '98007',
+//   },
+//   phone: '425-648-2212',
+//   role: 'mentor',
+//   accountId: '1EF12348902093DECBA914',
+//   studentData: {},
+//   mentorData: {
+//     students: ['1EF12348902093DECBA914', '1EF12348902093DECBA916'],
+//   },
+// };
+
+// const mockPersonProfile = {
+//   firstName: 'Generic',
+//   lastName: 'Person',
+//   email: 'anybody@gmail.com',
+//   address: {
+//     street: '12345 67th St NW',
+//     apt: '',
+//     city: 'Bellevue',
+//     state: 'WA',
+//     zip: '98007',
+//   },
+//   phone: '425-648-5555',
+//   role: 'teacher',
+//   accountId: '1EF12348902093DECBA914',
+//   studentData: {},
+//   mentorData: {},
+// };

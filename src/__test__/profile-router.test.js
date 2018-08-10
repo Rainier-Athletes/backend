@@ -9,7 +9,7 @@ import logger from '../lib/logger';
 
 bearerAuth(superagent);
 
-const apiUrl = `http://localhost:${process.env.PORT}/api`;
+const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING ROUTER PROFILE', () => {
   let mockData;
@@ -32,8 +32,8 @@ describe('TESTING ROUTER PROFILE', () => {
   describe('POST PROFILE ROUTES TESTING', () => {
     test('POST 200 to /api/profiles for successful profile creation', async () => {
       const mockProfile = {
-        bio: faker.lorem.words(20),
-        location: faker.address.city(),
+        role: 'mentor',
+        email: faker.internet.email(),
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
       };
@@ -49,8 +49,8 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body.accountId).toEqual(account._id.toString());
       expect(response.body.firstName).toEqual(mockProfile.firstName);
       expect(response.body.lastName).toEqual(mockProfile.lastName);
-      expect(response.body.bio).toEqual(mockProfile.bio);
-      expect(response.body.location).toEqual(mockProfile.location);
+      expect(response.body.email).toEqual(mockProfile.email);
+      expect(response.body.role).toEqual(mockProfile.role);
     });
 
     test('POST 400 for trying to post a profile with a bad token', async () => {
@@ -65,8 +65,8 @@ describe('TESTING ROUTER PROFILE', () => {
 
     test('POST 400 to /api/profiles for missing required firstName', async () => {
       const mockProfile = {
-        bio: faker.lorem.words(20),
-        location: faker.address.city(),
+        role: 'mentor',
+        email: faker.internet.email(),
         // firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
         accountId: account._id,
@@ -145,13 +145,13 @@ describe('TESTING ROUTER PROFILE', () => {
       try {
         response = await superagent.put(`${apiUrl}/profiles`)
           .authBearer(mock.token)
-          .send({ bio: 'this is our updated bio' });
+          .send({ email: 'thisis@updated.email' });
       } catch (err) {
         expect(err).toEqual('POST 200 test that should pass');
       }
       expect(response.status).toEqual(200);
       expect(response.body.accountId).toEqual(mock.profile.accountId.toString());
-      expect(response.body.bio).toEqual('this is our updated bio');
+      expect(response.body.email).toEqual('thisis@updated.email');
     });
 
     test('PUT 400  update of existing profile without body', async () => {
@@ -201,7 +201,7 @@ describe('TESTING ROUTER PROFILE', () => {
       try {
         response = await superagent.delete(`${apiUrl}/profiles`)
           .query({ id: profile._id.toString() })
-          .authBearer(token);
+          .authBearer(mock.token);
         expect(response.status).toEqual(200);
       } catch (err) {
         expect(err).toEqual('Unexpected error on valid delete test');
