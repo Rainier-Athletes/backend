@@ -10,7 +10,7 @@ import Account from '../model/account';
 const profileRouter = new Router();
 
 profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
-  logger.log(logger.INFO, `.post /api/profiles req.body: ${request.body}`);
+  logger.log(logger.INFO, `.post /api/v1/profiles req.body: ${request.body}`);
   Profile.init()
     .then(() => {
       return new Profile({
@@ -26,7 +26,7 @@ profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response,
   return undefined;
 });
 
-profileRouter.get(['/api/v1/profiles', '/api/profiles/me'], bearerAuthMiddleware, (request, response, next) => {
+profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
 
   Profile.init()
@@ -49,7 +49,7 @@ profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
 
   Profile.init()
     .then(() => {
-      return Profile.findOneAndUpdate({ _id: request.profile._id }, request.body);
+      return Profile.findOneAndUpdate({ _id: request.profile._id }, request.body, { runValidators: true });
     })
     .then((profile) => {
       return Profile.findOne(profile._id);
@@ -66,16 +66,16 @@ profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, respons
 
   Profile.init()
     .then(() => {
-      return Profile.findByIdAndRemove(request.query.id);
+      return Profile.findByIdAndRemove(request.profile._id);
     })
     .then(() => {
-      return PointTracker.remove({ profileID: request.query.id });
+      return PointTracker.remove({ studentId: request.profile._id });
     })
     .then(() => {
-      return Whitelist.remove({ email: request.query.email });
+      return Whitelist.remove({ email: request.profile.email });
     })
     .then(() => {
-      return Account.findByIdAndRemove(request.query._id);
+      return Account.findByIdAndRemove(request.account._id);
     })
     .catch(next);
   return undefined;
