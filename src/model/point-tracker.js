@@ -22,15 +22,26 @@ const pointTrackerSchema = mongoose.Schema({
     scoring: {
       excusedDays: Number,
       stamps: Number,
-      x: Number,
+      halfStamp: Number,
       tutorials: Number,
     },
+    grade: Number,
   }],
   surveyQuestions: {
-    attendedCheckin: Boolean,
+    mentorAttendedCheckin: Boolean,
     metFaceToFace: Boolean,
     hadOtherCommunication: Boolean,
+    hadNoCommunication: Boolean,
     scoreSheetTurnedIn: Boolean,
+    scoreSheetLostOrIncomplete: Boolean,
+    scoreSheetWillBeLate: Boolean,
+    scoreSheetOther: Boolean,
+    scoreSheetOtherReason: String,
+    // grades question we can skip as we'll have that data separately.
+    synopsisInformationComplete: Boolean,
+    synopsisInformationIncomplete: Boolean,
+    synopsisCompletedByRaStaff: Boolean,
+    // playing time earned and explanation handled via synopsisComments
   },
   synopsisComments: {
     extraPlayingTime: String,
