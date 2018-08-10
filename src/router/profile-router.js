@@ -10,7 +10,7 @@ import Account from '../model/account';
 const profileRouter = new Router();
 
 profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
-  logger.log(logger.INFO, `.post /api/profiles req.body: ${request.body}`);
+  logger.log(logger.INFO, `.post /api/v1/profiles req.body: ${request.body}`);
   Profile.init()
     .then(() => {
       return new Profile({
@@ -26,7 +26,7 @@ profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response,
   return undefined;
 });
 
-profileRouter.get(['/api/v1/profiles', '/api/profiles/me'], bearerAuthMiddleware, (request, response, next) => {
+profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
 
   Profile.init()
@@ -49,7 +49,7 @@ profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
 
   Profile.init()
     .then(() => {
-      return Profile.findOneAndUpdate({ _id: request.profile._id }, request.body);
+      return Profile.findOneAndUpdate({ _id: request.profile._id }, { runValidators: true }, request.body);
     })
     .then((profile) => {
       return Profile.findOne(profile._id);
