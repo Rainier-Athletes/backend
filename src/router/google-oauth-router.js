@@ -83,8 +83,11 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   // login failed, create account and profile
   // no account? Check Whitelist for the email
   console.log('oAuth: login failed, checking whitelist for', email);
-  const wlResult = await Whitelist.findOne({ email });
+  let wlResult = await Whitelist.findOne({ email });
   console.log('oAuth: whitelist result', wlResult);
+  if (!wlResult && email === JSON.parse(process.env.ROOT_ADMIN).email) {
+    wlResult = JSON.parse(process.env.ROOT_ADMIN);
+  }
   let signupResult;
   if (!wlResult) {
     console.log('oAuth: Email not in whitelist. returning status 401: Not Authorized');

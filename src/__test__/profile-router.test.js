@@ -201,7 +201,7 @@ describe.skip('TESTING ROUTER PROFILE', () => {
       try {
         response = await superagent.delete(`${apiUrl}/profiles`)
           .query({ id: profile._id.toString() })
-          .authBearer(token);
+          .authBearer(mock.token);
         expect(response.status).toEqual(200);
       } catch (err) {
         expect(err).toEqual('Unexpected error on valid delete test');
