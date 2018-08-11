@@ -33,6 +33,7 @@ profileRouter.get(['/api/v1/profiles', '/api/v1/profiles/me'], bearerAuthMiddlew
   if (request.query.id && request.profile.role === 'admin') {
     Profile.findOne({ _id: request.query.id })
       .then((profile) => {
+        console.log(profile);
         return response.json(profile);
       })
       .catch(next);
