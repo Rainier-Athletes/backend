@@ -1,52 +1,75 @@
 import { Router } from 'express';
 import superagent from 'superagent';
 import HttpErrors from 'http-errors';
+import Oauth2Client from 'client-oauth2';
 
-// These are modules you will need to create a MongoDB account based off the Google response
-// import crypto from 'crypto'; // maybe you want to use this to create a password for your MongoDB account
-// import jwt from 'jsonwebtoken'; // you will DEFINITELY need this to "sign" your Google token
 // import Account from '../model/account';
 import logger from '../lib/logger';
 import Whitelist from '../model/whitelist';
 
-const GOOGLE_OAUTH_URL = 'https://www.googleapis.com/oauth2/v4/token';
-const OPEN_ID_URL = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
+const BASECAMP_ACCESS_URL = 'https://launchpad.37signals.com/authorization/new';
+const BASECAMP_TOKEN_URL = 'https://launchpad.37signals.com/authorization/token';
+const BASECAMP_REDIRECT_URL = `${process.env.API_URL}/oauth/basecamp`;
+
+// const GOOGLE_OAUTH_URL = 'https://www.googleapis.com/oauth2/v4/token';
+// const OPEN_ID_URL = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
 
 require('dotenv').config();
+ 
+const basecampAuth = new Oauth2Client({
+  clientId: process.env.BASECAMP_OAUTH_ID,
+  clientSecret: process.env.BASECAMP_OAUTH_SECRET,
+  accessTokenUri: BASECAMP_TOKEN_URL,
+  authorizationUri: BASECAMP_ACCESS_URL,
+  redirectUri: BASECAMP_REDIRECT_URL,
+  scopes: [],
+});
 
-const googleOAuthRouter = new Router();
+const basecampOAuthRouter = new Router();
 
-googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) => {
+basecampOAuthRouter.get('/api/v1/oauth/basecamp', async (request, response, next) => {
+  console.log('basecamp oAuth: request.query.code', request.query.code);
+
+
   if (!request.query.code) {
-    logger.log(logger.ERROR, 'DID NOT GET CODE FROM GOOGLE');
+    logger.log(logger.ERROR, 'DID NOT GET CODE FROM BASECAMP');
     response.redirect(process.env.CLIENT_URL);
-    return next(new HttpErrors(500, 'Google OAuth Error'));
+    return next(new HttpErrors(500, 'Basecamp OAuth Error'));
   }
-  logger.log(logger.INFO, `RECVD CODE FROM GOOGLE AND SENDING IT BACK TO GOOGLE: ${request.query.code}`);
+  logger.log(logger.INFO, `RECVD CODE FROM BASECAMP AND SENDING IT BACK FOR TOKEN: ${request.query.code}`);
+
+  // POST https://launchpad.37signals.com/authorization/token?
+  // type=web_server&
+  // client_id=your-client-id&
+  // redirect_uri=your-redirect-uri&
+  // client_secret=your-client-secret&
+  // code=verification-code
+
+  const bcQuery = {
+    type: 'web_server',
+    client_id: process.env.BASECAMP_OAUTH_ID,
+    redirect_uri: BASECAMP_REDIRECT_URL,
+    client_secret: process.env.BASECAMP_OAUTH_SECRET,
+    code: request.query.code,
+  };
 
   let raToken;
-  let googleTokenResponse;
+  let basecampTokenResponse;
+
   try {
-    googleTokenResponse = await superagent.post(GOOGLE_OAUTH_URL)
-      .type('form')
-      .send({
-        code: request.query.code,
-        grant_type: 'authorization_code',
-        client_id: process.env.GOOGLE_OAUTH_ID,
-        client_secret: process.env.GOOGLE_OAUTH_SECRET,
-        redirect_uri: `${process.env.API_URL}/oauth/google`,
-      });
+    basecampTokenResponse = await superagent.post(BASECAMP_TOKEN_URL)
+      .query(bcQuery);
   } catch (err) {
-    logger.log(logger.ERROR, `ERROR FROM GOOGLE: ${JSON.stringify(err)}`);
-    return next(new HttpErrors(err.status, 'Error from Google Oauth'));
+    logger.log(logger.ERROR, `ERROR FROM BASECAMP: ${JSON.stringify(err)}`);
+    return next(new HttpErrors(err.status, 'Error from Basecamp Oauth'));
   }
 
-  if (!googleTokenResponse.body.access_token) {
-    logger.log(logger.ERROR, 'No Token from Google');
+  if (!basecampTokenResponse.body.access_token) {
+    logger.log(logger.ERROR, 'No Token from Basecamp');
     return response.redirect(process.env.CLIENT_URL);
   }
-  logger.log(logger.INFO, `RECEIVED GOOGLE ACCESS TOKEN: ${JSON.stringify(googleTokenResponse.body, null, 2)}`);
-  const accessToken = googleTokenResponse.body.access_token;
+  logger.log(logger.INFO, `RECEIVED BASECAMP ACCESS TOKEN: ${JSON.stringify(basecampTokenResponse.body, null, 2)}`);
+  const accessToken = basecampTokenResponse.body.access_token;
 
   let openIdResponse;
   try {
@@ -128,4 +151,4 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   return undefined;
 });
 
-export default googleOAuthRouter;
+export default basecampOAuthRouter;
