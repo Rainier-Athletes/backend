@@ -1,14 +1,14 @@
 import faker from 'faker';
 import Whitelist from '../../model/whitelist';
-import { createProfileMockPromise, removeAllResources } from './profile-mock';
+// import { createProfileMockPromise, removeAllResources } from './profile-mock';
 
 const createWhitelistMockPromise = async () => {
   const mockData = {};
 
-  const mockProfileData = await createProfileMockPromise();
-  mockData.profile = mockProfileData.profile;
-  mockData.originalRequest = mockProfileData.originalRequest;
-  mockData.token = mockProfileData.token;
+  // const mockProfileData = await createProfileMockPromise();
+  // mockData.profile = mockProfileData.profile;
+  // mockData.originalRequest = mockProfileData.originalRequest;
+  // mockData.token = mockProfileData.token;
 
   const mockWhitelist = {
     firstName: faker.name.firstName(),
@@ -26,7 +26,7 @@ const createWhitelistMockPromise = async () => {
 const removeWhitelistResources = () => {
   return Promise.all([
     Whitelist.remove({}),
-    removeAllResources(),
+    // removeAllResources(),
   ]);
 };
 
