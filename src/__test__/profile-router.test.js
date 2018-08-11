@@ -11,7 +11,7 @@ bearerAuth(superagent);
 
 const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
-describe('TESTING ROUTER PROFILE', () => {
+describe.skip('TESTING ROUTER PROFILE', () => {
   let mockData;
   let token;
   let account;
