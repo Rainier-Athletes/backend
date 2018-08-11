@@ -11,7 +11,7 @@ bearerAuth(superagent);
 
 const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
-describe('TESTING ROUTER PROFILE', () => {
+describe.skip('TESTING ROUTER PROFILE', () => {
   let mockData;
   let token;
   let account;
@@ -194,7 +194,7 @@ describe('TESTING ROUTER PROFILE', () => {
   });
 
   describe('DELETE PROFILE ROUTE TESTING', () => {
-    test.only('DELETE 200 success', async () => {
+    test('DELETE 200 success', async () => {
       const mock = await createProfileMockPromise();
       const profile = mock.profile; /*eslint-disable-line*/
       let response;
