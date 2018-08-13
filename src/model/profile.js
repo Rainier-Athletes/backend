@@ -86,12 +86,14 @@ const Profile = mongoose.model('Profile', profileSchema, 'profiles', skipInit);
 const studentProfilePostSave = async (student) => {
   // a saved student profile may have new references
   // to their mentor or coach(es). 
+  console.log('post save student, profile:', JSON.stringify(student, null, 4));
   if (student.studentData.mentor) {
     try {
       const mentor = await Profile.findById(student.studentData.mentor);
       if (!mentor.mentorData.students.map(v => v.toString()).includes(student._id.toString())) {
         mentor.mentorData.students.push(student._id);
-        return mentor.save();
+        console.log('post save student, saving mentor profile:', JSON.stringify(mentor, null, 4));
+        await mentor.save();
       }
     } catch (err) {
       logger.log(logger.ERROR, `studentProfilePostSave mongoose error finding mentor ${student.studentData.mentor}`);
@@ -99,39 +101,51 @@ const studentProfilePostSave = async (student) => {
     }
   }
 
+  const updateCoach = async (coach, studentId) => {
+    try {
+      const coachProfile = await Profile.findById(coach);
+      console.log('updateCoach, found coach', coachProfile);
+      if (!coachProfile.coachData.students.map(v => v.toString()).includes(studentId.toString())) {
+        coachProfile.coachData.students.push(studentId);
+        console.log('updateCoach, saving', coachProfile);
+        await coachProfile.save();
+        console.log('update coach back from save');
+      }
+    } catch (err) {
+      logger.log(logger.ERROR, `studentProfilePostSave mongoose error finding coach ${coach}`);
+      return Promise.reject(err);
+    }
+    return undefined;
+  };
+
   // check coaches to be sure they refer back to student
   if (student.studentData.coaches.length > 0) {
     const { coaches } = student.studentData;
-    const coachProfiles = [];
+    console.log('studentProfilePostSave working on coaches', coaches);
     for (let i = 0; i < coaches.length; i++) {
-      coachProfiles.push(Profile.findById(coaches[i]));
+      updateCoach(coaches[i], student._id);
     }
-    await Promise.all(coachProfiles);
-    for (let i = 0; i < coachProfiles.length; i++) {
-      if (!coachProfiles[i].students.map(v => v.toString()).includes(student._id.toString())) {
-        coachProfiles[i].students.push(student._id);
-      }
-    }
-    const savedProfiles = [];
-    for (let i = 0; i < coachProfiles.length; i++) {
-      savedProfiles.push(coachProfiles[i].save());
-    }
-    return Promise.all(savedProfiles);
   }
   return undefined;
 };
 
 const supportProfilePostSave = async (profile) => {
+  console.log('post save Support profile:', JSON.stringify(profile, null, 4));
   // these can be either mentor or coach profiles.
   const dataProp = `${profile.role}Data`;
+  // student array is at mentor.mentorData.students, e.g.
   const { students } = profile[dataProp];
+  console.log('... dataProp', dataProp, 'students', students);
   // students holds _id's of mentor or coaches mentees
   // get their profiles
   const studentProfiles = [];
-  for (let i = 0; i < students.length; i++) {
-    studentProfiles.push(Profile.findById(students[i]));
-  }
-  await Promise.all(studentProfiles);
+  // for (let i = 0; i < students.length; i++) {
+  //   studentProfiles.push(Profile.findById(students[i]));
+  // }
+  // await Promise.all(studentProfiles);
+  studentProfiles[0] = await Profile.findById(students[0]);
+  // studentProfiles is an array of Query objects, not profiles!
+  console.log('... studentProfiles', studentProfiles);
   const savedProfiles = [];
   for (let i = 0; i < studentProfiles.length; i++) {
     switch (profile.role) {
@@ -153,22 +167,41 @@ const supportProfilePostSave = async (profile) => {
   return Promise.all(savedProfiles);
 };
 
-profileSchema.post('save', (profile) => {
+profileSchema.post('save', async (profile) => {
+  console.log('>>>> profileSchema.post(save) profile', JSON.stringify(profile, null, 4));
   // if role is student, check that student's mentor
   // and coach(s) include the student's _id
   if (profile.role === 'student') {
-    return studentProfilePostSave(profile);
+    await studentProfilePostSave(profile);
   }
   // if role is mentor, check that student's include
   // mentor's _id
   // if roal is coach, check that student's include
   // coach's _id
-  if (profile.role === 'mentor' || profile.role === 'coach') {
-    return supportProfilePostSave(profile);
-  }
+  // if (profile.role === 'mentor' || profile.role === 'coach') {
+  //   return supportProfilePostSave(profile);
+  // }
   return undefined;
 });
 
+profileSchema.post('remove', async (profile) => {
+  if (profile.role === 'student') { 
+    // clean up student's mentor and coaches
+    await postRemoveStudentFromMentor(profile);
+    await postRemoveStudentFromCoaches(profile);
+  }
+});
+
+const postRemoveStudentFromMentor = async (student) => { 
+  const mentor = await Profile.findById(student.mentor._id)
+  mentor.mentorData.students = mentor.mentorData.students.filter(id => id.toString() !== student._id.toString());
+  return mentor.save();
+    })
+    .then(done())
+    .catch((err) => {
+      throw err;
+    });
+};
 export default Profile;
 
 // const mockStudentProfile = {
