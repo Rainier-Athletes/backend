@@ -6,6 +6,7 @@ import { createAccountMockPromise } from './lib/account-mock';
 // import { createAttachmentMockPromise } from './lib/attachment-mock';
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
 import logger from '../lib/logger';
+import Profile from '../model/profile';
 
 bearerAuth(superagent);
 
@@ -30,7 +31,7 @@ describe('TESTING ROUTER PROFILE', () => {
   });
 
   describe('POST PROFILE ROUTES TESTING', () => {
-    test('POST 200 to /api/v1/profiles for successful profile creation', async () => {
+    test('POST 200 to successfully save mentor', async () => {
       const mockProfile = {
         role: 'mentor',
         email: faker.internet.email(),
@@ -212,6 +213,10 @@ describe('TESTING ROUTER PROFILE', () => {
       }
       // want to verify that the mentor and coach now include
       // student's _id...
+      const updatedMentor = await Profile.findById(mentor._id);
+      expect(updatedMentor.mentorData.students[0].toString()).toEqual(student._id.toString());
+      const updatedCoach = await Profile.findById(coach._id);
+      expect(updatedCoach.coachData.students[0].toString()).toEqual(student._id.toString());
       // try {
       //   const updatedMentor = await superagent.get(`${apiUrl}/profiles`)
       //     .authBearer(mock.adminToken)
