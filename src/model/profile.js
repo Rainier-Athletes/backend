@@ -139,11 +139,11 @@ const supportProfilePostSave = async (profile) => {
   // students holds _id's of mentor or coaches mentees
   // get their profiles
   const studentProfiles = [];
-  // for (let i = 0; i < students.length; i++) {
-  //   studentProfiles.push(Profile.findById(students[i]));
-  // }
-  // await Promise.all(studentProfiles);
-  studentProfiles[0] = await Profile.findById(students[0]);
+  for (let i = 0; i < students.length; i++) {
+    studentProfiles.push(Profile.findById(students[i]));
+  }
+  await Promise.all(studentProfiles);
+  // studentProfiles[0] = await Profile.findById(students[0]);
   // studentProfiles is an array of Query objects, not profiles!
   console.log('... studentProfiles', studentProfiles);
   const savedProfiles = [];
@@ -174,34 +174,45 @@ profileSchema.post('save', async (profile) => {
   if (profile.role === 'student') {
     await studentProfilePostSave(profile);
   }
-  // if role is mentor, check that student's include
-  // mentor's _id
-  // if roal is coach, check that student's include
-  // coach's _id
+  // if role is mentor, check that student's include mentor's _id
+  // if roal is coach, check that student's include coach's _id
   // if (profile.role === 'mentor' || profile.role === 'coach') {
   //   return supportProfilePostSave(profile);
   // }
   return undefined;
 });
 
-profileSchema.post('remove', async (profile) => {
-  if (profile.role === 'student') { 
-    // clean up student's mentor and coaches
-    await postRemoveStudentFromMentor(profile);
-    await postRemoveStudentFromCoaches(profile);
-  }
-});
-
 const postRemoveStudentFromMentor = async (student) => { 
-  const mentor = await Profile.findById(student.mentor._id)
-  mentor.mentorData.students = mentor.mentorData.students.filter(id => id.toString() !== student._id.toString());
-  return mentor.save();
-    })
-    .then(done())
-    .catch((err) => {
-      throw err;
-    });
+  const mentor = await Profile.findById(student.mentor._id);
+  if (mentor) {
+    mentor.mentorData.students = mentor.mentorData.students.filter(id => id.toString() !== student._id.toString());
+    return mentor.save();
+  }
+  return undefined;
 };
+
+const postRemoveStudentFromCoach = async (coachId, studentId) => {
+  const coach = Profile.findOneById(coachId);
+  if (coach) {
+    coach.coachData.students = coach.coachData.students.filter(id => id.toString() !== studentId.toString());
+    return coach.save();
+  }
+  return undefined;
+};
+
+// profileSchema.post('remove', async (profile) => {
+//   if (profile.role === 'student') { 
+//     // clean up student's mentor and coaches
+//     if (profile.studentData.mentor) await postRemoveStudentFromMentor(profile);
+//     if (profile.studentData.coaches.length > 0) {
+//       for (let i = 0; i < profile.studentData.coaches.length; i++) {
+//         postRemoveStudentFromCoach(profile.studentData.coaches[i], profile._id);
+//       }
+//     }
+//   }
+//   return undefined;
+// });
+
 export default Profile;
 
 // const mockStudentProfile = {
