@@ -15,6 +15,7 @@ import basecampOauthRouter from '../router/basecamp-oauth-router';
 import profileRouter from '../router/profile-router';
 import pointTrackerRouter from '../router/point-tracker-router';
 import whitelistRouter from '../router/whitelist-router';
+import relationshipRouter from '../router/relationship-router';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -89,6 +90,7 @@ app.use(basecampOauthRouter);
 app.use(whitelistRouter);
 app.use(profileRouter);
 app.use(pointTrackerRouter);
+app.use(relationshipRouter);
 
 app.all('*', (request, response, next) => {
   logger.log(logger.INFO, 'returning 404 from the catch/all route');
