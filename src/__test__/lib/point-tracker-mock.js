@@ -57,6 +57,18 @@ const createPointTrackerMockPromise = async () => {
   return mockData;
 };
 
+pointTrackerSchema.post('save', (tracker) => {
+  Profile.findById(tracker.studentId)
+    .then((profile) => {
+      if (!profile.studentData.PointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
+        profile.studentData.PointTrackers.push(tracker._id);
+      }
+      return profile.save();
+    })
+    .catch((err) => {
+      throw err;
+    });
+});
 const removeAllResources = () => {
   return Promise.all([
     removeProfileResources(),
