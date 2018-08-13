@@ -200,18 +200,18 @@ const postRemoveStudentFromCoach = async (coachId, studentId) => {
   return undefined;
 };
 
-// profileSchema.post('remove', async (profile) => {
-//   if (profile.role === 'student') { 
-//     // clean up student's mentor and coaches
-//     if (profile.studentData.mentor) await postRemoveStudentFromMentor(profile);
-//     if (profile.studentData.coaches.length > 0) {
-//       for (let i = 0; i < profile.studentData.coaches.length; i++) {
-//         postRemoveStudentFromCoach(profile.studentData.coaches[i], profile._id);
-//       }
-//     }
-//   }
-//   return undefined;
-// });
+profileSchema.post('remove', async (profile) => {
+  if (profile.role === 'student') { 
+    // clean up student's mentor and coaches
+    if (profile.studentData.mentor) await postRemoveStudentFromMentor(profile);
+    if (profile.studentData.coaches.length > 0) {
+      for (let i = 0; i < profile.studentData.coaches.length; i++) {
+        postRemoveStudentFromCoach(profile.studentData.coaches[i], profile._id);
+      }
+    }
+  }
+  return undefined;
+});
 
 export default Profile;
 
