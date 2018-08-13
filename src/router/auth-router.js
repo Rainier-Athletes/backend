@@ -15,7 +15,7 @@ const authRouter = new Router();
 authRouter.post('/api/v1/signup', (request, response, next) => {
   Account.init()
     .then(() => {
-      return Account.create(request.body.username, request.body.email, request.body.password);
+      return Account.create(request.body.username, request.body.email, request.body.password, request.body.accessToken);
     })
     .then((account) => {
       // we want to get rid of the password as early as possible
@@ -90,7 +90,7 @@ authRouter.get('/api/v1/login', basicAuthMiddleware, (request, response, next) =
       logger.log(logger.INFO, 'AUTH-ROUTER /api/login - responding with a 200 status code and a token ');
       const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
       response.cookie('RaToken', savedToken, cookieOptions);
-
+      response.cookie('RaUser', newProfile.role.toString('base64'), cookieOptions);
       if (newProfile === null) {
         return response.json({ profileId: null, token: savedToken });
       }

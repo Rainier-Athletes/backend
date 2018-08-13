@@ -6,17 +6,18 @@ import { createAccountMockPromise } from './lib/account-mock';
 // import { createAttachmentMockPromise } from './lib/attachment-mock';
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
 import logger from '../lib/logger';
+import Profile from '../model/profile';
 
 bearerAuth(superagent);
 
 const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
-describe.skip('TESTING ROUTER PROFILE', () => {
+describe('TESTING ROUTER PROFILE', () => {
   let mockData;
   let token;
   let account;
   beforeAll(startServer);
-  afterAll(stopServer);
+  // afterAll(stopServer);
   beforeEach(async () => {
     await removeAllResources();
     try {
@@ -30,7 +31,7 @@ describe.skip('TESTING ROUTER PROFILE', () => {
   });
 
   describe('POST PROFILE ROUTES TESTING', () => {
-    test('POST 200 to /api/profiles for successful profile creation', async () => {
+    test('POST 200 to successfully save mentor', async () => {
       const mockProfile = {
         role: 'mentor',
         email: faker.internet.email(),
@@ -63,7 +64,7 @@ describe.skip('TESTING ROUTER PROFILE', () => {
       }
     });
 
-    test('POST 400 to /api/profiles for missing required firstName', async () => {
+    test('POST 400 to /api/v1/profiles for missing required firstName', async () => {
       const mockProfile = {
         role: 'mentor',
         email: faker.internet.email(),
@@ -190,6 +191,40 @@ describe.skip('TESTING ROUTER PROFILE', () => {
       } catch (err) {
         expect(err.status).toEqual(400);
       }
+    });
+
+    test.only('PUT 200 updating Student should update mentor and coach', async () => {
+      await removeAllResources();
+      const mock = await createProfileMockPromise();
+      const student = mock.studentProfile;
+      const coach = mock.coachProfile;
+      const mentor = mock.mentorProfile;
+
+      student.studentData.mentor = mentor._id.toString();
+      student.studentData.coaches.push(coach._id.toString());
+      // console.log(JSON.stringify(student, null, 2));
+      try {
+        const response = await superagent.put(`${apiUrl}/profiles`)
+          .authBearer(mock.mentorToken)
+          .send(student);
+        expect(response.status).toEqual(200);
+      } catch (err) {
+        expect(err).toEqual('error on valid student update');
+      }
+      // want to verify that the mentor and coach now include
+      // student's _id...
+      const updatedMentor = await Profile.findById(mentor._id);
+      expect(updatedMentor.mentorData.students[0].toString()).toEqual(student._id.toString());
+      const updatedCoach = await Profile.findById(coach._id);
+      expect(updatedCoach.coachData.students[0].toString()).toEqual(student._id.toString());
+      // try {
+      //   const updatedMentor = await superagent.get(`${apiUrl}/profiles`)
+      //     .authBearer(mock.adminToken)
+      //     .query({ id: mentor._id.toString() });
+      //   expect(updatedMentor.mentorData.students[0].toString()).toEqual(student._id.toString());
+      // } catch (err) {
+      //   expect(err).toEqual('error getting updated mentor');
+      // }
     });
   });
 
