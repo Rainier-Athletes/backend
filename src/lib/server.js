@@ -11,9 +11,10 @@ import loggerMiddleware from './middleware/logger-middleware';
 // our routes
 import authRouter from '../router/auth-router';
 import googleOauthRouter from '../router/google-oauth-router';
+import basecampOauthRouter from '../router/basecamp-oauth-router';
 import profileRouter from '../router/profile-router';
 import pointTrackerRouter from '../router/point-tracker-router';
-import pointTracker from '../model/point-tracker';
+import whitelistRouter from '../router/whitelist-router';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -55,12 +56,12 @@ let server = null;
 
 // here's the cors docs implementation:
 // const whitelist = ['http://localhost:8080', 'http://mygarage-frontend.herokuapp.com'];
-const whitelist = JSON.parse(process.env.CORS_ORIGINS);
-console.log('server origins whitelist', whitelist);
+const originWhitelist = JSON.parse(process.env.CORS_ORIGINS);
+console.log('server origins whitelist', originWhitelist);
 const corsOptions2 = {
   origin: (origin, callback) => {
     console.log('server origin:', origin);
-    if (whitelist.indexOf(origin) !== -1) {
+    if (originWhitelist.indexOf(origin) !== -1) {
       console.log('server origin passes whitelist.indexOf');
       callback(null, true);
     } else if (typeof origin === 'undefined') {
@@ -84,6 +85,8 @@ app.use(express.json());
 app.use(loggerMiddleware);
 app.use(authRouter);
 app.use(googleOauthRouter);
+app.use(basecampOauthRouter);
+app.use(whitelistRouter);
 app.use(profileRouter);
 app.use(pointTrackerRouter);
 

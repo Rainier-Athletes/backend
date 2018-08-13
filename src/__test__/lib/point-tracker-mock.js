@@ -1,11 +1,15 @@
 import faker from 'faker';
 import PointTracker from '../../model/point-tracker';
+import Profile from '../../model/profile';
+
 import { createProfileMockPromise, removeAllResources as removeProfileResources } from './profile-mock';
 
 const createPointTrackerMockPromise = async () => {
   const mockData = {};
 
   const profileData = await createProfileMockPromise();
+  profileData.profile.role = 'student';
+  await Profile.findByIdAndUpdate(profileData.profile);
   mockData.account = profileData.account;
   mockData.profile = profileData.profile;
   mockData.token = profileData.token;
@@ -21,9 +25,10 @@ const createPointTrackerMockPromise = async () => {
         scoring: {
           excusedDays: 1,
           stamps: 2,
-          x: 3,
+          halfStamp: 3,
           tutorials: 2,
         },
+        grade: 70.0,
       },
       {
         subjectName: faker.name.firstName(),
@@ -31,16 +36,80 @@ const createPointTrackerMockPromise = async () => {
         scoring: {
           excusedDays: 3,
           stamps: 4,
-          x: 1,
+          halfStamp: 1,
           tutorials: 1,
         },
+        grade: 90.0,
+      },
+      {
+        subjectName: faker.name.firstName(),
+        teacher: faker.name.findName(),
+        scoring: {
+          excusedDays: 1,
+          stamps: 2,
+          halfStamp: 3,
+          tutorials: 2,
+        },
+        grade: 70.0,
+      },
+      {
+        subjectName: faker.name.firstName(),
+        teacher: faker.name.findName(),
+        scoring: {
+          excusedDays: 3,
+          stamps: 4,
+          halfStamp: 1,
+          tutorials: 1,
+        },
+        grade: 90.0,
+      },
+      {
+        subjectName: faker.name.firstName(),
+        teacher: faker.name.findName(),
+        scoring: {
+          excusedDays: 3,
+          stamps: 4,
+          halfStamp: 1,
+          tutorials: 1,
+        },
+        grade: 90.0,
+      },
+      {
+        subjectName: faker.name.firstName(),
+        teacher: faker.name.findName(),
+        scoring: {
+          excusedDays: 1,
+          stamps: 2,
+          halfStamp: 3,
+          tutorials: 2,
+        },
+        grade: 70.0,
+      },
+      {
+        subjectName: faker.name.firstName(),
+        teacher: faker.name.findName(),
+        scoring: {
+          excusedDays: 3,
+          stamps: 4,
+          halfStamp: 1,
+          tutorials: 1,
+        },
+        grade: 90.0,
       },
     ],
     surveyQuestions: {
-      attendedCheckin: true,
+      mentorAttendedCheckin: true,
       metFaceToFace: true,
       hadOtherCommunication: false,
+      hadNoCommunication: false,
       scoreSheetTurnedIn: true,
+      scoreSheetLostOrIncomplete: false,
+      scoreSheetWillBeLate: false,
+      scoreSheetOther: false,
+      scoreSheetOtherReason: 'no reason needed in this case',
+      synopsisInformationComplete: true,
+      synopsisInformationIncomplete: false,
+      synopsisCompletedByRaStaff: false,
     },
     synopsisComments: {
       extraPlayingTime: faker.lorem.words(3),
@@ -53,7 +122,6 @@ const createPointTrackerMockPromise = async () => {
 
   const pointTracker = await new PointTracker(mockPointTracker).save();
   mockData.pointTracker = pointTracker;
-  console.log('ppp ppp ppp pointTracker save', JSON.stringify(mockData, null, 2));
   return mockData;
 };
 

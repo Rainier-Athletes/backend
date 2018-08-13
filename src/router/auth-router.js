@@ -49,7 +49,7 @@ authRouter.put('/api/v1/account/:update', bearerAuthMiddleware, (request, respon
 
         newAccount.email = request.body.email;
 
-        return Account.findByIdAndUpdate(newAccount._id, newAccount);
+        return Account.findByIdAndUpdate(newAccount._id, newAccount, { runValidators: true });
       })
       .then(() => {
         // There's no point testing for account not found because we wouldn't be here of it hadn't been find.
@@ -66,7 +66,7 @@ authRouter.put('/api/v1/account/:update', bearerAuthMiddleware, (request, respon
 
       newAccount.passwordHash = hash;
 
-      return Account.findByIdAndUpdate(newAccount._id, newAccount);
+      return Account.findByIdAndUpdate(newAccount._id, newAccount, { runValidators: true });
     })
     .then(() => {
       return response.sendStatus(200);
