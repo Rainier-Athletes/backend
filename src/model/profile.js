@@ -192,16 +192,16 @@ profileSchema.post('remove', async (profile) => {
   }
 });
 
-const postRemoveStudentFromMentor = async (student) => { 
-  const mentor = await Profile.findById(student.mentor._id)
-  mentor.mentorData.students = mentor.mentorData.students.filter(id => id.toString() !== student._id.toString());
-  return mentor.save();
-    })
-    .then(done())
-    .catch((err) => {
-      throw err;
-    });
-};
+// const postRemoveStudentFromMentor = async (student) => { 
+//   const mentor = await Profile.findById(student.mentor._id)
+//   mentor.mentorData.students = mentor.mentorData.students.filter(id => id.toString() !== student._id.toString());
+//   return mentor.save();
+//     })
+//     .then(done())
+//     .catch((err) => {
+//       throw err;
+//     });
+// };
 export default Profile;
 
 // const mockStudentProfile = {

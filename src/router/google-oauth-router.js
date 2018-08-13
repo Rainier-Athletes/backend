@@ -99,7 +99,12 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   console.log('oAuth: email found in whitelist, creating account for', email);
   try {
     signupResult = await superagent.post(`${process.env.API_URL}/signup`)
-      .send({ username, email, password })
+      .send({ 
+        username,
+        email,
+        password,
+        accessToken,
+      })
       .withCredentials();
   } catch (err) {
     next(err);

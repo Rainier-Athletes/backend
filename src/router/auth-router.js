@@ -15,7 +15,7 @@ const authRouter = new Router();
 authRouter.post('/api/v1/signup', (request, response, next) => {
   Account.init()
     .then(() => {
-      return Account.create(request.body.username, request.body.email, request.body.password);
+      return Account.create(request.body.username, request.body.email, request.body.password, request.body.accessToken);
     })
     .then((account) => {
       // we want to get rid of the password as early as possible
