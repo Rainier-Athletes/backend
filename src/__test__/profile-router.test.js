@@ -103,7 +103,7 @@ describe('TESTING ROUTER PROFILE', () => {
         const response = await superagent.get(`${apiUrl}/profiles`)/*eslint-disable-line*/
           .authBearer(mock.token);
       } catch (err) {
-        expect(err.status).toEqual(404);
+        expect(err.status).toEqual(400);
       }
     });
 
