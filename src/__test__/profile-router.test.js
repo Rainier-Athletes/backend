@@ -192,7 +192,7 @@ describe('TESTING ROUTER PROFILE', () => {
       }
     });
 
-    test.only('PUT 200 updating Student should update mentor and coach', async () => {
+    test('PUT 200 updating Student should update mentor and coach', async () => {
       await removeAllResources();
       const mock = await createProfileMockPromise();
       const student = mock.studentProfile;
