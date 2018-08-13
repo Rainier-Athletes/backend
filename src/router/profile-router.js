@@ -68,23 +68,7 @@ profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
       return Profile.findOne(profile._id);
     })
     .then((profile) => {
-      console.log('... after update result', JSON.stringify(profile, null, 4));
       response.json(profile);
-    })
-    .catch(next);
-  let dbProfile;
-  Profile.init()
-    .then(() => {
-      return Profile.findByIdAndRemove(request.body._id);
-    })
-    .then(() => {
-      delete request.body._id;
-      console.log('... attempting save of', JSON.stringify(request.body, null, 4));
-      return new Profile(request.body).save();
-    })
-    .then((saved) => {
-      console.log('... returning', JSON.stringify(dbProfile, null, 4));
-      response.json(saved).status(200);
     })
     .catch(next);
   return undefined;
