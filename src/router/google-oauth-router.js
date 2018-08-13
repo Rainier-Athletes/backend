@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import superagent from 'superagent';
 import HttpErrors from 'http-errors';
+import Profile from '../model/profile';
 
 // These are modules you will need to create a MongoDB account based off the Google response
 // import crypto from 'crypto'; // maybe you want to use this to create a password for your MongoDB account
@@ -75,9 +76,18 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   }
 
   if (loginResult) {
-    console.log('oAuth: login succeeded. Sending response and cookie');
+    console.log('oAuth: login succeeded. getting Profile', loginResult.body);
+    // get profile
+    let profile;
+    try {
+      profile = await Profile.findById(loginResult.body.profileId);
+    } catch (err) {
+      next(err);
+    }
+    console.log('oAuth: login succeeded. Sending response and cookies. Role:', profile.role);
     const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
     response.cookie('RaToken', loginResult.body.token, cookieOptions);
+    response.cookie('RaUser', Buffer.from(profile.role).toString('base64'), cookieOptions);
     return response.redirect(process.env.CLIENT_URL);
   } 
   // login failed, create account and profile
@@ -127,7 +137,7 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
     console.log('oAuth: sending cookie and redirecting');
     const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
     response.cookie('RaToken', raToken, cookieOptions);
-
+    response.cookie('RaUser', Buffer.from(role).toString('base64'), cookieOptions);
     return response.redirect(process.env.CLIENT_URL);
   }
   return undefined;
