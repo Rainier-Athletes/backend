@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import logger from '../lib/logger';
 
 const profileSchema = mongoose.Schema({
   active: {
