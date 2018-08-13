@@ -10,7 +10,6 @@ whitelistRouter.post('/api/v1/whitelists', bearerAuthMiddleware,
   (request, response, next) => {
     logger.log(logger.INFO, `.post at /api/v1/whitelists req.body: ${JSON.stringify(request.body, null, 2)}`);
     if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
-
     if (request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized.'));
 
     Whitelist.init() 

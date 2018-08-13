@@ -6,6 +6,7 @@ import { startServer, stopServer } from '../lib/server';
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
 import { createWhitelistMockPromise, removeWhitelistResources } from './lib/whitelist-mock';
 import logger from '../lib/logger';
+import { createAccountMockPromise } from './lib/account-mock';
 
 bearerAuth(superagent);
 
@@ -35,24 +36,30 @@ describe('TESTING ROUTER WHITELIST', () => {
 
   describe('POST WHITELIST ROUTES TESTING', () => {
     test('POST 200 to /api/whitelists for successful access', async () => {
-      const mockWhitelist1 = {
-        email: faker.internet.email(),
-        role: 'admin',
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-      };
+      const Whitelist = await createWhitelistMockPromise();
       let response;
       try {
         response = await superagent.post(`${apiUrl}/whitelists`)
-          .send(mockWhitelist1)
+          .send(Whitelist)
           .authBearer(mockAdminToken);
         expect(response.status).toEqual(200);
-        expect(response.body.role).toEqual(mockWhitelist1.role);
-        expect(response.body.email).toEqual(mockWhitelist1.email);
-        expect(response.body.firstName).toEqual(mockWhitelist1.firstName);
-        expect(response.body.lastName).toEqual(mockWhitelist1.lastName);
+        expect(response.body.role).toEqual(Whitelist.role);
+        expect(response.body.email).toEqual(Whitelist.email);
+        expect(response.body.firstName).toEqual(Whitelist.firstName);
+        expect(response.body.lastName).toEqual(Whitelist.lastName);
       } catch (err) {
         expect(err.status).toEqual('Unexpected error in POST 200 TEST');
+      }
+    });
+
+    test('POST 404 to /api/whitelists for missing login info', async () => {
+      const mock = await createWhitelistMockPromise();
+      try {
+        const response = await superagent.post(`${apiUrl}/whitelists`)
+          .authBearer(mock.token);
+        expect(response).toEqual('POST login info needed');
+      } catch (err) {
+        expect(err.status).toEqual(404);
       }
     });
 
@@ -116,25 +123,6 @@ describe('TESTING ROUTER WHITELIST', () => {
     });
 
     test('PUT 401 NO ADMIN ROLE, DENIED ACCESS', async () => {
-      let whitelists;
-      try {
-        const mock = await createProfileMockPromise();
-        whitelists = mock.profile;
-      } catch (err) {
-        throw err;
-      }
-      let response;
-      try {
-        response = await superagent.put(`${apiUrl}/whitelists`)
-          .query({ id: whitelists.accoutId })
-          .authBearer('admin token missing');
-        expect(response.status).toEqual('should not hit here');
-      } catch (err) {
-        expect(err.status).toEqual(401);
-      }
-    });
-
-    test('PUT 400 to /api/whitelists bad request, missing request', async () => {
       const mock = await createWhitelistMockPromise();
       try {
         await superagent.put(`${apiUrl}/whitelists`)
@@ -142,20 +130,6 @@ describe('TESTING ROUTER WHITELIST', () => {
           .send({});
       } catch (err) {
         expect(err.status).toEqual(400);
-      }
-    });
-
-    test('PUT 404 whitelist not found', async () => {
-      const mock = await createWhitelistMockPromise();
-
-      const profile = await createProfileMockPromise();
-      try {
-        const response = await superagent.put(`${apiUrl}/whitelists`)
-          .authBearer(mock.token)
-          .send(profile);
-        expect(response).toEqual('PUT if you see this, this test failed');
-      } catch (err) {
-        expect(err.status).toEqual(404);
       }
     });
   });
@@ -172,18 +146,6 @@ describe('TESTING ROUTER WHITELIST', () => {
         expect(response.status).toEqual(200);
       } catch (err) {
         expect(err).toEqual('unexpected error  on valid delete test');
-      }
-    });
-
-    test('DELETE 404 not found', async () => {
-      let response;
-      try {
-        response = await superagent.delete(`${apiUrl}/whitelists`)
-          .query({ id: '1234568909876543321' })
-          .authBearer(token);
-        expect(response).toEqual('DELETE 404 expected but not received');
-      } catch (err) {
-        expect(err.status).toEqual(404);
       }
     });
 

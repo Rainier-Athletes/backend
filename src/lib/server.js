@@ -11,7 +11,7 @@ import loggerMiddleware from './middleware/logger-middleware';
 // our routes
 import authRouter from '../router/auth-router';
 import googleOauthRouter from '../router/google-oauth-router';
-import basecampOauthRouter from '../router/basecamp-oauth-router';
+// import basecampOauthRouter from '../router/basecamp-oauth-router';
 import profileRouter from '../router/profile-router';
 import pointTrackerRouter from '../router/point-tracker-router';
 import whitelistRouter from '../router/whitelist-router';
@@ -85,7 +85,7 @@ app.use(express.json());
 app.use(loggerMiddleware);
 app.use(authRouter);
 app.use(googleOauthRouter);
-app.use(basecampOauthRouter);
+// app.use(basecampOauthRouter);
 app.use(whitelistRouter);
 app.use(profileRouter);
 app.use(pointTrackerRouter);

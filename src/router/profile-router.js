@@ -60,18 +60,18 @@ profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
 
   console.log('........ profile router PUT request.body', JSON.stringify(request.body, null, 4));
 
-  // Profile.init()
-  //   .then(() => {
-  //     return Profile.findOneAndUpdate({ _id: request.body._id }, request.body, { runValidators: true });
-  //   })
-  //   .then((profile) => {
-  //     return Profile.findOne(profile._id);
-  //   })
-  //   .then((profile) => {
-  //     console.log('... after update result', JSON.stringify(profile, null, 4));
-  //     response.json(profile);
-  //   })
-  //   .catch(next);
+  Profile.init()
+    .then(() => {
+      return Profile.findOneAndUpdate({ _id: request.body._id }, request.body, { runValidators: true });
+    })
+    .then((profile) => {
+      return Profile.findOne(profile._id);
+    })
+    .then((profile) => {
+      console.log('... after update result', JSON.stringify(profile, null, 4));
+      response.json(profile);
+    })
+    .catch(next);
   let dbProfile;
   Profile.init()
     .then(() => {

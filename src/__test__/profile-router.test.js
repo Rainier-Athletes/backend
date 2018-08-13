@@ -30,7 +30,7 @@ describe('TESTING ROUTER PROFILE', () => {
     return undefined;
   });
 
-  describe('POST PROFILE ROUTES TESTING', () => {
+  describe.skip('POST PROFILE ROUTES TESTING', () => {
     test('POST 200 to successfully save mentor', async () => {
       const mockProfile = {
         role: 'mentor',
@@ -83,7 +83,7 @@ describe('TESTING ROUTER PROFILE', () => {
     });
   });
 
-  describe('GET PROFILES ROUTE TESTING', () => {
+  describe.skip('GET PROFILES ROUTE TESTING', () => {
     test('GET 200 on successfull profile retrieval', async () => {
       const mockProfile = await createProfileMockPromise();
       let response;
@@ -138,7 +138,7 @@ describe('TESTING ROUTER PROFILE', () => {
     });
   });
 
-  describe('PUT PROFILES ROUTE TESTING', () => {
+  describe.skip('PUT PROFILES ROUTE TESTING', () => {
     test('PUT 200 successful update of existing profile', async () => {
       const mock = await createProfileMockPromise();
       let response;
@@ -193,7 +193,7 @@ describe('TESTING ROUTER PROFILE', () => {
       }
     });
 
-    test.only('PUT 200 updating Student should update mentor and coach', async () => {
+    test('PUT 200 updating Student should update mentor and coach', async () => {
       await removeAllResources();
       const mock = await createProfileMockPromise();
       const student = mock.studentProfile;
@@ -228,7 +228,7 @@ describe('TESTING ROUTER PROFILE', () => {
     });
   });
 
-  describe('DELETE PROFILE ROUTE TESTING', () => {
+  describe.skip('DELETE PROFILE ROUTE TESTING', () => {
     test('DELETE 200 success', async () => {
       const mock = await createProfileMockPromise();
       const profile = mock.profile; /*eslint-disable-line*/
