@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Profile from './profile';
 
 const pointTrackerSchema = mongoose.Schema({
   date: {
@@ -50,6 +51,19 @@ const pointTrackerSchema = mongoose.Schema({
     sportsUpdate: String,
     additionalComments: String,
   },
+});
+
+pointTrackerSchema.post('save', (tracker) => {
+  Profile.findById(tracker.studentId)
+    .then((profile) => {
+      if (!profile.studentData.PointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
+        profile.studentData.PointTrackers.push(tracker._id);
+      }
+      return profile.save();
+    })
+    .catch((err) => {
+      throw err;
+    });
 });
 
 const skipInit = process.env.NODE_ENV === 'development';

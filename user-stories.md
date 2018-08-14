@@ -1,4 +1,13 @@
-## Tracy's ideas for User Stories
+## Tracy's thoughts on server side stories...
+
+If student is saved, make sure studentId in mentor a coach profiles  are updated as needed.
+
+If a mentor is saved, make sure students profiles are updated with mentor's id.
+
+If a coach is saved, make sure all his students show him/her as a coach.
+
+
+## Tracy's ideas for Client-side User Stories
 
 As a mentor can add students to the app. Information will include their name, school, and grade. If I know their coach(es) I want to add that too.
 

@@ -11,7 +11,7 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
   if (!request.profile) return next(new HttpErrors(401, 'GET POINTS ROUTER: not logged in', { expose: false }));
 
   const queryType = Object.keys(request.query)[0];
-  if (!['id', 'studentId', 'date'].includes(queryType)) return next(new HttpErrors(400, 'GET GARAGE ROUTER: bad request', { expose: false }));
+  if (!['id', 'studentId', 'date'].includes(queryType)) return next(new HttpErrors(400, 'GET POINTS TRACKER: bad request', { expose: false }));
 
   const modelMap = {
     id: '_id',
