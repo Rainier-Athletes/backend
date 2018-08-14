@@ -87,7 +87,7 @@ authRouter.get('/api/v1/login', basicAuthMiddleware, (request, response, next) =
       return profile.findOne({ accountId: request.account._id });
     })
     .then((newProfile) => {
-      logger.log(logger.INFO, 'AUTH-ROUTER /api/login - responding with a 200 status code and a token ');
+      logger.log(logger.INFO, 'AUTH-ROUTER /api/v1/login - responding with a 200 status code and a token ');
       const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
       response.cookie('RaToken', savedToken, cookieOptions);
       response.cookie('RaUser', newProfile.role.toString('base64'), cookieOptions);
