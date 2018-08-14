@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import superagent from 'superagent';
+import { google } from 'googleapis';
 import HttpErrors from 'http-errors';
 import Profile from '../model/profile';
 
@@ -11,6 +12,7 @@ import logger from '../lib/logger';
 import Whitelist from '../model/whitelist';
 
 const GOOGLE_OAUTH_URL = 'https://www.googleapis.com/oauth2/v4/token';
+
 const OPEN_ID_URL = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
 
 require('dotenv').config();
@@ -32,6 +34,7 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
       .type('form')
       .send({
         code: request.query.code,
+        access_type: 'offline',
         grant_type: 'authorization_code',
         client_id: process.env.GOOGLE_OAUTH_ID,
         client_secret: process.env.GOOGLE_OAUTH_SECRET,
@@ -47,12 +50,31 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
     return response.redirect(process.env.CLIENT_URL);
   }
   logger.log(logger.INFO, `RECEIVED GOOGLE ACCESS TOKEN: ${JSON.stringify(googleTokenResponse.body, null, 2)}`);
-  const accessToken = googleTokenResponse.body.access_token;
+
+  // const oAuth2Client = new google.auth.OAuth2(
+  //   process.env.GOOGLE_OAUTH_ID,
+  //   process.env.GOOGLE_OAUTH_SECRET,
+  //   'http://localhost:3000/api/v1/oauth/google email profile openid',
+  // );
+
+  // this is what the drive example does once it
+  // has a token. sends the whole object to setCreds
+  // oAuth2Client.setCredentials(googleTokenResponse.body);
+  // oauth2Client.setCredentials({ access_token: googleAccessToken });
+
+  // google.options({
+  //   auth: oAuth2Client,
+  // });
+
+  // console.log('oAuth2Client in google router', oAuth2Client);
+
+  const googleAccessToken = googleTokenResponse.body.access_token;
+  // const googleIdToken = googleTokenResponse.body.id_token;
 
   let openIdResponse;
   try {
     openIdResponse = await superagent.get(OPEN_ID_URL)
-      .set('Authorization', `Bearer ${accessToken}`);
+      .set('Authorization', `Bearer ${googleAccessToken}`);
   } catch (err) {
     logger.log(logger.ERROR, `OpenId request failed, error: ${JSON.stringify(err, null, 2)}`);
     return response.sentStatus(err.status);
@@ -66,13 +88,14 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   const lastName = openIdResponse.body.family_name;
   const { picture } = openIdResponse.body;
 
-  console.log('oAuth: logging in. Data:', username, email, password, firstName, lastName);
-
+  
   // at this point we've completed google oauth. now we try to login to the app
   let loginResult;
+  console.log('oAuth: oauthlogin, auth:', username, password, 'body:', googleTokenResponse.body);
   try {
-    loginResult = await superagent.get(`${process.env.API_URL}/login`)
+    loginResult = await superagent.get(`${process.env.API_URL}/oauthlogin`)
       .auth(username, password)
+      .send(googleTokenResponse.body)
       .withCredentials();
   } catch (err) {
     console.log('oAuth: login failed, checking whitelist for', email);
@@ -113,12 +136,12 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   let { role } = wlResult; //eslint-disable-line
   console.log('oAuth: email found in whitelist, creating account for', email);
   try {
-    signupResult = await superagent.post(`${process.env.API_URL}/signup`)
+    signupResult = await superagent.post(`${process.env.API_URL}/oauthsignup`)
       .send({ 
         username,
         email,
         password,
-        accessToken,
+        googleTokenResponse: googleTokenResponse.body,
       })
       .withCredentials();
   } catch (err) {

@@ -15,13 +15,33 @@ const authRouter = new Router();
 authRouter.post('/api/v1/signup', (request, response, next) => {
   Account.init()
     .then(() => {
-      return Account.create(request.body.username, request.body.email, request.body.password, request.body.accessToken);
+      return Account.create(request.body.username, request.body.email, request.body.password);
     })
     .then((account) => {
       // we want to get rid of the password as early as possible
       delete request.body.password;
       logger.log(logger.INFO, 'AUTH-ROUTER /api/signup: creating token');
       return account.createTokenPromise();
+    })
+    .then((token) => {
+      logger.log(logger.INFO, `AUTH-ROUTER /api/signup: returning a 200 code and a token ${token}`);
+      const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
+      response.cookie('RaToken', token, cookieOptions);
+      return response.json({ token });
+    })
+    .catch(next);
+});
+
+authRouter.post('/api/v1/oauthsignup', (request, response, next) => {
+  Account.init()
+    .then(() => {
+      return Account.create(request.body.username, request.body.email, request.body.password);
+    })
+    .then((account) => {
+      // we want to get rid of the password as early as possible
+      delete request.body.password;
+      logger.log(logger.INFO, 'AUTH-ROUTER /api/signup: creating token');
+      return account.createTokenPromise(request.body.googleTokenResponse);
     })
     .then((token) => {
       logger.log(logger.INFO, `AUTH-ROUTER /api/signup: returning a 200 code and a token ${token}`);
@@ -89,6 +109,37 @@ authRouter.get('/api/v1/login', basicAuthMiddleware, (request, response, next) =
     .then((newProfile) => {
       logger.log(logger.INFO, 'AUTH-ROUTER /api/v1/login - responding with a 200 status code and a token ');
       const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
+      response.cookie('RaToken', savedToken, cookieOptions);
+      response.cookie('RaUser', newProfile.role.toString('base64'), cookieOptions);
+      if (newProfile === null) {
+        return response.json({ profileId: null, token: savedToken });
+      }
+      return response.json({ profileId: newProfile._id, token: savedToken });
+    })
+    .catch(next);
+  return undefined;
+});
+
+authRouter.get('/api/v1/oauthlogin', basicAuthMiddleware, (request, response, next) => {
+  let savedToken;
+  // if we made it past basicAuthMiddleware we'll have a valid account object on request.
+  // the body of this route must include the google oAuth2Client object
+  // created in google-oauth-router.
+
+  console.log('ooooooooo oauthlogin request.body', request.body);
+  Account.init()
+    .then(() => {
+      // request.body is the oAuth2Client object with tokens as props
+      return request.account.createTokenPromise(request.body);
+    })
+    .then((token) => {
+      savedToken = token;
+      return profile.findOne({ accountId: request.account._id });
+    })
+    .then((newProfile) => {
+      logger.log(logger.INFO, 'AUTH-ROUTER /api/v1/login - responding with a 200 status code and a token ');
+      const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
+      console.log('auth-router setting cookie RaToken to', savedToken);
       response.cookie('RaToken', savedToken, cookieOptions);
       response.cookie('RaUser', newProfile.role.toString('base64'), cookieOptions);
       if (newProfile === null) {
