@@ -13,7 +13,7 @@ beforeAll(async () => { await startServer(); });
 afterAll(stopServer);
 beforeEach(removeAccountMockPromise);
 
-describe.skip('AUTH router signup (post) tests', () => {
+describe('AUTH router signup (post) tests', () => {
   test('Test function of catch-all route in server', async () => {
     try {
       const response = await superagent.get(`${apiUrl}/notaroute`);
@@ -67,7 +67,7 @@ describe.skip('AUTH router signup (post) tests', () => {
   });
 });
 
-describe.skip('basic AUTH router login (get) tests', () => {
+describe('basic AUTH router login (get) tests', () => {
   test('GET 200 to api/login for successful login (no profile) and receipt of a TOKEN', async () => {
     const mockData = await createAccountMockPromise();
     try {

@@ -73,13 +73,13 @@ describe('Points Tracker information retrieval (GET requests)', () => {
     }
   });
 
-  test('GET 400 for pointstracker not found', async () => {
+  test.only('GET 404 for pointstracker not found', async () => {
     const mockData = await createPointTrackerMockPromise();
     try {
-      const response = await superagent.get(`${apiUrl}/pointstracker`)
-        .authBearer(mockData.body.token);
+      const response = await superagent.get(`${apiUrl}/pointstracker`);
+      expect(response).toEqual(`GET POINTS ROUTER: ${mockData.studentId} not found.`);
     } catch (err) {
-      expect(err.status).toEqual(400);
+      expect(err.status).toEqual(404);
     }
   });
 
@@ -91,7 +91,7 @@ describe('Points Tracker information retrieval (GET requests)', () => {
       throw err;
     }
     try {
-      const response = await superagent.get(`${apiUrl}/pointstracker`)
+      const response = await superagent.get(`${apiUrl}/pointstracker`)/*eslint-disable-line*/
         .query({ id: profile.accountId })
         .authBearer('Incorrect token');
       expect(response.status).toEqual('Unreachable code, dont worry about it GET 404');
