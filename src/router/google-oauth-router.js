@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import superagent from 'superagent';
+import { google } from 'googleapis';
 import HttpErrors from 'http-errors';
 import Profile from '../model/profile';
 
@@ -9,9 +10,8 @@ import Profile from '../model/profile';
 // import Account from '../model/account';
 import logger from '../lib/logger';
 import Whitelist from '../model/whitelist';
-import { google } from '../../node_modules/googleapis';
-
 const GOOGLE_OAUTH_URL = 'https://www.googleapis.com/oauth2/v4/token';
+
 const OPEN_ID_URL = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
 
 require('dotenv').config();
@@ -50,6 +50,13 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   logger.log(logger.INFO, `RECEIVED GOOGLE ACCESS TOKEN: ${JSON.stringify(googleTokenResponse.body, null, 2)}`);
   const googleAccessToken = googleTokenResponse.body.access_token;
   const googleIdToken = googleTokenResponse.body.id_token;
+
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_OAUTH_ID,
+    process.env.GOOGLE_OAUTH_SECRET,
+    'http://localhost:3000/api/v1/oauth/google email profile openid',
+  );
+  oauth2Client.setCredentials(googleAccessToken);
 
   let openIdResponse;
   try {
