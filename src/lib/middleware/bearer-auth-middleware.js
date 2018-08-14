@@ -32,8 +32,7 @@ export default (request, response, next) => {
     .then((account) => {
       if (!account) return next(new HttpErrors(404, 'BEARER AUTH - no account found', { expose: false }));
       request.account = account;
-      request.googleAccessToken = tokenPayload.googleAccessToken;
-      request.googleIdToken = tokenPayload.googleIdToken;
+      request.googleTokenResponse = tokenPayload.googleTokenResponse;
       return Profile.findOne({ accountId: account._id });
     })
     .then((profile) => {

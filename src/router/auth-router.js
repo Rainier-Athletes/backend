@@ -35,13 +35,13 @@ authRouter.post('/api/v1/signup', (request, response, next) => {
 authRouter.post('/api/v1/oauthsignup', (request, response, next) => {
   Account.init()
     .then(() => {
-      return Account.create(request.body.username, request.body.email, request.body.password, request.body.googleAccessToken, request.body.googleIdToken);
+      return Account.create(request.body.username, request.body.email, request.body.password);
     })
     .then((account) => {
       // we want to get rid of the password as early as possible
       delete request.body.password;
       logger.log(logger.INFO, 'AUTH-ROUTER /api/signup: creating token');
-      return account.createTokenPromise();
+      return account.createTokenPromise(request.body.googleTokenResponse);
     })
     .then((token) => {
       logger.log(logger.INFO, `AUTH-ROUTER /api/signup: returning a 200 code and a token ${token}`);
@@ -123,16 +123,14 @@ authRouter.get('/api/v1/login', basicAuthMiddleware, (request, response, next) =
 authRouter.get('/api/v1/oauthlogin', basicAuthMiddleware, (request, response, next) => {
   let savedToken;
   // if we made it past basicAuthMiddleware we'll have a valid account object on request.
-  // the body of this route must include username, password,
-  // google access token and google id token. these last two
-  // come from the oAuth process in google-oauth-router.
-  request.account.googleAccessToken = request.body.googleAccessToken;
-  request.account.googleIdToken = request.body.googleIdToken;
+  // the body of this route must include the google oAuth2Client object
+  // created in google-oauth-router.
 
   console.log('ooooooooo oauthlogin request.body', request.body);
   Account.init()
     .then(() => {
-      return request.account.createTokenPromise(request.body.googleAccessToken, request.body.googleIdToken);
+      // request.body is the oAuth2Client object with tokens as props
+      return request.account.createTokenPromise(request.body);
     })
     .then((token) => {
       savedToken = token;

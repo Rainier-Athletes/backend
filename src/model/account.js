@@ -49,12 +49,12 @@ accountSchema.methods.verifyPasswordPromise = function verifyPasswordPromise(pas
     });
 };
 
-accountSchema.methods.createTokenPromise = function createTokenPromise(googleAccessToken = '', googleIdToken = '') {
+accountSchema.methods.createTokenPromise = function createTokenPromise(googleTokenResponse = {}) {
   this.tokenSeed = crypto.randomBytes(TOKEN_SEED_LENGTH).toString('hex');
   return this.save()
     .then((updatedAccount) => { 
-      console.log('createTokenPromise google tokes', { googleAccessToken, googleIdToken });   
-      return jsonWebToken.sign({ accountId: updatedAccount._id, googleAccessToken, googleIdToken }, process.env.SECRET);
+      console.log('createTokenPromise google tokes', googleTokenResponse);   
+      return jsonWebToken.sign({ accountId: updatedAccount._id, googleTokenResponse }, process.env.SECRET);
     })
     .catch((err) => {
       throw new HttpErrors(500, `ERROR SAVING ACCOUNT or ERROR WITH JWT: ${JSON.stringify(err)}`, { expose: false });

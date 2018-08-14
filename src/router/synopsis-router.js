@@ -20,7 +20,9 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   const title = (name + date);
   const options = { format: request.body.options };
   const { html } = request.body;
-  const { googleAccessToken, googleIdToken } = request.body;
+  const { googleTokenResponse } = request;
+
+  console.log('))))))))) synopsis googleTokenResponse', googleTokenResponse);
 
   /*
   const oauth2Client = new google.auth.OAuth2(
@@ -34,73 +36,73 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
     auth: oauth2Client
   });
   */
-  const oauth2Client = new google.auth.OAuth2(
+  const oAuth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_OAUTH_ID,
     process.env.GOOGLE_OAUTH_SECRET,
     'http://localhost:3000/api/v1/oauth/google email profile openid',
   );
-  oauth2Client.setCredentials(googleAccessToken);
-  console.log('typeof oauth2Client', typeof oauth2Client);
-  console.log('oauth2Client:', oauth2Client);
 
-  const drive = google.drive({ version: 'v3', auth: googleAccessToken });
+  // this is what the drive example does once it
+  // has a token. sends the whole object to setCreds
+  oAuth2Client.setCredentials(googleTokenResponse);
+
+  // oauth2Client.setCredentials(googleAccessToken);
+  console.log('))))))))) synopsis router: typeof oAuth2Client', typeof oAuth2Client);
+  console.log('))))))))) synopsis router: oAuth2Client:', oAuth2Client);
+
+  const drive = google.drive({ version: 'v3', auth: oAuth2Client }); 
 
   // const drive = google.drive({ version: 'v3', auth: googleAccessToken });
   
 
   console.log('&&&&&&&&&&&&& synopsis router request.googleAccessToken', request.googleAccessToken);
 
-  const res = await pdf.create(html, options).toFile(`${TEMP_DIR}/${title}.pdf`);
-  console.log('html-pdf response', res);
-
-  const filePath = `${TEMP_DIR}/${title}.pdf`;
-  const fileMetadata = {
-    name: `${title}.pdf`,
-  };
-  
-  let readStream;
-  try {
-    readStream = fs.createReadStream(filePath);
-  } catch (err) {
-    console.log('&&&&&&&&&& fs.createReadStream error:');
-    console.error(err);
-    console.log('&&&&&&&&& end of error');
-  }
-  const requestBody = {
-    name: `${title}.pdf`,
-    mimeType: 'application/pdf', 
-  };
-  const media = {
-    mimeType: 'application/pdf',
-    body: readStream,
-  };
-  /* 
-  
-  const res = await drive.files.create({
-    requestBody: {
-      name: 'testimage.png',
-      mimeType: 'image/png'
-    },
-    media: {
-      mimeType: 'image/png',
-      body: fs.createReadStream('awesome.png')
+  const sendFileToGoogleDrive = async () => {
+    console.log('>>>>>>>> sendFileToGoogleDrive entered');
+    const filePath = `${TEMP_DIR}/${title}.pdf`;
+    
+    let readStream;
+    try {
+      readStream = fs.createReadStream(filePath);
+    } catch (err) {
+      console.log('&&&&&&&&&& fs.createReadStream error:');
+      console.error(err);
+      console.log('&&&&&&&&& end of error');
     }
-  });
-  */
+    console.log('>>>>>>> readStream created');
+    const requestBody = {
+      name: `${title}.pdf`,
+      mimeType: 'application/pdf', 
+    };
+    const media = {
+      mimeType: 'application/pdf',
+      body: readStream,
+    };
 
-  let result;
-  try {
-    result = await drive.files.create({
-      requestBody,
-      media,
+    let result;
+    try {
+      console.log('>>>>>>>>> calling drive.files.create');
+      result = await drive.files.create({
+        requestBody,
+        media,
+      });
+      console.log('>>>>>>>> back from drive.files.create');
+    } catch (err) {
+      console.error('HITTING THE ERROR################', err);
+      return next(new HttpError(err.status, 'Error saving PDF to google drive.', { expose: false }));
+    }
+    console.log('>>>>>>>>>>> result from drive.file.create:', result);
+    return response.json(result);
+  }; // end of pdf.create callback
+  
+  pdf.create(html, options).toFile(`${TEMP_DIR}/${title}.pdf`,
+    (err, res) => {
+      if (err) return next(new HttpError(500, 'Error creating pdf from html'));
+      console.log('html-pdf response', res);
+      return sendFileToGoogleDrive();
     });
-  } catch (err) {
-    console.error('HITTING THE ERROR################', err);
-    return next(new HttpError(err.status, 'Error saving PDF to google drive.', { expose: false }));
-  }
-  console.log('File Id: ', result.id);
-  return response.json(result);
 });
+  
 
 export default synopsisRouter;
 
