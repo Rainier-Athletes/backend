@@ -22,7 +22,7 @@ const whitelistSchema = mongoose.Schema({
   },
   googleToken: {
     type: String, 
-    required: true, 
+    // required: true, 
     unique: true,
   },
 });

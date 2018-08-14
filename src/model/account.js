@@ -29,7 +29,7 @@ const accountSchema = mongoose.Schema({
   },
   googleToken: {
     type: String,
-    required: true,
+    // required: true,
     unique: true,
   },
 }, { timestamps: true });

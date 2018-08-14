@@ -2,11 +2,11 @@ import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
 import faker from 'faker';
 import { startServer, stopServer } from '../lib/server';
-// import { createAccountMockPromise } from './lib/account-mock';
+
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
 import { createWhitelistMockPromise, removeWhitelistResources } from './lib/whitelist-mock';
 import logger from '../lib/logger';
-import { createAccountMockPromise } from './lib/account-mock';
+// import { createAccountMockPromise } from './lib/account-mock';
 
 bearerAuth(superagent);
 
@@ -14,7 +14,6 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING ROUTER WHITELIST', () => {
   let mockData;
-  let account;
   let token;
   let mockWhitelist;
   let mockAdminToken;
@@ -36,19 +35,20 @@ describe('TESTING ROUTER WHITELIST', () => {
 
   describe('POST WHITELIST ROUTES TESTING', () => {
     test('POST 200 to /api/whitelists for successful access', async () => {
-      const Whitelist = await createWhitelistMockPromise();
+      // const Whitelist = await createAccountMockPromise();
       let response;
       try {
+        const mock = await createProfileMockPromise();
         response = await superagent.post(`${apiUrl}/whitelists`)
-          .send(Whitelist)
-          .authBearer(mockAdminToken);
+          .send(mock)
+          .authBearer(mockData.mockAdminToken);
         expect(response.status).toEqual(200);
-        expect(response.body.role).toEqual(Whitelist.role);
-        expect(response.body.email).toEqual(Whitelist.email);
-        expect(response.body.firstName).toEqual(Whitelist.firstName);
-        expect(response.body.lastName).toEqual(Whitelist.lastName);
+        expect(response.body.role).toEqual(mock.adminToken);
+        expect(response.body.email).toEqual(mock.email);
+        expect(response.body.firstName).toEqual(mock.firstName);
+        expect(response.body.lastName).toEqual(mock.lastName);
       } catch (err) {
-        expect(err.status).toEqual('Unexpected error in POST 200 TEST');
+        expect(err.status).toEqual('not supposed to hit this');
       }
     });
 
@@ -83,10 +83,10 @@ describe('TESTING ROUTER WHITELIST', () => {
 
   describe('GET WHITELIST ROUTES TESTING', () => {
     test('GET 200 on successfull whitelist retrieval', async () => {
-      let response;
+      const mock = await createProfileMockPromise();
       try {
-        response = await superagent.get(`${apiUrl}/whitelists`)
-          .authBearer(mockAdminToken);
+        const response = await superagent.get(`${apiUrl}/whitelists`)
+          .authBearer(mock.mockAdminToken);
         console.log('get 200 RESPONSE', response.body);
         expect(response.body.role).toEqual(mockWhitelist.role);
       } catch (err) {
@@ -95,10 +95,10 @@ describe('TESTING ROUTER WHITELIST', () => {
     });
 
     test('GET 401 UNAUTHORIZED TOKEN', async () => {
-      const mock = await createWhitelistMockPromise();
+      const mock = await createProfileMockPromise();
       try {
         const response = await superagent.get(`${apiUrl}/whitelists`)
-          .authBearer(mock.token);
+          .authBearer(mock.coachToken);
         expect(response).toEqual('GET whitelist should have failed with 404');
       } catch (err) {
         expect(err.status).toEqual(401);
@@ -123,13 +123,46 @@ describe('TESTING ROUTER WHITELIST', () => {
     });
 
     test('PUT 401 NO ADMIN ROLE, DENIED ACCESS', async () => {
-      const mock = await createWhitelistMockPromise();
+      let whitelists;
+      try {
+        const mock = await createProfileMockPromise();
+        whitelists = mock.profile;
+      } catch (err) {
+        throw err;
+      }
+      let response;
+      try {
+        response = await superagent.put(`${apiUrl}/whitelists`)
+          .query({ id: whitelists.accoutId })
+          .authBearer('admin token missing');
+        expect(response.status).toEqual('should not hit here');
+      } catch (err) {
+        expect(err.status).toEqual(401);
+      }
+    });
+
+    test('PUT 400 to /api/whitelists bad request, missing request', async () => {
+      const mock = await createProfileMockPromise();
       try {
         await superagent.put(`${apiUrl}/whitelists`)
-          .authBearer(mock.token)
+          .authBearer(mock.coachToken)
           .send({});
       } catch (err) {
         expect(err.status).toEqual(400);
+      }
+    });
+
+    test('PUT 404 whitelist not found', async () => {
+      const mock = await createWhitelistMockPromise();
+
+      const profile = await createProfileMockPromise();
+      try {
+        const response = await superagent.put(`${apiUrl}/whitelists`)
+          .authBearer(mock.token)
+          .send(profile);
+        expect(response).toEqual('PUT if you see this, this test failed');
+      } catch (err) {
+        expect(err.status).toEqual(404);
       }
     });
   });
@@ -146,6 +179,18 @@ describe('TESTING ROUTER WHITELIST', () => {
         expect(response.status).toEqual(200);
       } catch (err) {
         expect(err).toEqual('unexpected error  on valid delete test');
+      }
+    });
+
+    test('DELETE 404 not found', async () => {
+      let response;
+      try {
+        response = await superagent.delete(`${apiUrl}/whitelists`)
+          .query({ id: '1234568909876543321' })
+          .authBearer(token);
+        expect(response).toEqual('DELETE 404 expected but not received');
+      } catch (err) {
+        expect(err.status).toEqual(404);
       }
     });
 
