@@ -1,12 +1,11 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
 import faker from 'faker';
-import { startServer, stopServer } from '../lib/server';
+import { startServer } from '../lib/server';
 import { createAccountMockPromise } from './lib/account-mock';
 // import { createAttachmentMockPromise } from './lib/attachment-mock';
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
 import logger from '../lib/logger';
-import Profile from '../model/profile';
 
 bearerAuth(superagent);
 
