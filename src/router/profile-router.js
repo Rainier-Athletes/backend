@@ -26,24 +26,55 @@ profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response,
   return undefined;
 });
 
-profileRouter.get(['/api/v1/profiles', '/api/v1/profiles/me'], bearerAuthMiddleware, (request, response, next) => {
+profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
-  if (request.query.id && request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized.'));
+  if (request.query.id && request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized to query by id.', { expose: false }));
   
   if (request.query.id && request.profile.role === 'admin') {
-    Profile.findOne({ _id: request.query.id })
-      .then((profile) => {
-        return response.json(profile);
+    Profile.init()
+      .then(() => {
+        Profile.findBiId(request.query.id)
+          .then((profile) => {
+            return response.json(profile);
+          })
+          .catch(next);
+      });
+    return undefined;
+  }
+  
+  if (request.profile.role === 'admin') {
+    Profile.init()
+      .then(() => {
+        return Profile.find();
+      })
+      .then((profiles) => {
+        return response.json(profiles);
       })
       .catch(next);
     return undefined;
   }
-  
+
   Profile.init()
     .then(() => {
-      Profile.findOne({ _id: request.profile._id.toString() })
+      Profile.findById(request.profile._id.toString())
         .then((profile) => {
           delete profile.role;
+          return response.json(profile);
+        });
+      return undefined;
+    })
+    .catch(next);
+  return undefined;
+});
+
+profileRouter.get('/api/v1/profiles/me', bearerAuthMiddleware, (request, response, next) => {
+  if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
+
+  Profile.init()
+    .then(() => {
+      Profile.findById(request.profile._id.toString())
+        .then((profile) => {
+          if (request.profile.role !== 'admin') delete profile.role;
           return response.json(profile);
         });
       return undefined;
@@ -60,31 +91,15 @@ profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
 
   console.log('........ profile router PUT request.body', JSON.stringify(request.body, null, 4));
 
-  // Profile.init()
-  //   .then(() => {
-  //     return Profile.findOneAndUpdate({ _id: request.body._id }, request.body, { runValidators: true });
-  //   })
-  //   .then((profile) => {
-  //     return Profile.findOne(profile._id);
-  //   })
-  //   .then((profile) => {
-  //     console.log('... after update result', JSON.stringify(profile, null, 4));
-  //     response.json(profile);
-  //   })
-  //   .catch(next);
-  let dbProfile;
   Profile.init()
     .then(() => {
-      return Profile.findByIdAndRemove(request.body._id);
+      return Profile.findOneAndUpdate({ _id: request.body._id }, request.body, { runValidators: true });
     })
-    .then(() => {
-      delete request.body._id;
-      console.log('... attempting save of', JSON.stringify(request.body, null, 4));
-      return new Profile(request.body).save();
+    .then((profile) => {
+      return Profile.findOne(profile._id);
     })
-    .then((saved) => {
-      console.log('... returning', JSON.stringify(dbProfile, null, 4));
-      response.json(saved).status(200);
+    .then((profile) => {
+      response.json(profile);
     })
     .catch(next);
   return undefined;

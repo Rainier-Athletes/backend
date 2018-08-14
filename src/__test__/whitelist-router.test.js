@@ -3,7 +3,7 @@ import bearerAuth from 'superagent-auth-bearer';
 import faker from 'faker';
 import { startServer, stopServer } from '../lib/server';
 // import { createAccountMockPromise } from './lib/account-mock';
-import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
+import { createProfileMockPromise } from './lib/profile-mock';
 import { createWhitelistMockPromise, removeWhitelistResources } from './lib/whitelist-mock';
 import logger from '../lib/logger';
 
@@ -13,8 +13,6 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING ROUTER WHITELIST', () => {
   let mockData;
-  let account;
-  let token;
   let mockWhitelist;
   let mockAdminToken;
   let mockMentorToken;

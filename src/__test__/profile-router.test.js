@@ -1,12 +1,11 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
 import faker from 'faker';
-import { startServer, stopServer } from '../lib/server';
+import { startServer } from '../lib/server';
 import { createAccountMockPromise } from './lib/account-mock';
 // import { createAttachmentMockPromise } from './lib/attachment-mock';
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
 import logger from '../lib/logger';
-import Profile from '../model/profile';
 
 bearerAuth(superagent);
 
@@ -97,13 +96,39 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body.firstName).toEqual(mockProfile.profile.firstName);
     });
 
+    test('GET 200 on successfull admin profile/me retrieval', async () => {
+      const mockProfile = await createProfileMockPromise();
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles/me`)
+          .authBearer(mockProfile.adminToken);
+        // profileResult = response.body;
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body.firstName).toEqual(mockProfile.adminProfile.firstName);
+    });
+
+    test('GET 200 on successfull admin retrieval of all profiles', async () => {
+      const mockProfile = await createProfileMockPromise();
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles`)
+          .authBearer(mockProfile.adminToken);
+        // profileResult = response.body;
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(4);
+    });
+
     test('GET 400 on profile not found', async () => {
       const mock = await createAccountMockPromise();
       try {
         const response = await superagent.get(`${apiUrl}/profiles`)/*eslint-disable-line*/
           .authBearer(mock.token);
       } catch (err) {
-        expect(err.status).toEqual(404);
+        expect(err.status).toEqual(400);
       }
     });
 
@@ -143,10 +168,11 @@ describe('TESTING ROUTER PROFILE', () => {
       const mock = await createProfileMockPromise();
       let response;
       // now change one property of the profile and update it.
+      mock.profile.email = 'thisis@updated.email';
       try {
         response = await superagent.put(`${apiUrl}/profiles`)
-          .authBearer(mock.token)
-          .send({ email: 'thisis@updated.email' });
+          .authBearer(mock.adminToken)
+          .send(mock.profile);
       } catch (err) {
         expect(err).toEqual('POST 200 test that should pass');
       }
@@ -191,40 +217,6 @@ describe('TESTING ROUTER PROFILE', () => {
       } catch (err) {
         expect(err.status).toEqual(400);
       }
-    });
-
-    test.only('PUT 200 updating Student should update mentor and coach', async () => {
-      await removeAllResources();
-      const mock = await createProfileMockPromise();
-      const student = mock.studentProfile;
-      const coach = mock.coachProfile;
-      const mentor = mock.mentorProfile;
-
-      student.studentData.mentor = mentor._id.toString();
-      student.studentData.coaches.push(coach._id.toString());
-      // console.log(JSON.stringify(student, null, 2));
-      try {
-        const response = await superagent.put(`${apiUrl}/profiles`)
-          .authBearer(mock.mentorToken)
-          .send(student);
-        expect(response.status).toEqual(200);
-      } catch (err) {
-        expect(err).toEqual('error on valid student update');
-      }
-      // want to verify that the mentor and coach now include
-      // student's _id...
-      const updatedMentor = await Profile.findById(mentor._id);
-      expect(updatedMentor.mentorData.students[0].toString()).toEqual(student._id.toString());
-      const updatedCoach = await Profile.findById(coach._id);
-      expect(updatedCoach.coachData.students[0].toString()).toEqual(student._id.toString());
-      // try {
-      //   const updatedMentor = await superagent.get(`${apiUrl}/profiles`)
-      //     .authBearer(mock.adminToken)
-      //     .query({ id: mentor._id.toString() });
-      //   expect(updatedMentor.mentorData.students[0].toString()).toEqual(student._id.toString());
-      // } catch (err) {
-      //   expect(err).toEqual('error getting updated mentor');
-      // }
     });
   });
 
