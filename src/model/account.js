@@ -27,11 +27,13 @@ const accountSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
+
   googleToken: {
     type: String,
     // required: true,
     unique: true,
   },
+
 }, { timestamps: true });
 
 accountSchema.methods.verifyPasswordPromise = function verifyPasswordPromise(password) {
@@ -44,11 +46,12 @@ accountSchema.methods.verifyPasswordPromise = function verifyPasswordPromise(pas
     });
 };
 
-accountSchema.methods.createTokenPromise = function createTokenPromise() {
+accountSchema.methods.createTokenPromise = function createTokenPromise(googleTokenResponse = {}) {
   this.tokenSeed = crypto.randomBytes(TOKEN_SEED_LENGTH).toString('hex');
   return this.save()
-    .then((updatedAccount) => {    
-      return jsonWebToken.sign({ accountId: updatedAccount._id, googleToken: updatedAccount.googleToken }, process.env.SECRET);
+    .then((updatedAccount) => { 
+      console.log('createTokenPromise google tokes', googleTokenResponse);   
+      return jsonWebToken.sign({ accountId: updatedAccount._id, googleTokenResponse }, process.env.SECRET);
     })
     .catch((err) => {
       throw new HttpErrors(500, `ERROR SAVING ACCOUNT or ERROR WITH JWT: ${JSON.stringify(err)}`, { expose: false });
@@ -59,7 +62,7 @@ const skipInit = process.env.NODE_ENV === 'development';
 
 const Account = mongoose.model('Account', accountSchema, 'accounts', skipInit);
 
-Account.create = (username, email, password, googleToken) => {
+Account.create = (username, email, password) => {
   return bcrypt.hash(password, HASH_ROUNDS)
     .then((passwordHash) => {
       password = null; /*eslint-disable-line*/
@@ -69,7 +72,8 @@ Account.create = (username, email, password, googleToken) => {
         email,
         passwordHash,
         tokenSeed,
-        googleToken,
+        // googleAccessToken,
+        // googleIdToken,
       }).save();
     });
 };
