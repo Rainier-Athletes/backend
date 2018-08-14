@@ -50,8 +50,8 @@ app.use(express.json());
 
 // our own api routers or middleware
 app.use(loggerMiddleware);
-app.use(authRouter);
 app.use(googleOauthRouter);
+app.use(authRouter);
 app.use(whitelistRouter);
 app.use(profileRouter);
 app.use(pointTrackerRouter);
