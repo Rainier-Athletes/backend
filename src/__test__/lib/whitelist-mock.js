@@ -5,16 +5,12 @@ import Whitelist from '../../model/whitelist';
 const createWhitelistMockPromise = async () => {
   const mockData = {};
 
-  // const mockProfileData = await createProfileMockPromise();
-  // mockData.profile = mockProfileData.profile;
-  // mockData.originalRequest = mockProfileData.originalRequest;
-  // mockData.token = mockProfileData.token;
-
   const mockWhitelist = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'admin', 
+    googleToken: faker.lorem.words(),
   };
 
   const whitelist = await new Whitelist(mockWhitelist).save();

@@ -27,16 +27,13 @@ const accountSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
-  // googleAccessToken: {
-  //   type: String,
-  //   // required: true,
-  //   // unique: true,
-  // },
-  // googleIdToken: {
-  //   type: String,
-  //   // required: true,
-  //   // unique: true,
-  // },
+
+  googleToken: {
+    type: String,
+    // required: true,
+    unique: true,
+  },
+
 }, { timestamps: true });
 
 accountSchema.methods.verifyPasswordPromise = function verifyPasswordPromise(password) {
