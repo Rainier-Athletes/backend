@@ -24,6 +24,7 @@ const profileSchema = mongoose.Schema({
     zip: String,
   },
   phone: String,
+  picture: String,
   role: {
     type: String,
     required: true,
