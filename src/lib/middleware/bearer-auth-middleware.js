@@ -13,6 +13,8 @@ export default (request, response, next) => {
 
   const token = request.headers.authorization.split('Bearer ')[1];
   if (!token) return next(new HttpErrors(400, 'BEARER AUTH MIDDLEWARE: no token', { expose: false }));
+
+  let tokenPayload;
   return jwtVerify(token, process.env.SECRET)
     .catch((error) => {
       return Promise.reject(new HttpErrors(401, `BEARER AUTH - unable to verify token ${JSON.stringify(error)}`, { expose: false }));
@@ -24,15 +26,19 @@ export default (request, response, next) => {
           iat: some date....
         }
       */
-      return Account.findOne({ _id: decryptedToken.accountId });
+      tokenPayload = decryptedToken;
+      return Account.findOne({ _id: tokenPayload.accountId });
     })
     .then((account) => {
       if (!account) return next(new HttpErrors(404, 'BEARER AUTH - no account found', { expose: false }));
       request.account = account;
+      request.googleAccessToken = tokenPayload.googleAccessToken;
+      request.googleIdToken = tokenPayload.googleIdToken;
       return Profile.findOne({ accountId: account._id });
     })
     .then((profile) => {
       request.profile = profile;
+      // console.log('request.googleIdToken', request.googleAccessToken);
       return next();
     })
     .catch(next);
