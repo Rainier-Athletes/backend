@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { google } from 'googleapis';
-import superagent from 'superagent';
+// import superagent from 'superagent';
+import HttpError from 'http-errors';
 import fs from 'fs';
 import pdf from 'html-pdf';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
-import logger from '../lib/logger';
+// import logger from '../lib/logger';
 
-const GOOGLE_DRIVE_API = 'https://www.googleapis.com/upload/drive/v3/files/';
+// const GOOGLE_DRIVE_API = 'https://www.googleapis.com/upload/drive/v3/files/';
 // const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 const TEMP_DIR = `${__dirname}/temp`;
 
@@ -36,19 +37,21 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_OAUTH_ID,
     process.env.GOOGLE_OAUTH_SECRET,
-    'http://localhost:3000/api/v1/oauth/google',
+    'http://localhost:3000/api/v1/oauth/google email profile openid',
   );
+  oauth2Client.setCredentials(googleAccessToken);
+  console.log('typeof oauth2Client', typeof oauth2Client);
+  console.log('oauth2Client:', oauth2Client);
 
-  const drive = google.drive({ version: 'v2', auth: oauth2Client });
+  const drive = google.drive({ version: 'v3', auth: googleAccessToken });
 
   // const drive = google.drive({ version: 'v3', auth: googleAccessToken });
   
 
   console.log('&&&&&&&&&&&&& synopsis router request.googleAccessToken', request.googleAccessToken);
-  pdf.create(html, options).toFile(`${TEMP_DIR}/${title}.pdf`, (err, res) => {
-    if (err) return next(err);
-    return response.json(res);
-  });
+
+  const res = await pdf.create(html, options).toFile(`${TEMP_DIR}/${title}.pdf`);
+  console.log('html-pdf response', res);
 
   const filePath = `${TEMP_DIR}/${title}.pdf`;
   const fileMetadata = {
