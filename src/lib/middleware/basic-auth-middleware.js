@@ -15,6 +15,8 @@ export default (request, response, next) => {
   const [username, password] = stringAuthHeader.split(':');
   if (!username || !password) return next(new HttpErrors(400, 'AUTH, invalid request', { expose: false }));
 
+  console.log('!!!!!! bamw auth header', stringAuthHeader);
+  console.log('!!!!!! bamw request.body', request.body);
   let account;
   return Account.findOne({ username })
     .then((result) => {
