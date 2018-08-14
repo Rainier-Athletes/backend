@@ -21,7 +21,27 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   const { html } = request.body;
   const { googleAccessToken, googleIdToken } = request.body;
 
-  const drive = google.drive({ version: 'v3', auth: googleAccessToken });
+  /*
+  const oauth2Client = new google.auth.OAuth2(
+    YOUR_CLIENT_ID,
+    YOUR_CLIENT_SECRET,
+    YOUR_REDIRECT_URL
+  );
+  
+  const drive = google.drive({
+    version: 'v2',
+    auth: oauth2Client
+  });
+  */
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_OAUTH_ID,
+    process.env.GOOGLE_OAUTH_SECRET,
+    'http://localhost:3000/api/v1/oauth/google',
+  );
+
+  const drive = google.drive({ version: 'v2', auth: oauth2Client });
+
+  // const drive = google.drive({ version: 'v3', auth: googleAccessToken });
   
 
   console.log('&&&&&&&&&&&&& synopsis router request.googleAccessToken', request.googleAccessToken);
@@ -39,13 +59,20 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   try {
     readStream = fs.createReadStream(filePath);
   } catch (err) {
+    console.log('&&&&&&&&&& fs.createReadStream error:');
     console.error(err);
+    console.log('&&&&&&&&& end of error');
   }
+  const requestBody = {
+    name: `${title}.pdf`,
+    mimeType: 'application/pdf', 
+  };
   const media = {
     mimeType: 'application/pdf',
     body: readStream,
   };
   /* 
+  
   const res = await drive.files.create({
     requestBody: {
       name: 'testimage.png',
@@ -61,16 +88,15 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   let result;
   try {
     result = await drive.files.create({
-      requestBody: {
-        name: `${title}.pdf`,
-        mimeType: 'application/pdf',
-      },
+      requestBody,
       media,
     });
   } catch (err) {
     console.error('HITTING THE ERROR################', err);
+    return next(new HttpError(err.status, 'Error saving PDF to google drive.', { expose: false }));
   }
   console.log('File Id: ', result.id);
+  return response.json(result);
 });
 
 export default synopsisRouter;
