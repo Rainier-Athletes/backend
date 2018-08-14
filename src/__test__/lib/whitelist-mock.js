@@ -10,6 +10,7 @@ const createWhitelistMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'admin', 
+    googleToken: faker.lorem.words(),
   };
 
   const whitelist = await new Whitelist(mockWhitelist).save();

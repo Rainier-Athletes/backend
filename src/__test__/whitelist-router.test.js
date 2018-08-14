@@ -35,29 +35,34 @@ describe('TESTING ROUTER WHITELIST', () => {
 
   describe('POST WHITELIST ROUTES TESTING', () => {
     test('POST 200 to /api/whitelists for successful access', async () => {
-      // const Whitelist = await createAccountMockPromise();
       let response;
       try {
-        const mock = await createProfileMockPromise();
+        const mockWhitelist1 = {
+          firstName: faker.name.firstName(),
+          lastName: faker.name.lastName(),
+          email: faker.internet.email(),
+          role: 'admin', 
+        };
+        
         response = await superagent.post(`${apiUrl}/whitelists`)
-          .send(mock)
-          .authBearer(mockData.mockAdminToken);
+          .send(mockWhitelist1)
+          .authBearer(mockAdminToken);
         expect(response.status).toEqual(200);
-        expect(response.body.role).toEqual(mock.adminToken);
-        expect(response.body.email).toEqual(mock.email);
-        expect(response.body.firstName).toEqual(mock.firstName);
-        expect(response.body.lastName).toEqual(mock.lastName);
+        expect(response.body.role).toEqual(mockWhitelist1.role);
+        expect(response.body.email).toEqual(mockWhitelist1.email);
+        expect(response.body.firstName).toEqual(mockWhitelist1.firstName);
+        expect(response.body.lastName).toEqual(mockWhitelist1.lastName);
       } catch (err) {
         expect(err.status).toEqual('not supposed to hit this');
       }
     });
 
-    test('POST 404 to /api/whitelists for missing login info', async () => {
-      const mock = await createWhitelistMockPromise();
+    test('POST 404 on profile not found', async () => {
+      const mock = await createProfileMockPromise();
       try {
-        const response = await superagent.post(`${apiUrl}/whitelists`)
-          .authBearer(mock.token);
-        expect(response).toEqual('POST login info needed');
+        const response = await superagent.get(`${apiUrl}/profiles`)
+          .authBearer(mockAdminToken);
+        expect(response).toEqual('POST profile should have failed with 404');
       } catch (err) {
         expect(err.status).toEqual(404);
       }
@@ -81,16 +86,22 @@ describe('TESTING ROUTER WHITELIST', () => {
     });
   });
 
-  describe('GET WHITELIST ROUTES TESTING', () => {
-    test('GET 200 on successfull whitelist retrieval', async () => {
-      const mock = await createProfileMockPromise();
+  describe.only('GET WHITELIST ROUTES TESTING', () => {
+    test.only('GET 200 on successfull whitelist retrieval', async () => {
+      const mockWhitelist = await createWhitelistMockPromise();
+      let response;
+      console.log(response, 'EHHHHHLLEOOOOOOO')
       try {
-        const response = await superagent.get(`${apiUrl}/whitelists`)
-          .authBearer(mock.mockAdminToken);
-        console.log('get 200 RESPONSE', response.body);
-        expect(response.body.role).toEqual(mockWhitelist.role);
+        response = await superagent.get(`${apiUrl}/whitelists`)
+          .authBearer(mockAdminToken)
+          .send(mockWhitelist);
+        expect(response.body.firstName).toEqual(mockWhitelist.firstName);
+        expect(response.body.lastName).toEqual(mockData.adminProfile);
+        expect(response.body.email).toEqual(mockData.adminProfile);
+        expect(response.body.role).toEqual(mockData.adminProfile);
       } catch (err) {
-        expect(err).toEqual('Failed to get access');
+        console.log(err, 'DO YOU SEE THIS');
+        expect(err.status).toEqual('Failed to get access');
       }
     });
 
@@ -145,7 +156,7 @@ describe('TESTING ROUTER WHITELIST', () => {
       const mock = await createProfileMockPromise();
       try {
         await superagent.put(`${apiUrl}/whitelists`)
-          .authBearer(mock.coachToken)
+          .authBearer(mockAdminToken)
           .send({});
       } catch (err) {
         expect(err.status).toEqual(400);
