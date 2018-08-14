@@ -14,6 +14,7 @@ import googleOauthRouter from '../router/google-oauth-router';
 import profileRouter from '../router/profile-router';
 import pointTrackerRouter from '../router/point-tracker-router';
 import whitelistRouter from '../router/whitelist-router';
+import synopsisRouter from '../router/synopsis-router';
 import relationshipRouter from '../router/relationship-router';
 
 const app = express();
@@ -54,6 +55,7 @@ app.use(googleOauthRouter);
 app.use(whitelistRouter);
 app.use(profileRouter);
 app.use(pointTrackerRouter);
+app.use(synopsisRouter);
 app.use(relationshipRouter);
 
 app.all('*', (request, response, next) => {
