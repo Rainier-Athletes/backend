@@ -64,6 +64,8 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   const password = openIdResponse.body.sub;
   const firstName = openIdResponse.body.given_name;
   const lastName = openIdResponse.body.family_name;
+  const { picture } = openIdResponse.body;
+
   console.log('oAuth: logging in. Data:', username, email, password, firstName, lastName);
 
   // at this point we've completed google oauth. now we try to login to the app
@@ -125,7 +127,7 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
       profile = await superagent.post(`${process.env.API_URL}/profiles`)
         .set('Authorization', `Bearer ${raToken}`)
         .send({ 
-          firstName, lastName, email, role, 
+          firstName, lastName, email, role, picture, 
         });
     } catch (err) {
       next(err);
@@ -140,7 +142,7 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
     } catch (err) {
       console.log('oAuth: ERROR saving whitelist result with pending flag false');
     }
-    
+
     console.log('oAuth: profile created:', JSON.stringify(profile, null, 2));
     console.log('oAuth: sending cookie and redirecting');
     const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
