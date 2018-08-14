@@ -96,6 +96,32 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body.firstName).toEqual(mockProfile.profile.firstName);
     });
 
+    test('GET 200 on successfull admin profile/me retrieval', async () => {
+      const mockProfile = await createProfileMockPromise();
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles/me`)
+          .authBearer(mockProfile.adminToken);
+        // profileResult = response.body;
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body.firstName).toEqual(mockProfile.adminProfile.firstName);
+    });
+
+    test('GET 200 on successfull admin retrieval of all profiles', async () => {
+      const mockProfile = await createProfileMockPromise();
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles`)
+          .authBearer(mockProfile.adminToken);
+        // profileResult = response.body;
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(4);
+    });
+
     test('GET 400 on profile not found', async () => {
       const mock = await createAccountMockPromise();
       try {
