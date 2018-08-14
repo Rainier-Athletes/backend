@@ -64,7 +64,11 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   const password = openIdResponse.body.sub;
   const firstName = openIdResponse.body.given_name;
   const lastName = openIdResponse.body.family_name;
+  const { picture } = openIdResponse.body;
+
   console.log('oAuth: logging in. Data:', username, email, password, firstName, lastName);
+
+  // at this point we've completed google oauth. now we try to login to the app
   let loginResult;
   try {
     loginResult = await superagent.get(`${process.env.API_URL}/login`)
@@ -75,6 +79,7 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
     loginResult = null;
   }
 
+  // if loginResult is truthy we succeeded in logging. send cookies and redirect user to home page.
   if (loginResult) {
     console.log('oAuth: login succeeded. getting Profile', loginResult.body);
     // get profile
@@ -127,10 +132,20 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
       profile = await superagent.post(`${process.env.API_URL}/profiles`)
         .set('Authorization', `Bearer ${raToken}`)
         .send({ 
-          firstName, lastName, email, role, 
+          firstName, lastName, email, role, picture, 
         });
     } catch (err) {
       next(err);
+    }
+    // we're all signed up using Oauth data.  Set the whitelist pending flag to false since
+    // the invite has been accepted.
+
+    wlResult.pending = false;
+    console.log('oAuth: saving whitelist entry', wlResult);
+    try {
+      await wlResult.save();
+    } catch (err) {
+      console.log('oAuth: ERROR saving whitelist result with pending flag false');
     }
 
     console.log('oAuth: profile created:', JSON.stringify(profile, null, 2));
