@@ -4,6 +4,7 @@ import faker from 'faker';
 import { startServer, stopServer } from '../lib/server';
 
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
+
 import { createWhitelistMockPromise, removeWhitelistResources } from './lib/whitelist-mock';
 import logger from '../lib/logger';
 // import { createAccountMockPromise } from './lib/account-mock';
