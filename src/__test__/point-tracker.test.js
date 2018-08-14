@@ -12,7 +12,7 @@ afterAll(stopServer);
 beforeEach(removePointTrackerMockPromise);
 
 describe('PUT POINT TRACKER TEST', () => {
-  test.only('200 update point tracker', async () => {
+  test('200 update point tracker', async () => {
     const mockData = await createAccountMockPromise();
 
     let response;
