@@ -20,6 +20,10 @@ const whitelistSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  pending: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const skipInit = process.env.NODE_ENV === 'development';
