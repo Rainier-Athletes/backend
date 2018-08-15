@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Profile from './profile';
+import logger from '../lib/logger';
 
 const pointTrackerSchema = mongoose.Schema({
   date: {
@@ -55,14 +56,12 @@ const pointTrackerSchema = mongoose.Schema({
 
 pointTrackerSchema.post('save', (tracker) => {
   Profile.findById(tracker.studentId)
-    .then((profile) => {
-      if (!profile.studentData.PointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
-        profile.studentData.PointTrackers.push(tracker._id);
-      }
-      return profile.save();
+    .then((student) => {
+      student.studentData.lastPointTracker = tracker._id;
+      return student.save();
     })
     .catch((err) => {
-      throw err;
+      logger.log(logger.ERROR, `pointTracker post save error: ${err}`);
     });
 });
 
