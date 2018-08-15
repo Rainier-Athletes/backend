@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import autopopulate from 'mongoose-autopopulate';
 import Profile from './profile';
 
 const pointTrackerSchema = mongoose.Schema({
@@ -7,8 +8,8 @@ const pointTrackerSchema = mongoose.Schema({
     required: true,
   },
   studentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Profile',
+    //  This is for mongoose autopopulation, should translate to the profiletId from profile.js
+    lead: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile', autopopulate: true },
     required: true,
   },
   subjects: [{
@@ -17,8 +18,7 @@ const pointTrackerSchema = mongoose.Schema({
       required: true,
     },
     teacher: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Profile',
+      lead: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile', autopopulate: true },
     },
     scoring: {
       excusedDays: Number,
@@ -52,19 +52,28 @@ const pointTrackerSchema = mongoose.Schema({
     additionalComments: String,
   },
 });
+pointTrackerSchema.plugin(autopopulate);
+
+// pointTrackerSchema.post('save', (tracker) => {
+//   Profile.findById(tracker.studentId)
+//     .then((profile) => {
+//       if (!profile.studentData.pointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
+//         profile.studentData.pointTrackers.push(tracker._id);
+//       }
+//       return profile.save();
+//     })
+//     .catch((err) => {
+//       throw err;
+//     });
+// });
 
 pointTrackerSchema.post('save', (tracker) => {
-  Profile.findById(tracker.studentId)
-    .then((profile) => {
-      if (!profile.studentData.pointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
-        profile.studentData.pointTrackers.push(tracker._id);
-      }
-      return profile.save();
-    })
+  Profile.findOne({ profileId: `${tracker.studentId.lead}` })
     .catch((err) => {
       throw err;
     });
 });
+
 
 const skipInit = process.env.NODE_ENV === 'development';
 export default mongoose.model('PointTracker', pointTrackerSchema, 'pointTrackers', skipInit);

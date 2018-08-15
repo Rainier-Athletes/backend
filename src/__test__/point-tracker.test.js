@@ -81,19 +81,18 @@ describe('TESTING POINT-TRACKER MODEL', () => {
     });
   });
 
-  // describe('Points Tracker information retrieval (GET requests)', () => {
-  //   test('GET 200 to api/v1/pointstracker for successful retrieval of a points tracking sheet', async () => {
-  //     const mockPointTracker = await createPointTrackerMockPromise();
-  //     try {
-  //       const response = await superagent.get(`${apiUrl}/pointstracker`);
-  //       expect(response.status).toEqual(200);
-  //       expect(response.body.token).toBeTruthy();
-  //       expect(response.body.studentId).toBeDefined();
-  //       expect(response.body.subjects).toEqual(mockPointTracker.subjects);
-  //     } catch (err) {
-  //       expect(err.status).toEqual('Unexpected error response from valid get request');
-  //     }
-  //   });
+  describe('Points Tracker information retrieval (GET requests)', () => {
+    test('GET 200 to api/v1/pointstracker for successful retrieval of a points tracking sheet', async () => {
+      try {
+        const response = await superagent.get(`${apiUrl}/pointstracker`);
+        expect(response.status).toEqual(200);
+        expect(response.body.token).toBeTruthy();
+        expect(response.body.studentId).toBeDefined();
+        expect(response.body.subjects).toEqual(mockPointTracker.subjects);
+      } catch (err) {
+        expect(err.status).toEqual('Unexpected error response from valid get request');
+      }
+    });
 
   //   test('GET 404 for pointstracker not found', async () => {
   //     const mockData = await createPointTrackerMockPromise();

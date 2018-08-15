@@ -31,7 +31,7 @@ const profileSchema = mongoose.Schema({
     enum: ['admin', 'staff', 'student', 'mentor', 'teacher', 'coach', 'family'],
     default: 'family',
   },
-  accountId: {
+  profileId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     unique: true,
