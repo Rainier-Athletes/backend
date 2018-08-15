@@ -12,7 +12,7 @@ whitelistRouter.post('/api/v1/whitelists', bearerAuthMiddleware,
     if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
     if (request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized.'));
 
-    Whitelist.init() 
+    Whitelist.init()
       .then(() => {
         return new Whitelist({
           ...request.body,
@@ -43,13 +43,12 @@ whitelistRouter.get('/api/v1/whitelists', bearerAuthMiddleware, (request, respon
   return undefined;
 });
 
-whitelistRouter.put('/api/v1/whitelists', bearerAuthMiddleware, (request, response, next) => { 
+whitelistRouter.put('/api/v1/whitelists', bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
 
   if (request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized.'));
-  
-  if (!Object.keys(request.body).length) return next(new HttpErrors(400, 'PUT WHITELIST ROUTER: Missing request body', { expose: false }));
 
+  if (!Object.keys(request.body).length) return next(new HttpErrors(400, 'PUT WHITELIST ROUTER: Missing request body', { expose: false }));
   Whitelist.init()
     .then(() => {
       return Whitelist.findOneAndUpdate({ _id: request.body._id }, request.body, { runValidators: true });
@@ -66,7 +65,7 @@ whitelistRouter.put('/api/v1/whitelists', bearerAuthMiddleware, (request, respon
 
 whitelistRouter.delete('/api/v1/whitelists', bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
-  
+
   if (request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized.'));
 
   if (!request.query.id) return next(new HttpErrors(400, 'DELETE WHITELIST ROUTER: bad query', { expose: false }));
