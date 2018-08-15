@@ -56,8 +56,8 @@ const pointTrackerSchema = mongoose.Schema({
 pointTrackerSchema.post('save', (tracker) => {
   Profile.findById(tracker.studentId)
     .then((profile) => {
-      if (!profile.studentData.PointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
-        profile.studentData.PointTrackers.push(tracker._id);
+      if (!profile.studentData.pointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
+        profile.studentData.pointTrackers.push(tracker._id);
       }
       return profile.save();
     })

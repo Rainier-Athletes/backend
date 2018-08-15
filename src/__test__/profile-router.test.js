@@ -1,12 +1,11 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
 import faker from 'faker';
-import { startServer, stopServer } from '../lib/server';
+import { startServer } from '../lib/server';
 import { createAccountMockPromise } from './lib/account-mock';
 // import { createAttachmentMockPromise } from './lib/attachment-mock';
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
 import logger from '../lib/logger';
-import Profile from '../model/profile';
 
 bearerAuth(superagent);
 
@@ -95,6 +94,32 @@ describe('TESTING ROUTER PROFILE', () => {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
       expect(response.body.firstName).toEqual(mockProfile.profile.firstName);
+    });
+
+    test('GET 200 on successfull admin profile/me retrieval', async () => {
+      const mockProfile = await createProfileMockPromise();
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles/me`)
+          .authBearer(mockProfile.adminToken);
+        // profileResult = response.body;
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body.firstName).toEqual(mockProfile.adminProfile.firstName);
+    });
+
+    test('GET 200 on successfull admin retrieval of all profiles', async () => {
+      const mockProfile = await createProfileMockPromise();
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles`)
+          .authBearer(mockProfile.adminToken);
+        // profileResult = response.body;
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(4);
     });
 
     test('GET 400 on profile not found', async () => {

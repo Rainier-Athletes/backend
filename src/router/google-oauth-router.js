@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import superagent from 'superagent';
+import { google } from 'googleapis';
 import HttpErrors from 'http-errors';
 import Profile from '../model/profile';
 
@@ -11,6 +12,7 @@ import logger from '../lib/logger';
 import Whitelist from '../model/whitelist';
 
 const GOOGLE_OAUTH_URL = 'https://www.googleapis.com/oauth2/v4/token';
+
 const OPEN_ID_URL = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
 
 require('dotenv').config();
@@ -47,12 +49,20 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
     return response.redirect(process.env.CLIENT_URL);
   }
   logger.log(logger.INFO, `RECEIVED GOOGLE ACCESS TOKEN: ${JSON.stringify(googleTokenResponse.body, null, 2)}`);
-  const accessToken = googleTokenResponse.body.access_token;
+  const googleAccessToken = googleTokenResponse.body.access_token;
+  const googleIdToken = googleTokenResponse.body.id_token;
+
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_OAUTH_ID,
+    process.env.GOOGLE_OAUTH_SECRET,
+    'http://localhost:3000/api/v1/oauth/google email profile openid',
+  );
+  oauth2Client.setCredentials(googleAccessToken);
 
   let openIdResponse;
   try {
     openIdResponse = await superagent.get(OPEN_ID_URL)
-      .set('Authorization', `Bearer ${accessToken}`);
+      .set('Authorization', `Bearer ${googleAccessToken}`);
   } catch (err) {
     logger.log(logger.ERROR, `OpenId request failed, error: ${JSON.stringify(err, null, 2)}`);
     return response.sentStatus(err.status);
@@ -64,17 +74,23 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   const password = openIdResponse.body.sub;
   const firstName = openIdResponse.body.given_name;
   const lastName = openIdResponse.body.family_name;
-  console.log('oAuth: logging in. Data:', username, email, password, firstName, lastName);
+  const { picture } = openIdResponse.body;
+
+  
+  // at this point we've completed google oauth. now we try to login to the app
   let loginResult;
+  console.log('oAuth: oauthlogin, auth:', username, password, 'body:', { googleAccessToken, googleIdToken });
   try {
-    loginResult = await superagent.get(`${process.env.API_URL}/login`)
+    loginResult = await superagent.get(`${process.env.API_URL}/oauthlogin`)
       .auth(username, password)
+      .send({ googleAccessToken, googleIdToken })
       .withCredentials();
   } catch (err) {
     console.log('oAuth: login failed, checking whitelist for', email);
     loginResult = null;
   }
 
+  // if loginResult is truthy we succeeded in logging. send cookies and redirect user to home page.
   if (loginResult) {
     console.log('oAuth: login succeeded. getting Profile', loginResult.body);
     // get profile
@@ -108,12 +124,13 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   let { role } = wlResult; //eslint-disable-line
   console.log('oAuth: email found in whitelist, creating account for', email);
   try {
-    signupResult = await superagent.post(`${process.env.API_URL}/signup`)
+    signupResult = await superagent.post(`${process.env.API_URL}/oauthsignup`)
       .send({ 
         username,
         email,
         password,
-        accessToken,
+        googleAccessToken,
+        googleIdToken,
       })
       .withCredentials();
   } catch (err) {
@@ -127,10 +144,20 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
       profile = await superagent.post(`${process.env.API_URL}/profiles`)
         .set('Authorization', `Bearer ${raToken}`)
         .send({ 
-          firstName, lastName, email, role, 
+          firstName, lastName, email, role, picture, 
         });
     } catch (err) {
       next(err);
+    }
+    // we're all signed up using Oauth data.  Set the whitelist pending flag to false since
+    // the invite has been accepted.
+
+    wlResult.pending = false;
+    console.log('oAuth: saving whitelist entry', wlResult);
+    try {
+      await wlResult.save();
+    } catch (err) {
+      console.log('oAuth: ERROR saving whitelist result with pending flag false');
     }
 
     console.log('oAuth: profile created:', JSON.stringify(profile, null, 2));

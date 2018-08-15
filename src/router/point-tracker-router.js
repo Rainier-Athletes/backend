@@ -25,6 +25,9 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
         .then((scores) => {
           if (!scores) return next(new HttpErrors(404, `GET POINTS ROUTER: ${request.query} not found.`));
           logger.log(logger.info, `GET POINTS ROUTER returning\n${JSON.stringify(scores, null, 2)}`);
+          return scores.populate('teacher');
+        })
+        .then((scores) => {
           return response.json(scores);
         })
         .catch(next);
@@ -35,11 +38,12 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
 
 pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
   logger.log(logger.INFO, `.post /api/pointstracker req.body: ${request.body}`);
+  console.log(request.body);
   PointTracker.init()
     .then(() => {
       return new PointTracker({
         ...request.body,
-        studentId: request.studentId._id,
+        // studentId: request.body._id,
       }).save();
     })
     .then((pointstracker) => {

@@ -3,7 +3,7 @@ db/
 *.log
 src/temp/*
 build/
-
+**/temp/*
 .env
 
 coverage

@@ -68,19 +68,6 @@ describe('AUTH router signup (post) tests', () => {
 });
 
 describe('basic AUTH router login (get) tests', () => {
-  test('GET 200 to api/login for successful login (no profile) and receipt of a TOKEN', async () => {
-    const mockData = await createAccountMockPromise();
-    try {
-      const response = await superagent.get(`${apiUrl}/login`)
-        .auth(mockData.account.username, mockData.originalRequest.password); 
-      expect(response.status).toEqual(200);
-      expect(response.body.token).toBeTruthy();
-      expect(response.body.profileId).toBeDefined();
-    } catch (err) {
-      expect(err.status).toEqual('Unexpected error response from valid signIn');
-    }
-  });
-
   test('GET 200 to api/login for success and profile', async () => {
     const mock = await createProfileMockPromise();
     const username = mock.originalRequest.username; /*eslint-disable-line*/
@@ -141,7 +128,7 @@ describe('basic AUTH router login (get) tests', () => {
   });
 });
 
-describe.skip('AUTH-ROUTER update (put) tests', () => {
+describe('AUTH-ROUTER update (put) tests', () => {
   test('200 update existing account email address', async () => {
     const mockData = await createAccountMockPromise();
 
@@ -157,7 +144,7 @@ describe.skip('AUTH-ROUTER update (put) tests', () => {
   });
 
   test('200 update existing account password', async () => {
-    const mockData = await createAccountMockPromise();
+    const mockData = await createProfileMockPromise();
 
     let response;
     try {
@@ -176,6 +163,7 @@ describe.skip('AUTH-ROUTER update (put) tests', () => {
       expect(response.status).toEqual(200);
       expect(response.body.token).toBeTruthy();
     } catch (err) {
+      console.error(err.error);
       expect(err).toEqual('Login with new password failed!');
     }
   });

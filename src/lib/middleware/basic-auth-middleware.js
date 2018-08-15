@@ -1,5 +1,6 @@
 import HttpErrors from 'http-errors';
 import Account from '../../model/account';
+import Profile from '../../model/profile';
 
 export default (request, response, next) => {
   if (!request.headers.authorization) return next(new HttpErrors(400, 'AUTH MIDDLEWARE - invalid request', { expose: false }));
@@ -14,6 +15,8 @@ export default (request, response, next) => {
   const [username, password] = stringAuthHeader.split(':');
   if (!username || !password) return next(new HttpErrors(400, 'AUTH, invalid request', { expose: false }));
 
+  console.log('!!!!!! bamw auth header', stringAuthHeader);
+  console.log('!!!!!! bamw request.body', request.body);
   let account;
   return Account.findOne({ username })
     .then((result) => {
@@ -24,10 +27,16 @@ export default (request, response, next) => {
     .then((verified) => {
       if (verified) {
         request.account = account;
-        return next();
+      } else {
+        return next(new HttpErrors(401, 'BASIC AUTH - unable to validate user', { expose: false }));
       }
-      // else
-      return next(new HttpErrors(401, 'BASIC AUTH - unable to validate user', { expose: false }));
+      return Profile.findOne({ accountId: account._id });
+    })
+    .then((profile) => {
+      request.profile = profile;
+      console.log('basic auth router request.account', request.account);
+      console.log('basic auth router request.profile', request.profile);
+      return next();
     })
     .catch(next);
 };
