@@ -21,7 +21,7 @@ const createPointTrackerMockPromise = async () => {
     subjects: [
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 1,
           stamps: 2,
@@ -32,7 +32,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,        
         scoring: {
           excusedDays: 3,
           stamps: 4,
@@ -43,7 +43,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 1,
           stamps: 2,
@@ -54,7 +54,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 3,
           stamps: 4,
@@ -65,7 +65,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 3,
           stamps: 4,
@@ -76,7 +76,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 1,
           stamps: 2,
@@ -87,7 +87,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 3,
           stamps: 4,
