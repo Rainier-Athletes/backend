@@ -1,84 +1,64 @@
 import faker from 'faker';
 import Profile from '../../model/profile';
-import { createAccountMockPromise, removeAccountMockPromise } from './account-mock';
 
 const createProfileMockPromise = async () => {
   const mockData = {};
 
-  const mockAccountData = await createAccountMockPromise();
-  mockData.account = mockAccountData.account;
-  mockData.originalRequest = mockAccountData.originalRequest;
-  mockData.token = mockAccountData.token;
-
-  const mockMentorData = await createAccountMockPromise();
-  mockData.mentorAccount = mockMentorData.account;
-  mockData.mentorOriginalRequest = mockMentorData.originalRequest;
-  mockData.mentorToken = mockMentorData.token;
-
-  const mockCoachData = await createAccountMockPromise();
-  mockData.coachAccount = mockCoachData.account;
-  mockData.coachOriginalRequest = mockCoachData.originalRequest;
-  mockData.coachToken = mockCoachData.token;
-
-  const mockAdminData = await createAccountMockPromise();
-  mockData.adminAccount = mockAdminData.account;
-  mockData.adminOriginalRequest = mockAdminData.originalRequest;
-  mockData.adminToken = mockAdminData.token;
-     
-  // console.log('profile mock accounts:', JSON.stringify(mockData, null, 2));
-
   const mockProfile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    email: mockData.account.email,
+    email: faker.internet.email(),
     role: 'student',
-    accountId: mockData.account._id.toString(),
   };
 
   const mockMentorProfile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    email: mockData.mentorAccount.email,
+    email: faker.internet.email(),
     role: 'mentor',
-    accountId: mockData.mentorAccount._id.toString(),
   };
 
   const mockCoachProfile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    email: mockData.coachAccount.email,
+    email: faker.internet.email(),
     role: 'coach',
-    accountId: mockData.coachAccount._id.toString(),
   };
 
   const mockAdminProfile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    email: mockData.adminAccount.email,
+    email: faker.internet.email(),
     role: 'admin',
-    accountId: mockData.adminAccount._id.toString(),
   };
 
-  // console.log('profile mock student profile', JSON.stringify(mockProfile, null, 2));
-
-  const profile = await new Profile(mockProfile).save();
-  const mentor = await new Profile(mockMentorProfile).save();
+  const newProfile = new Profile(mockProfile);
+  const profile = await newProfile.save();
+  const newMentor = new Profile(mockMentorProfile);
+  const mentor = await newMentor.save();
   const coach = await new Profile(mockCoachProfile).save();
   const admin = await new Profile(mockAdminProfile).save();
 
   mockData.mentorProfile = mentor;
+  mockData.mentorToken = await mentor.createTokenPromise();
+
   mockData.adminProfile = admin;
+  mockData.adminToken = await admin.createTokenPromise();
+
   mockData.coachProfile = coach;
+  mockData.coachToken = await coach.createTokenPromise();
+
   mockData.studentProfile = profile;
+  mockData.studentToken = await profile.createTokenPromise();
+
   mockData.profile = profile;
+  mockData.token = mockData.studentToken;
+
   return mockData;
 };
 
 const removeAllResources = () => {
-  return Promise.all([
-    Profile.remove({}),
-    removeAccountMockPromise(),
-  ]);
+  return Profile.remove({});
 };
 
 export { createProfileMockPromise, removeAllResources };
