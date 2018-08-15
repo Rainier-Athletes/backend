@@ -53,7 +53,7 @@ accountSchema.methods.createTokenPromise = function createTokenPromise(googleAcc
   this.tokenSeed = crypto.randomBytes(TOKEN_SEED_LENGTH).toString('hex');
   return this.save()
     .then((updatedAccount) => { 
-      console.log('createTokenPromise google tokes', { googleAccessToken, googleIdToken });   
+      // console.log('createTokenPromise google tokes', { googleAccessToken, googleIdToken });   
       return jsonWebToken.sign({ accountId: updatedAccount._id, googleAccessToken, googleIdToken }, process.env.SECRET);
     })
     .catch((err) => {
