@@ -2,10 +2,9 @@ import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
 import faker from 'faker';
 import { startServer } from '../lib/server';
-import { createAccountMockPromise } from './lib/account-mock';
-// import { createAttachmentMockPromise } from './lib/attachment-mock';
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
 import logger from '../lib/logger';
+// import Profile from '../model/profile';
 
 bearerAuth(superagent);
 
@@ -13,24 +12,21 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING ROUTER PROFILE', () => {
   let mockData;
-  let token;
-  let account;
   beforeAll(startServer);
   // afterAll(stopServer);
   beforeEach(async () => {
     await removeAllResources();
     try {
-      mockData = await createAccountMockPromise(); 
-      account = mockData.account; /*eslint-disable-line*/
-      token = mockData.token; /*eslint-disable-line*/
+      mockData = await createProfileMockPromise();
     } catch (err) {
-      return logger.log(logger.ERROR, `Unexpected error in profile-router beforeEach: ${err}`);
+      return logger.log(logger.ERROR, `Unexpected error in profile-router.test beforeEach: ${err}`);
     }
     return undefined;
   });
 
-  describe.skip('POST PROFILE ROUTES TESTING', () => {
+  describe('POST PROFILE ROUTES TESTING', () => {
     test('POST 200 to successfully save mentor', async () => {
+      console.log('mockData: ', JSON.stringify(mockData, null, 4));
       const mockProfile = {
         role: 'mentor',
         email: faker.internet.email(),
@@ -40,13 +36,12 @@ describe('TESTING ROUTER PROFILE', () => {
       let response;
       try {
         response = await superagent.post(`${apiUrl}/profiles`)
-          .authBearer(token)
+          .authBearer(mockData.adminToken)
           .send(mockProfile);
       } catch (err) {
         expect(err).toEqual('POST 200 test that should pass');
       }
       expect(response.status).toEqual(200);
-      expect(response.body.accountId).toEqual(account._id.toString());
       expect(response.body.firstName).toEqual(mockProfile.firstName);
       expect(response.body.lastName).toEqual(mockProfile.lastName);
       expect(response.body.email).toEqual(mockProfile.email);
@@ -69,11 +64,10 @@ describe('TESTING ROUTER PROFILE', () => {
         email: faker.internet.email(),
         // firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
-        accountId: account._id,
       };
       try {
         const response = await superagent.post(`${apiUrl}/profiles`)
-          .authBearer(token)
+          .authBearer(mockData.adminToken)
           .send(mockProfile);
         expect(response.status).toEqual('ignored, should not reach this code.');
       } catch (err) {
@@ -82,39 +76,36 @@ describe('TESTING ROUTER PROFILE', () => {
     });
   });
 
-  describe.skip('GET PROFILES ROUTE TESTING', () => {
-    test('GET 200 on successfull profile retrieval', async () => {
-      const mockProfile = await createProfileMockPromise();
+  describe('GET PROFILES ROUTE TESTING', () => {
+    test('GET 200 on successfull profile retrieval by student', async () => {
       let response;
       try {
         response = await superagent.get(`${apiUrl}/profiles`)
-          .authBearer(mockProfile.token);
+          .authBearer(mockData.studentToken);
         // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
-      expect(response.body.firstName).toEqual(mockProfile.profile.firstName);
+      expect(response.body.firstName).toEqual(mockData.studentProfile.firstName);
     });
 
     test('GET 200 on successfull admin profile/me retrieval', async () => {
-      const mockProfile = await createProfileMockPromise();
       let response;
       try {
         response = await superagent.get(`${apiUrl}/profiles/me`)
-          .authBearer(mockProfile.adminToken);
+          .authBearer(mockData.adminToken);
         // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
-      expect(response.body.firstName).toEqual(mockProfile.adminProfile.firstName);
+      expect(response.body.firstName).toEqual(mockData.adminProfile.firstName);
     });
 
     test('GET 200 on successfull admin retrieval of all profiles', async () => {
-      const mockProfile = await createProfileMockPromise();
       let response;
       try {
         response = await superagent.get(`${apiUrl}/profiles`)
-          .authBearer(mockProfile.adminToken);
+          .authBearer(mockData.adminToken);
         // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
@@ -122,71 +113,61 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body).toHaveLength(4);
     });
 
-    test('GET 400 on profile not found', async () => {
-      const mock = await createAccountMockPromise();
+    test('GET 200 on successfull retrieval of profile by id', async () => {
+      let response;
       try {
-        const response = await superagent.get(`${apiUrl}/profiles`)/*eslint-disable-line*/
-          .authBearer(mock.token);
+        response = await superagent.get(`${apiUrl}/profiles`)
+          .authBearer(mockData.adminToken)
+          .query({ id: mockData.coachProfile._id.toString() });
+        // profileResult = response.body;
       } catch (err) {
-        expect(err.status).toEqual(400);
+        expect(err).toEqual('Failure of profile GET unexpected');
       }
+      expect(response.body.firstName).toEqual(mockData.coachProfile.firstName);
     });
 
     test('GET 404 on profile not found', async () => {
-      const mock = await createAccountMockPromise();
+      await removeAllResources();
       try {
-        const response = await superagent.get(`${apiUrl}/profiles`)
-          .authBearer(mock.token);
-        expect(response).toEqual('GET profile should have failed with 404');
+        const response = await superagent.get(`${apiUrl}/profiles`)/*eslint-disable-line*/
+          .authBearer(mockData.mentorToken);
       } catch (err) {
         expect(err.status).toEqual(404);
       }
     });
 
     test('GET 401 on bad token', async () => {
-      let profile;
-      try {
-        const mock = await createProfileMockPromise();
-        profile = mock.profile; /*eslint-disable-line*/
-      } catch (err) {
-        throw err;
-      }
       let response;
       try {
         response = await superagent.get(`${apiUrl}/profiles`)
-          .query({ id: profile.accountId })
           .authBearer('this is not the token we seek');
-        expect(response.status).toEqual('We should not reach this code GET 404');
+        expect(response.status).toEqual('We should not reach this code GET 401');
       } catch (err) {
         expect(err.status).toEqual(401);
       }
     });
   });
 
-  describe.skip('PUT PROFILES ROUTE TESTING', () => {
+  describe('PUT PROFILES ROUTE TESTING', () => {
     test('PUT 200 successful update of existing profile', async () => {
-      const mock = await createProfileMockPromise();
       let response;
       // now change one property of the profile and update it.
-      mock.profile.email = 'thisis@updated.email';
+      mockData.profile.email = 'thisis@updated.email';
       try {
         response = await superagent.put(`${apiUrl}/profiles`)
-          .authBearer(mock.adminToken)
-          .send(mock.profile);
+          .authBearer(mockData.adminToken)
+          .send(mockData.profile);
       } catch (err) {
         expect(err).toEqual('POST 200 test that should pass');
       }
       expect(response.status).toEqual(200);
-      expect(response.body.accountId).toEqual(mock.profile.accountId.toString());
       expect(response.body.email).toEqual('thisis@updated.email');
     });
 
     test('PUT 400  update of existing profile without body', async () => {
-      const mock = await createProfileMockPromise();
-
       try {
         await superagent.put(`${apiUrl}/profiles`)
-          .authBearer(mock.token)
+          .authBearer(mockData.token)
           .send({});
       } catch (err) {
         expect(err.status).toEqual(400);
@@ -194,13 +175,11 @@ describe('TESTING ROUTER PROFILE', () => {
     });
 
     test('PUT 404 profile not found', async () => {
-      const mock = await createAccountMockPromise();
-
-      const profile = await createProfileMockPromise();
+      await mockData.profile.remove();
       try {
         const response = await superagent.put(`${apiUrl}/profiles`)
-          .authBearer(mock.token)
-          .send(profile);
+          .authBearer(mockData.token)
+          .send(mockData.profile);
         expect(response).toEqual('PUT should have returned 404...');
       } catch (err) {
         expect(err.status).toEqual(404);
@@ -209,8 +188,6 @@ describe('TESTING ROUTER PROFILE', () => {
 
     test('PUT 400 bad request', async () => {
       let response;
-      const mock = await createProfileMockPromise();
-      const profile = mock.profile; /*eslint-disable-line*/
       try {
         response = await superagent.put(`${apiUrl}/profiles`);
         expect(response).toEqual('We should have failed with a 400');
@@ -220,19 +197,17 @@ describe('TESTING ROUTER PROFILE', () => {
     });
   });
 
-  describe.skip('DELETE PROFILE ROUTE TESTING', () => {
+  describe('DELETE PROFILE ROUTE TESTING', () => {
     test('DELETE 200 success', async () => {
-      const mock = await createProfileMockPromise();
-      const profile = mock.profile; /*eslint-disable-line*/
       let response;
       try {
         response = await superagent.delete(`${apiUrl}/profiles`)
-          .query({ id: profile._id.toString() })
-          .authBearer(mock.token);
-        expect(response.status).toEqual(200);
+          .query({ id: mockData.studentProfile._id.toString() })
+          .authBearer(mockData.adminToken);
       } catch (err) {
         expect(err).toEqual('Unexpected error on valid delete test');
       }
+      expect(response.status).toEqual(200);
     });
 
     test('DELETE 404 not found', async () => {
@@ -240,28 +215,28 @@ describe('TESTING ROUTER PROFILE', () => {
       try {
         response = await superagent.delete(`${apiUrl}/profiles`)
           .query({ id: '1234568909876543321' })
-          .authBearer(token);
+          .authBearer(mockData.adminToken);
         expect(response).toEqual('DELETE 404 expected but not received');
       } catch (err) {
         expect(err.status).toEqual(404);
       }
     });
 
-    test('DELETE 400 bad request', async () => {
+    test('DELETE 400 bad request. missing query.', async () => {
       try {
         await superagent.delete(`${apiUrl}/profiles`)
-          .authBearer(token);
+          .authBearer(mockData.adminToken);
         expect(true).toEqual('DELETE 400 missing query unexpected success');
       } catch (err) {
         expect(err.status).toEqual(400);
       }
     });
 
-    test('DELETE 401 bad token', async () => {
+    test('DELETE 401 unauthorized token', async () => {
       try {
         await superagent.delete(`${apiUrl}/profiles`)
-          .query({ id: 'thiswontbereached' })
-          .authBearer('badtoken');
+          .query({ id: mockData.mentorProfile._id.toString() })
+          .authBearer(mockData.studentToken);
         expect(true).toEqual('DELETE 401 expected but succeeded');
       } catch (err) {
         expect(err.status).toEqual(401);

@@ -40,10 +40,7 @@ pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request,
   logger.log(logger.INFO, `.post /api/pointstracker req.body: ${request.body}`);
   PointTracker.init()
     .then(() => {
-      return new PointTracker({
-        ...request.body,
-        studentId: request.studentId._id,
-      }).save();
+      return new PointTracker(request.body).save();
     })
     .then((pointstracker) => {
       logger.log(logger.INFO, `POST POINT-TRACKER ROUTER: new point tracker created with 200 code, ${JSON.stringify(pointstracker)}`);
