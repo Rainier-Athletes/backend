@@ -28,7 +28,7 @@ const profileSchema = mongoose.Schema({
   role: {
     type: String,
     required: true,
-    enum: ['admin', 'staff', 'student', 'mentor', 'teacher', 'coach', 'family'],
+    enum: ['admin', 'student', 'mentor', 'teacher', 'coach', 'family'],
     default: 'family',
   },
   accountId: {
@@ -60,7 +60,7 @@ const profileSchema = mongoose.Schema({
     }],
     gender: {
       type: String,
-      enum: ['male', 'female'],
+      enum: ['male', 'female', 'nonbinary'],
       default: 'male',
       required: true,
     },
@@ -79,6 +79,7 @@ const profileSchema = mongoose.Schema({
     }],
   },
   teacherData: {
+    school: String,
     students: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Profile',
@@ -213,18 +214,18 @@ const Profile = mongoose.model('Profile', profileSchema, 'profiles', skipInit);
 //   return undefined;
 // };
 
-profileSchema.post('remove', async (profile) => {
-  if (profile.role === 'student') { 
-    // clean up student's mentor and coaches
-    if (profile.studentData.mentor) await postRemoveStudentFromMentor(profile);
-    if (profile.studentData.coaches.length > 0) {
-      for (let i = 0; i < profile.studentData.coaches.length; i++) {
-        postRemoveStudentFromCoach(profile.studentData.coaches[i], profile._id);
-      }
-    }
-  }
-  return undefined;
-});
+// profileSchema.post('remove', async (profile) => {
+//   if (profile.role === 'student') { 
+//     // clean up student's mentor and coaches
+//     if (profile.studentData.mentor) await postRemoveStudentFromMentor(profile);
+//     if (profile.studentData.coaches.length > 0) {
+//       for (let i = 0; i < profile.studentData.coaches.length; i++) {
+//         postRemoveStudentFromCoach(profile.studentData.coaches[i], profile._id);
+//       }
+//     }
+//   }
+//   return undefined;
+// });
 
 export default Profile;
 

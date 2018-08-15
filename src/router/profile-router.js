@@ -28,9 +28,9 @@ profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response,
 
 profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
-  if (request.query.id && request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized to query by id.', { expose: false }));
+  // if (request.query.id && request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized to query by id.', { expose: false }));
   
-  if (request.query.id && request.profile.role === 'admin') {
+  if (request.query.id) {
     Profile.init()
       .then(() => {
         Profile.findBiId(request.query.id)
