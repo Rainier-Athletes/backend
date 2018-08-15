@@ -9,7 +9,7 @@ const pointTrackerSchema = mongoose.Schema({
   },
   studentId: {
     //  This is for mongoose autopopulation, should translate to the profiletId from profile.js
-    lead: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile', autopopulate: true },
+    studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile', autopopulate: true },
     required: true,
   },
   subjects: [{
@@ -68,7 +68,7 @@ pointTrackerSchema.plugin(autopopulate);
 // });
 
 pointTrackerSchema.post('save', (tracker) => {
-  Profile.findOne({ profileId: `${tracker.studentId.lead}` })
+  Profile.findOne({ profileId: `${tracker.studentId.studentId}` })
     .catch((err) => {
       throw err;
     });
