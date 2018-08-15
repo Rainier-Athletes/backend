@@ -25,6 +25,11 @@ const whitelistSchema = mongoose.Schema({
     type: String, 
     // required: true, 
     unique: true,
+
+  pending: {
+    type: Boolean,
+    default: true,
+
   },
 
   pending: {
