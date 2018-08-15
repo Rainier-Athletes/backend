@@ -1,14 +1,19 @@
 import { Router } from 'express';
 import { google } from 'googleapis';
-// import superagent from 'superagent';
 import HttpError from 'http-errors';
 import fs from 'fs';
 import pdf from 'html-pdf';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
-// import logger from '../lib/logger';
 
-// const GOOGLE_DRIVE_API = 'https://www.googleapis.com/upload/drive/v3/files/';
-// const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+const cleanDate = () => {
+  const dateObj = new Date();
+  const month = dateObj.getUTCMonth() + 1;
+  const day = dateObj.getUTCDate();
+  const year = dateObj.getUTCFullYear();
+  const newDate = `${year}/${month}/${day}`;
+  return newDate;
+};
+
 const TEMP_DIR = `${__dirname}/temp`;
 
 const synopsisRouter = new Router();
@@ -16,26 +21,15 @@ const synopsisRouter = new Router();
 synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, response, next) => {
   console.log('&&&&&&&&&& in POST api/v1/synopsis');
   const { name } = request.body;
-  const { date } = request.body; 
-  const title = (name + date);
+  const date = cleanDate(); 
+  const title = `${name} ${date}`;
   const options = { format: request.body.options };
   const { html } = request.body;
   const { googleTokenResponse } = request;
+  const setFolderName = `Rainier Athletes - ${name}`;
 
   console.log('))))))))) synopsis googleTokenResponse', googleTokenResponse);
 
-  /*
-  const oauth2Client = new google.auth.OAuth2(
-    YOUR_CLIENT_ID,
-    YOUR_CLIENT_SECRET,
-    YOUR_REDIRECT_URL
-  );
-  
-  const drive = google.drive({
-    version: 'v2',
-    auth: oauth2Client
-  });
-  */
   const oAuth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_OAUTH_ID,
     process.env.GOOGLE_OAUTH_SECRET,
@@ -51,40 +45,78 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   console.log('))))))))) synopsis router: oAuth2Client:', oAuth2Client);
 
   const drive = google.drive({ version: 'v3', auth: oAuth2Client }); 
-
-  // const drive = google.drive({ version: 'v3', auth: googleAccessToken });
   
-
-  console.log('&&&&&&&&&&&&& synopsis router request.googleAccessToken', request.googleAccessToken);
-
   const sendFileToGoogleDrive = async () => {
-    console.log('>>>>>>>> sendFileToGoogleDrive entered');
     const filePath = `${TEMP_DIR}/${title}.pdf`;
     
     let readStream;
     try {
       readStream = fs.createReadStream(filePath);
     } catch (err) {
-      console.log('&&&&&&&&&& fs.createReadStream error:');
       console.error(err);
-      console.log('&&&&&&&&& end of error');
     }
-    console.log('>>>>>>> readStream created');
-    const requestBody = {
-      name: `${title}.pdf`,
-      mimeType: 'application/pdf', 
-    };
-    const media = {
-      mimeType: 'application/pdf',
-      body: readStream,
-    };
 
     let result;
-    try {
+
+    const uploadFileToFolder = async (folderId) => {    
+      const fileMetadata = {
+        name: `${title}`,
+        writersCanShare: true,
+        parents: [folderId],
+      };
+
+      const requestBody = {
+        name: `${title}.pdf`,
+        mimeType: 'application/pdf',
+
+      };
+      const media = {
+        mimeType: 'application/pdf',
+        body: readStream,
+      };
+
       console.log('>>>>>>>>> calling drive.files.create');
       result = await drive.files.create({
+        resource: fileMetadata,
         requestBody,
         media,
+      });
+    };
+
+    try {
+      const folderMetadata = {
+        name: setFolderName,
+        mimeType: 'application/vnd.google-apps.folder',
+        fields: 'id',
+      };
+
+      drive.files.list({
+        q: `name='${setFolderName}'`,
+      }, (err, res) => {
+        let folderId;
+        if (err) {
+          console.error(err);
+        } else {
+          if (res.data.files[0]) {
+            folderId = res.data.files[0].id;
+          } else {
+            return drive.files.create({
+              resource: folderMetadata,
+            }, (error, file) => {
+              if (err) {
+                // Handle error
+                console.error(error);
+              } else {
+                folderId = file.data.id;
+                return uploadFileToFolder(folderId);
+              }
+              return undefined;
+            });
+          }
+          console.log('FOLDER ID:', folderId);
+          uploadFileToFolder(folderId);  
+        }
+        return undefined;        
       });
       console.log('>>>>>>>> back from drive.files.create');
     } catch (err) {

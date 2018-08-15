@@ -22,7 +22,9 @@ profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response,
 });
 
 profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
-  if (request.query.id) {
+  if (request.query.id && request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized to query by id.', { expose: false }));
+  
+  if (request.query.id && request.profile.role === 'admin') {
     Profile.init()
       .then(() => {
         Profile.findById(request.query.id)
@@ -31,6 +33,20 @@ profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
           })
           .catch(next);
       });
+    return undefined;
+  }
+
+  if (Object.keys(request.query).toString() !== 'id') {
+    const requestedProp = Object.keys(request.query)[0];
+
+    Profile.init()
+      .then(() => {
+        return Profile.find({ requestedProp: request.query[requestedProp] });
+      })
+      .then((requestedPropReturn) => {
+        return response.json(requestedPropReturn);
+      })
+      .catch(next);
     return undefined;
   }
   
@@ -64,7 +80,6 @@ profileRouter.get('/api/v1/profiles/me', bearerAuthMiddleware, (request, respons
     .then(() => {
       Profile.findById(request.profile._id.toString())
         .then((profile) => {
-          if (request.profile.role !== 'admin') delete profile.role;
           return response.json(profile);
         });
       return undefined;
@@ -92,8 +107,8 @@ profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
 });
 
 profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
-  if (!request.query.id) return next(new HttpErrors(400, 'DELETE PROFILE ROUTER: missing query', { expose: false }));
-
+  if (request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized to query by id.', { expose: false }));
+  
   Profile.init()
     .then(() => {
       return Profile.findByIdAndRemove(request.query.id);
