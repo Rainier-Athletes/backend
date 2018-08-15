@@ -86,6 +86,7 @@ describe('TESTING ROUTER PROFILE', () => {
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
+      expect(response.status).toEqual(200);
       expect(response.body.firstName).toEqual(mockData.studentProfile.firstName);
     });
 
