@@ -3,7 +3,7 @@ import bearerAuth from 'superagent-auth-bearer';
 import faker from 'faker';
 import { startServer, stopServer } from '../lib/server';
 
-import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
+import { createProfileMockPromise } from './lib/profile-mock';
 
 import { createWhitelistMockPromise, removeWhitelistResources } from './lib/whitelist-mock';
 import logger from '../lib/logger';
@@ -132,7 +132,7 @@ describe('TESTING ROUTER WHITELIST', () => {
         expect(response.body.accountId).toEqual(mock.profile.accountId.toString());
         expect(response.body.email).toEqual('newEmail@updated.email');
       } catch (err) {
-        console.log(err)
+        console.log(err);
         // expect(err.status).toEqual('PUT 200 test that should pass');
       }
     });
