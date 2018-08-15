@@ -41,7 +41,7 @@ profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
 
     Profile.init()
       .then(() => {
-        return Profile.find({ requestedProp: request.query[requestedProp] });
+        return Profile.find({ [requestedProp]: request.query[requestedProp] });
       })
       .then((requestedPropReturn) => {
         return response.json(requestedPropReturn);
