@@ -4,8 +4,6 @@ import Profile from '../model/profile';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import logger from '../lib/logger';
 import PointTracker from '../model/point-tracker';
-import Whitelist from '../model/whitelist';
-import Account from '../model/account';
 
 const profileRouter = new Router();
 
@@ -13,13 +11,10 @@ profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response,
   logger.log(logger.INFO, `.post /api/v1/profiles req.body: ${request.body}`);
   Profile.init()
     .then(() => {
-      return new Profile({
-        ...request.body,
-        accountId: request.account._id,
-      }).save();
+      return new Profile(request.body).save();
     })
     .then((profile) => {
-      logger.log(logger.INFO, `POST PROFILE ROUTER: new account created with 200 code, ${JSON.stringify(profile)}`);
+      logger.log(logger.INFO, `POST PROFILE ROUTER: new profile created with 200 code, ${JSON.stringify(profile)}`);
       return response.json(profile);
     })
     .catch(next);
@@ -27,18 +22,31 @@ profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response,
 });
 
 profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
-  if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
   if (request.query.id && request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized to query by id.', { expose: false }));
   
   if (request.query.id && request.profile.role === 'admin') {
     Profile.init()
       .then(() => {
-        Profile.findBiId(request.query.id)
+        Profile.findById(request.query.id)
           .then((profile) => {
             return response.json(profile);
           })
           .catch(next);
       });
+    return undefined;
+  }
+
+  if (Object.keys(request.query).toString() !== 'id') {
+    const requestedProp = Object.keys(request.query)[0];
+
+    Profile.init()
+      .then(() => {
+        return Profile.find({ requestedProp: request.query[requestedProp] });
+      })
+      .then((requestedPropReturn) => {
+        return response.json(requestedPropReturn);
+      })
+      .catch(next);
     return undefined;
   }
   
@@ -68,13 +76,10 @@ profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
 });
 
 profileRouter.get('/api/v1/profiles/me', bearerAuthMiddleware, (request, response, next) => {
-  if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
-
   Profile.init()
     .then(() => {
       Profile.findById(request.profile._id.toString())
         .then((profile) => {
-          if (request.profile.role !== 'admin') delete profile.role;
           return response.json(profile);
         });
       return undefined;
@@ -85,11 +90,7 @@ profileRouter.get('/api/v1/profiles/me', bearerAuthMiddleware, (request, respons
 
 // update route
 profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
-  if (!request.profile) return next(new HttpErrors(404, 'PROFILE ROUTER GET: profile not found. Missing login info.', { expose: false }));
-
   if (!Object.keys(request.body).length) return next(new HttpErrors(400, 'PUT PROFILE ROUTER: Missing request body', { expose: false }));
-
-  console.log('........ profile router PUT request.body', JSON.stringify(request.body, null, 4));
 
   Profile.init()
     .then(() => {
@@ -106,8 +107,8 @@ profileRouter.put('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
 });
 
 profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
-  if (!request.query.id) return next(new HttpErrors(400, 'DELETE PROFILE ROUTER: missing query', { expose: false }));
-
+  if (request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized to query by id.', { expose: false }));
+  
   Profile.init()
     .then(() => {
       return Profile.findByIdAndRemove(request.query.id);
@@ -117,12 +118,6 @@ profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, respons
     })
     .then(() => {
       return PointTracker.remove({ studentId: request.profile._id });
-    })
-    .then(() => {
-      return Whitelist.remove({ email: request.profile.email });
-    })
-    .then(() => {
-      return Account.findByIdAndRemove(request.account._id);
     })
     .then(() => {
       return response.sendStatus(200);

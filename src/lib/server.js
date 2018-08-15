@@ -9,11 +9,11 @@ import errorMiddleware from './middleware/error-middleware';
 import loggerMiddleware from './middleware/logger-middleware';
 
 // our routes
-import authRouter from '../router/auth-router';
+// import authRouter from '../router/auth-router';
 import googleOauthRouter from '../router/google-oauth-router';
 import profileRouter from '../router/profile-router';
 import pointTrackerRouter from '../router/point-tracker-router';
-import whitelistRouter from '../router/whitelist-router';
+// import whitelistRouter from '../router/whitelist-router';
 import synopsisRouter from '../router/synopsis-router';
 import relationshipRouter from '../router/relationship-router';
 
@@ -51,8 +51,8 @@ app.use(express.json());
 // our own api routers or middleware
 app.use(loggerMiddleware);
 app.use(googleOauthRouter);
-app.use(authRouter);
-app.use(whitelistRouter);
+// app.use(authRouter);
+// app.use(whitelistRouter);
 app.use(profileRouter);
 app.use(pointTrackerRouter);
 app.use(synopsisRouter);
