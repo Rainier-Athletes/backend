@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import superagent from 'superagent';
-import { google } from 'googleapis';
+// import { google } from 'googleapis';
 import HttpErrors from 'http-errors';
 import Profile from '../model/profile';
 
@@ -9,7 +9,7 @@ import Profile from '../model/profile';
 // import jwt from 'jsonwebtoken'; // you will DEFINITELY need this to "sign" your Google token
 // import Account from '../model/account';
 import logger from '../lib/logger';
-import Whitelist from '../model/whitelist';
+// import Whitelist from '../model/whitelist';
 
 const GOOGLE_OAUTH_URL = 'https://www.googleapis.com/oauth2/v4/token';
 
@@ -21,153 +21,99 @@ const googleOAuthRouter = new Router();
 
 googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) => {
   if (!request.query.code) {
-    logger.log(logger.ERROR, 'DID NOT GET CODE FROM GOOGLE');
+    // logger.log(logger.ERROR, 'DID NOT GET CODE FROM GOOGLE');
     response.redirect(process.env.CLIENT_URL);
-    return next(new HttpErrors(500, 'Google OAuth Error'));
+    return next(new HttpErrors(500, 'Google OAuth Code Error'));
   }
-  logger.log(logger.INFO, `RECVD CODE FROM GOOGLE AND SENDING IT BACK TO GOOGLE: ${request.query.code}`);
+  // logger.log(logger.INFO, `RECVD CODE FROM GOOGLE AND SENDING IT BACK TO GOOGLE: ${request.query.code}`);
 
-  let raToken;
   let googleTokenResponse;
   try {
     googleTokenResponse = await superagent.post(GOOGLE_OAUTH_URL)
       .type('form')
       .send({
         code: request.query.code,
+        access_type: 'offline',
         grant_type: 'authorization_code',
         client_id: process.env.GOOGLE_OAUTH_ID,
         client_secret: process.env.GOOGLE_OAUTH_SECRET,
         redirect_uri: `${process.env.API_URL}/oauth/google`,
       });
   } catch (err) {
-    logger.log(logger.ERROR, `ERROR FROM GOOGLE: ${JSON.stringify(err)}`);
-    return next(new HttpErrors(err.status, 'Error from Google Oauth'));
+    // logger.log(logger.ERROR, `ERROR FROM GOOGLE: ${JSON.stringify(err)}`);
+    return next(new HttpErrors(err.status, 'Error from Google Oauth error fetching authorization tokens'));
   }
 
+  // I'm thinking this code is pointless...
   if (!googleTokenResponse.body.access_token) {
     logger.log(logger.ERROR, 'No Token from Google');
     return response.redirect(process.env.CLIENT_URL);
   }
-  logger.log(logger.INFO, `RECEIVED GOOGLE ACCESS TOKEN: ${JSON.stringify(googleTokenResponse.body, null, 2)}`);
-  const googleAccessToken = googleTokenResponse.body.access_token;
-  const googleIdToken = googleTokenResponse.body.id_token;
 
-  const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_OAUTH_ID,
-    process.env.GOOGLE_OAUTH_SECRET,
-    'http://localhost:3000/api/v1/oauth/google email profile openid',
-  );
-  oauth2Client.setCredentials(googleAccessToken);
+  const googleAccessToken = googleTokenResponse.body.access_token;
 
   let openIdResponse;
   try {
     openIdResponse = await superagent.get(OPEN_ID_URL)
       .set('Authorization', `Bearer ${googleAccessToken}`);
   } catch (err) {
-    logger.log(logger.ERROR, `OpenId request failed, error: ${JSON.stringify(err, null, 2)}`);
-    return response.sentStatus(err.status);
+    return next(new HttpErrors(err.status, 'OpenId request failed'));
   }
 
-  logger.log(logger.INFO, `OPEN ID: ${JSON.stringify(openIdResponse.body, null, 2)}`);
-  const email = openIdResponse.body.email; // eslint-disable-line
-  const username = email; 
-  const password = openIdResponse.body.sub;
+  const { email } = openIdResponse.body;
   const firstName = openIdResponse.body.given_name;
   const lastName = openIdResponse.body.family_name;
   const { picture } = openIdResponse.body;
 
-  
-  // at this point we've completed google oauth. now we try to login to the app
-  let loginResult;
-  console.log('oAuth: oauthlogin, auth:', username, password, 'body:', { googleAccessToken, googleIdToken });
-  try {
-    loginResult = await superagent.get(`${process.env.API_URL}/oauthlogin`)
-      .auth(username, password)
-      .send({ googleAccessToken, googleIdToken })
-      .withCredentials();
-  } catch (err) {
-    console.log('oAuth: login failed, checking whitelist for', email);
-    loginResult = null;
+  // at this point Oauth is complete. Now we need to see they are
+  // in the profile collection
+
+  let profile = await Profile.findOne({ email });
+
+  if (!profile) {
+    // user not in profile collection, check process.env.ROOT_ADMIN
+    const rootAdmin = JSON.parse(process.env.ROOT_ADMIN);
+    if (email !== rootAdmin.email) {
+      return next(new HttpErrors(401, 'User not recognized'));
+    }
+    // they're authorized. Create a profile for them
+    logger.log(logger.INFO, 'Creating ROOT_ADMIN profile');
+    const newProfile = new Profile({
+      email,
+      firstName,
+      lastName,
+      picture,
+      role: rootAdmin.role,
+    });
+    try {
+      profile = await newProfile.save();
+    } catch (err) {
+      logger.log(logger.ERROR, `Error saving new ROOT ADMIN profile: ${err}`);
+    }
   }
 
-  // if loginResult is truthy we succeeded in logging. send cookies and redirect user to home page.
-  if (loginResult) {
-    console.log('oAuth: login succeeded. getting Profile', loginResult.body);
-    // get profile
-    let profile;
-    try {
-      profile = await Profile.findById(loginResult.body.profileId);
-    } catch (err) {
-      next(err);
-    }
-    console.log('oAuth: login succeeded. Sending response and cookies. Role:', profile.role);
-    const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
-    response.cookie('RaToken', loginResult.body.token, cookieOptions);
-    response.cookie('RaUser', Buffer.from(profile.role).toString('base64'), cookieOptions);
-    return response.redirect(process.env.CLIENT_URL);
-  } 
-  // login failed, create account and profile
-  // no account? Check Whitelist for the email
-  console.log('oAuth: login failed, checking whitelist for', email);
-  let wlResult = await Whitelist.findOne({ email });
-  console.log('oAuth: whitelist result', wlResult);
-  if (!wlResult && email === JSON.parse(process.env.ROOT_ADMIN).email) {
-    console.log('oAuth: using .env ROOT_ADMIN credentials');
-    wlResult = JSON.parse(process.env.ROOT_ADMIN);
+  // at this point we have a profile for sure
+  if (!(profile.role === 'admin' || profile.role === 'mentor')) {
+    return next(new HttpErrors(401, 'User not authorized.'));  
   }
-  let signupResult;
-  if (!wlResult) {
-    console.log('oAuth: Email not in whitelist. returning status 401: Not Authorized');
-    return response.sendStatus(401);
-  }
-  // email in whitelist, create account
-  let { role } = wlResult; //eslint-disable-line
-  console.log('oAuth: email found in whitelist, creating account for', email);
-  try {
-    signupResult = await superagent.post(`${process.env.API_URL}/oauthsignup`)
-      .send({ 
-        username,
-        email,
-        password,
-        googleAccessToken,
-        googleIdToken,
-      })
-      .withCredentials();
-  } catch (err) {
-    next(err);
-  }
-  let profile;
-  if (signupResult) {
-    console.log('oAuth: create account succeeded, creating profile with role:', role);
-    raToken = signupResult.body.token;
-    try {
-      profile = await superagent.post(`${process.env.API_URL}/profiles`)
-        .set('Authorization', `Bearer ${raToken}`)
-        .send({ 
-          firstName, lastName, email, role, picture, 
-        });
-    } catch (err) {
-      next(err);
-    }
-    // we're all signed up using Oauth data.  Set the whitelist pending flag to false since
-    // the invite has been accepted.
+  logger.log(logger.INFO, 'Profile validated');
 
-    wlResult.pending = false;
-    console.log('oAuth: saving whitelist entry', wlResult);
-    try {
-      await wlResult.save();
-    } catch (err) {
-      console.log('oAuth: ERROR saving whitelist result with pending flag false');
-    }
+  // in the previous version where we logged in and the fetched profile
+  // basic and bearer auth middleware was invoked which put account,
+  // profile and other stuff on the request object.  We need to keep 
+  // at least the profile and auth stuff around...
 
-    console.log('oAuth: profile created:', JSON.stringify(profile, null, 2));
-    console.log('oAuth: sending cookie and redirecting');
-    const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
-    response.cookie('RaToken', raToken, cookieOptions);
-    response.cookie('RaUser', Buffer.from(role).toString('base64'), cookieOptions);
-    return response.redirect(process.env.CLIENT_URL);
-  }
-  return undefined;
+  // this call returns a jwt with profileId and google tokens
+  // as payload
+
+  const raToken = await profile.createTokenPromise(googleTokenResponse.body);
+
+  // send raToken as cookie and in response json
+  const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
+  response.cookie('RaToken', raToken, cookieOptions);
+  response.cookie('RaUser', Buffer.from(profile.role)
+    .toString('base64'), cookieOptions);
+  return response.redirect(process.env.CLIENT_URL);
 });
 
 export default googleOAuthRouter;

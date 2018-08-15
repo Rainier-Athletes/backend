@@ -54,18 +54,18 @@ const pointTrackerSchema = mongoose.Schema({
 });
 pointTrackerSchema.plugin(autopopulate);
 
-// pointTrackerSchema.post('save', (tracker) => {
-//   Profile.findById(tracker.studentId)
-//     .then((profile) => {
-//       if (!profile.studentData.pointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
-//         profile.studentData.pointTrackers.push(tracker._id);
-//       }
-//       return profile.save();
-//     })
-//     .catch((err) => {
-//       throw err;
-//     });
-// });
+pointTrackerSchema.post('save', (tracker) => {
+  Profile.findById(tracker.studentId)
+    .then((profile) => {
+      if (!profile.studentData.pointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
+        profile.studentData.pointTrackers.push(tracker._id);
+      }
+      return profile.save();
+    })
+    .catch((err) => {
+      throw err;
+    });
+});
 
 pointTrackerSchema.post('save', (tracker) => {
   Profile.findOne({ profileId: `${tracker.studentId.studentId}` })

@@ -1,7 +1,6 @@
 import HttpErrors from 'http-errors';
 import jsonWebToken from 'jsonwebtoken';
 import { promisify } from 'util';
-import Account from '../../model/account';
 import logger from '../logger';
 import Profile from '../../model/profile';
 
@@ -27,18 +26,12 @@ export default (request, response, next) => {
         }
       */
       tokenPayload = decryptedToken;
-      return Account.findOne({ _id: tokenPayload.accountId });
-    })
-    .then((account) => {
-      if (!account) return next(new HttpErrors(404, 'BEARER AUTH - no account found', { expose: false }));
-      request.account = account;
-      request.googleAccessToken = tokenPayload.googleAccessToken;
-      request.googleIdToken = tokenPayload.googleIdToken;
-      return Profile.findOne({ accountId: account._id });
+      return Profile.findOne({ _id: tokenPayload.profileId });
     })
     .then((profile) => {
+      if (!profile) return next(new HttpErrors(404, 'BEARER AUTH - no profile found', { expose: false }));
       request.profile = profile;
-      // console.log('request.googleIdToken', request.googleAccessToken);
+      request.googleTokenResponse = tokenPayload.googleTokenResponse;
       return next();
     })
     .catch(next);
