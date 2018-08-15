@@ -14,7 +14,7 @@ const createWhitelistMockPromise = async () => {
   };
 
   const whitelist = await new Whitelist(mockWhitelist).save();
-  mockData.whiteList = whitelist;
+  mockData.whiteList = whitelist; // HEY LOOK CAREFULLY AT WHITELIST, it's camel cased
   console.log('we got dat mockData my folks', JSON.stringify(mockData, null, 2));
   return mockData;
 };
