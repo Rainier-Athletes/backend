@@ -54,6 +54,7 @@ pointTrackerRouter.put('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
   if (!request.profile) return next(new HttpErrors(404, 'POINT-TRACKER ROUTER GET: Point tracker not found. Missing login info.', { expose: false }));
 
   if (!Object.keys(request.body).length) return next(new HttpErrors(400, 'PUT POINT-TRACKER ROUTER: Missing request body', { expose: false }));
+  console.log('notice me', request.body);
   
   PointTracker.init()
     .then(() => {

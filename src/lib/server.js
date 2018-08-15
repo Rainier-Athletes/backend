@@ -85,7 +85,7 @@ app.use(express.json());
 app.use(loggerMiddleware);
 app.use(authRouter);
 app.use(googleOauthRouter);
-app.use(basecampOauthRouter);
+// app.use(basecampOauthRouter);
 app.use(whitelistRouter);
 app.use(profileRouter);
 app.use(pointTrackerRouter);
