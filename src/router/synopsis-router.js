@@ -26,23 +26,10 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   const options = { format: request.body.options };
   const { html } = request.body;
   const { googleTokenResponse } = request;
-  const setFolderName = `Rainier Athletes - ${name} - ${date}`;
-
+  const setFolderName = `Rainier Athletes - ${name}`;
 
   console.log('))))))))) synopsis googleTokenResponse', googleTokenResponse);
 
-  /*
-  const oauth2Client = new google.auth.OAuth2(
-    YOUR_CLIENT_ID,
-    YOUR_CLIENT_SECRET,
-    YOUR_REDIRECT_URL
-  );
-  
-  const drive = google.drive({
-    version: 'v2',
-    auth: oauth2Client
-  });
-  */
   const oAuth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_OAUTH_ID,
     process.env.GOOGLE_OAUTH_SECRET,
@@ -58,8 +45,6 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   console.log('))))))))) synopsis router: oAuth2Client:', oAuth2Client);
 
   const drive = google.drive({ version: 'v3', auth: oAuth2Client }); 
-
-  // const drive = google.drive({ version: 'v3', auth: googleAccessToken });
   
   const sendFileToGoogleDrive = async () => {
     const filePath = `${TEMP_DIR}/${title}.pdf`;
@@ -114,7 +99,6 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
         } else {
           if (res.data.files[0]) {
             folderId = res.data.files[0].id;
-            console.log('!!!!!!!!!!!!!!!!!!! IT WORKS', folderId);
           } else {
             return drive.files.create({
               resource: folderMetadata,
@@ -124,7 +108,6 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
                 console.error(error);
               } else {
                 folderId = file.data.id;
-                console.log('@@@@@@@@@@@@@@@@@@@Folder Id: ', file.data.id);
                 return uploadFileToFolder(folderId);
               }
               return undefined;
