@@ -2,7 +2,6 @@ import { Router } from 'express';
 import HttpErrors from 'http-errors';
 import PointTracker from '../model/point-tracker';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
-import logger from '../lib/logger';
 
 const pointTrackerRouter = new Router();
 
@@ -24,10 +23,6 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
       PointTracker.find({ [modelMap[queryType]]: request.query[queryType] })
         .then((scores) => {
           if (!scores) return next(new HttpErrors(404, `GET POINTS ROUTER: ${request.query} not found.`));
-          logger.log(logger.info, `GET POINTS ROUTER returning\n${JSON.stringify(scores, null, 2)}`);
-          return scores.populate('teacher');
-        })
-        .then((scores) => {
           return response.json(scores);
         })
         .catch(next);
@@ -37,13 +32,11 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
 });
 
 pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
-  logger.log(logger.INFO, `.post /api/pointstracker req.body: ${request.body}`);
   PointTracker.init()
     .then(() => {
       return new PointTracker(request.body).save();
     })
     .then((pointstracker) => {
-      logger.log(logger.INFO, `POST POINT-TRACKER ROUTER: new point tracker created with 200 code, ${JSON.stringify(pointstracker)}`);
       return response.json(pointstracker);
     })
     .catch(next);
@@ -53,11 +46,17 @@ pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request,
 pointTrackerRouter.put('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(404, 'POINT-TRACKER ROUTER GET: Point tracker not found. Missing login info.', { expose: false }));
 
-  if (!Object.keys(request.body).length) return next(new HttpErrors(400, 'PUT POINT-TRACKER ROUTER: Missing request body', { expose: false }));
+  if (!request.body) return next(new HttpErrors(400, 'PUT POINT-TRACKER ROUTER: Missing request body', { expose: false }));
   
   PointTracker.init()
     .then(() => {
-      return PointTracker.findOneAndUpdate({ _id: request.pointtracker._id }, request.body);
+      return PointTracker.findOneAndUpdate(request.body);
+    })
+    .then(() => {
+      return PointTracker.findById(request.body._id.toString());
+    })
+    .then((updated) => {
+      return response.json(updated).status(200);
     })
     .catch(next);
   return undefined;
@@ -71,7 +70,7 @@ pointTrackerRouter.delete('/api/v1/pointstracker', bearerAuthMiddleware, (reques
       return PointTracker.findByIdAndRemove(request.query.id);
     })
     .catch(next);
-  return undefined;
+  return response.sendStatus(200);
 });
 
 export default pointTrackerRouter;

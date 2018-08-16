@@ -9,6 +9,10 @@ const createProfileMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'student',
+    address: faker.address.streetAddress(),
+    phone: faker.phone.phoneNumberFormat(3),
+    gender: 'male',
+    school: 'skyline high school',
   };
 
   const mockMentorProfile = {
@@ -16,6 +20,9 @@ const createProfileMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'mentor',
+    address: faker.address.streetAddress(),
+    phone: faker.phone.phoneNumberFormat(3),
+    gender: 'female',
   };
 
   const mockCoachProfile = {
@@ -23,6 +30,9 @@ const createProfileMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'coach',
+    address: faker.address.streetAddress(),
+    phone: faker.phone.phoneNumberFormat(3),
+    gender: 'male',
   };
 
   const mockAdminProfile = {
@@ -30,7 +40,18 @@ const createProfileMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'admin',
+    address: faker.address.streetAddress(),
+    phone: faker.phone.phoneNumberFormat(3),
+    gender: 'female',
   };
+
+  const mockTeacherProfile = {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    role: 'teacher',
+  };
+
 
   const newProfile = new Profile(mockProfile);
   const profile = await newProfile.save();
@@ -38,6 +59,11 @@ const createProfileMockPromise = async () => {
   const mentor = await newMentor.save();
   const coach = await new Profile(mockCoachProfile).save();
   const admin = await new Profile(mockAdminProfile).save();
+
+  const teacher = await new Profile(mockTeacherProfile).save();
+  mockData.teacherProfile = teacher;
+  mockData.teacherToken = await teacher.createTokenPromise();
+
 
   mockData.mentorProfile = mentor;
   mockData.mentorToken = await mentor.createTokenPromise();

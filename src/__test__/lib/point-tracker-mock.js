@@ -1,6 +1,6 @@
 import faker from 'faker';
 import PointTracker from '../../model/point-tracker';
-import Profile from '../../model/profile';
+
 
 import { createProfileMockPromise, removeAllResources as removeProfileResources } from './profile-mock';
 
@@ -8,20 +8,32 @@ const createPointTrackerMockPromise = async () => {
   const mockData = {};
 
   const profileData = await createProfileMockPromise();
-  profileData.profile.role = 'student';
-  await Profile.findByIdAndUpdate(profileData.profile);
-  mockData.account = profileData.account;
-  mockData.profile = profileData.profile;
-  mockData.token = profileData.token;
-  mockData.originalRequest = profileData.originalRequest;
 
+  // profileData.profile.role = 'student';
+  mockData.profileData = profileData;
+
+
+  const getTeacher = async () => {
+    const mock = await createProfileMockPromise();
+    return mock.teacherProfile._id.toString();
+  };
+  const teachers = [];
+  teachers.push(await getTeacher());
+  teachers.push(await getTeacher());
+  teachers.push(await getTeacher());
+  teachers.push(await getTeacher());
+  teachers.push(await getTeacher());
+  teachers.push(await getTeacher());
+  teachers.push(await getTeacher());
+ 
+ 
   const mockPointTracker = {
-    date: new Date().now(),
-    studentId: mockData.profile._id,
+    date: new Date().toISOString(),
+    student: mockData.profileData.studentProfile._id,
     subjects: [
       {
         subjectName: faker.name.firstName(),
-        teacher: profileData.coachProfile._id,
+        teacher: teachers[0],
         scoring: {
           excusedDays: 1,
           stamps: 2,
@@ -32,7 +44,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: profileData.coachProfile._id,
+        teacher: teachers[1],
         scoring: {
           excusedDays: 3,
           stamps: 4,
@@ -43,7 +55,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: profileData.coachProfile._id,
+        teacher: teachers[2],
         scoring: {
           excusedDays: 1,
           stamps: 2,
@@ -54,7 +66,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: profileData.coachProfile._id,
+        teacher: teachers[3],
         scoring: {
           excusedDays: 3,
           stamps: 4,
@@ -65,7 +77,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: profileData.coachProfile._id,
+        teacher: teachers[4],
         scoring: {
           excusedDays: 3,
           stamps: 4,
@@ -76,7 +88,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: profileData.coachProfile._id,
+        teacher: teachers[5],
         scoring: {
           excusedDays: 1,
           stamps: 2,
@@ -87,7 +99,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: profileData.coachProfile._id,
+        teacher: teachers[6],
         scoring: {
           excusedDays: 3,
           stamps: 4,
@@ -121,6 +133,7 @@ const createPointTrackerMockPromise = async () => {
   };
 
   const pointTracker = await new PointTracker(mockPointTracker).save();
+  mockData.mockProfiles = profileData;
   mockData.pointTracker = pointTracker;
   return mockData;
 };

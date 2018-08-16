@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import autopopulate from 'mongoose-autopopulate';
 import Profile from './profile';
 
 const pointTrackerSchema = mongoose.Schema({
@@ -6,19 +7,21 @@ const pointTrackerSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
-  studentId: {
-    type: mongoose.Schema.Types.ObjectId,
+  student: { 
+    type: mongoose.Schema.Types.ObjectId, 
     ref: 'Profile',
     required: true,
+    autopopulate: true,
   },
   subjects: [{
     subjectName: {
       type: String,
       required: true,
     },
-    teacher: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Profile',
+    teacher: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Profile', 
+      autopopulate: true,
     },
     scoring: {
       excusedDays: Number,
@@ -52,18 +55,25 @@ const pointTrackerSchema = mongoose.Schema({
     additionalComments: String,
   },
 });
+pointTrackerSchema.plugin(autopopulate);
 
-pointTrackerSchema.post('save', (tracker) => {
-  Profile.findById(tracker.studentId)
-    .then((profile) => {
-      if (!profile.studentData.PointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
-        profile.studentData.PointTrackers.push(tracker._id);
-      }
-      return profile.save();
-    })
-    .catch((err) => {
-      throw err;
-    });
+// pointTrackerSchema.post('save', (tracker) => {
+//   Profile.findById(tracker.studentId)
+//     .then((profile) => {
+//       if (!profile.studentData.pointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
+//         profile.studentData.pointTrackers.push(tracker._id);
+//       }
+//       return profile.save();
+//     })
+//     .catch((err) => {
+//       throw err;
+//     });
+// });
+
+pointTrackerSchema.post('save', async (tracker) => {
+  const student = await Profile.findById(tracker.student);
+  student.studentData.lastPointTracker = tracker._id;
+  return student.save();
 });
 
 const skipInit = process.env.NODE_ENV === 'development';
@@ -117,3 +127,4 @@ const mockPointTrackerData = {
   },
 };
 */
+// ..
