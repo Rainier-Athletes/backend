@@ -16,7 +16,7 @@ const createPointTrackerMockPromise = async () => {
   mockData.originalRequest = profileData.originalRequest;
 
   const mockPointTracker = {
-    date: new Date().now(),
+    date: Date.now(),
     studentId: mockData.profile._id,
     subjects: [
       {
@@ -32,7 +32,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: profileData.coachProfile._id,
+        teacher: profileData.coachProfile._id,        
         scoring: {
           excusedDays: 3,
           stamps: 4,
