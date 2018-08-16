@@ -38,6 +38,7 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
 
 pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
   logger.log(logger.INFO, `.post /api/pointstracker req.body: ${request.body}`);
+  // console.log(request.body);
   PointTracker.init()
     .then(() => {
       return new PointTracker(request.body).save();
