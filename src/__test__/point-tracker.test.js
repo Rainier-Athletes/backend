@@ -11,13 +11,11 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 describe('TESTING POINT-TRACKER MODEL', () => {
   let mockData;
   let token;
-  let account;
   beforeEach(async () => {
     await startServer();
     await removeAllResources();
     try {
       mockData = await createPointTrackerMockPromise();
-      account = mockData.account; /*eslint-disable-line*/
       token = mockData.token; /*eslint-disable-line*/
     } catch (err) {
       return logger.log(logger.ERROR, `unexpected error in beforeEach: ${err}`);
@@ -38,17 +36,21 @@ describe('TESTING POINT-TRACKER MODEL', () => {
       }
     });
 
-    test('/api/v1/pointstracker 200 POST SUCCESS', async () => {
+    test.only('/api/v1/pointstracker 200 POST SUCCESS', async () => {
       // const mockPointTracker = await createPointTrackerMockPromise();
       try {
         // console.log(mockPointTracker.pointTracker);
         const pointTracker = JSON.parse(JSON.stringify(mockData.pointTracker));
+        // console.log(pointTracker);
         delete pointTracker._id;
         const response = await superagent.post(`${apiUrl}/pointstracker`)
           .authBearer(token)
           .send(pointTracker);
         expect(response.status).toEqual(200);
-        expect(response.body.studentId.toString()).toEqual(pointTracker.studentId);
+        console.log('###################', response.body);
+        console.log('@@@@@@@@@@@@@@@', pointTracker);
+
+        expect(response.body.student.toString()).toEqual(pointTracker.student.toString());
       } catch (err) {
         expect(err.message).toEqual('Unexpected error while testing point tracker POST');
       }
@@ -88,7 +90,7 @@ describe('TESTING POINT-TRACKER MODEL', () => {
         expect(response.status).toEqual(200);
         expect(response.body.token).toBeTruthy();
         expect(response.body.studentId).toBeDefined();
-        expect(response.body.subjects).toEqual(mockPointTracker.subjects);
+        expect(response.body.subjects).toEqual(mockData.subjects);
       } catch (err) {
         expect(err.status).toEqual('Unexpected error response from valid get request');
       }
@@ -121,5 +123,5 @@ describe('TESTING POINT-TRACKER MODEL', () => {
   //     }
   //   });
   // });
-
-
+  });
+});

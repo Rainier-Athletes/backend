@@ -8,20 +8,19 @@ const createPointTrackerMockPromise = async () => {
   const mockData = {};
 
   const profileData = await createProfileMockPromise();
-  profileData.profile.role = 'student';
+  // profileData.profile.role = 'student';
   await Profile.findByIdAndUpdate(profileData.profile);
-  mockData.account = profileData.account;
   mockData.profile = profileData.profile;
   mockData.token = profileData.token;
   mockData.originalRequest = profileData.originalRequest;
 
   const mockPointTracker = {
     date: Date.now(),
-    studentId: mockData.profile._id,
+    student: mockData.profile._id,
     subjects: [
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 1,
           stamps: 2,
@@ -32,7 +31,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 3,
           stamps: 4,
@@ -43,7 +42,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 1,
           stamps: 2,
@@ -54,7 +53,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 3,
           stamps: 4,
@@ -65,7 +64,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 3,
           stamps: 4,
@@ -76,7 +75,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 1,
           stamps: 2,
@@ -87,7 +86,7 @@ const createPointTrackerMockPromise = async () => {
       },
       {
         subjectName: faker.name.firstName(),
-        teacher: mockData.profile.studentData.coaches._id,
+        teacher: profileData.coachProfile._id,
         scoring: {
           excusedDays: 3,
           stamps: 4,
