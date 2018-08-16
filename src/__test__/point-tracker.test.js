@@ -1,5 +1,6 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
+import faker from 'faker';
 import { createPointTrackerMockPromise, removeAllResources } from './lib/point-tracker-mock';
 import PointTracker from '../model/point-tracker';
 import { startServer } from '../lib/server';
@@ -46,6 +47,47 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       }
       expect(response.status).toEqual(200);
       expect(response.body[0].student.firstName).toEqual(mockData.profileData.studentProfile.firstName);
+    });
+
+    test('GET 404 bad request', async () => {
+      const modelMap = {
+        id: 123456,
+        studentId: 'helloBob',
+        date: Date.now(),
+      };
+      try {
+        const response = await superagent.get(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.mockProfiles.adminToken)
+          .query('id=1234')
+          .query('studentId=hello')
+          .query(`date=${modelMap.date}`);
+        expect(response.status).toEqual('nothing to pass, should FAIL');
+      } catch (err) {
+        expect(err.status).toEqual(404);
+      }
+    });
+
+    test('GET 401 no access, not logged in', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.mockProfiles.whateverToken);
+        expect(response).toEqual('GET whitelist should have failed with 401');
+      } catch (err) {
+        expect(err.status).toEqual(401);
+      }
+    });
+
+    test('GET 400 NOT FOUND', async () => {
+      let response; 
+      try {
+        response = await superagent.get(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.mockProfiles.adminToken)
+          .query({});
+        expect(response.status).toEqual('THIS SHOULD FAIL');
+      } catch (err) {
+        expect(err.status).toEqual(400);
+      }
     });
   });
 
