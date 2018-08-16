@@ -88,6 +88,36 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
     expect(putResponse.body.subjects[1].subjectName).toEqual('New Subject Name');
   });
 
+  test('Put 404 for point tracker not found', async () => {
+    try {
+      await superagent.put(`${apiUrl}/pointtracker`)
+        .authBearer(mockData.token)
+        .send({});
+    } catch (err) {
+      expect(err.status).toEqual(404);
+    }
+  });
+
+
+  test('PUT 401 for unauthorized request', async () => {
+    try {
+      await superagent.put(`${apiUrl}/pointstracker`)
+        .authBearer(mockData.Token)
+        .query({ id: mockData.pointTracker._id.toString() });
+    } catch (err) {
+      expect(err.status).toEqual(401);
+    }
+  });
+  test('PUT 400 bad request', async () => { 
+    let response;
+    try {
+      response = await superagent.put(`${apiUrl}/pointstracker`);
+      expect(response).toEqual('Failed, 400');
+    } catch (err) {
+      expect(err.status).toEqual(400);
+    }
+  });
+
   describe('Testing point-tracker DELETE route', () => {
     test('DELETE 200 good request', async () => {
       let response;
