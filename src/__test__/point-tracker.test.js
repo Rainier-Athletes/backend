@@ -45,7 +45,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
         expect(err.status).toEqual('Unexpected error on good get from point-tracker');
       }
       expect(response.status).toEqual(200);
-      expect(response.body[0].student.firstName).toEqual(mockData.profileData.studentProfile.firstName);
+      expect(response.body.student.firstName).toEqual(mockData.profileData.studentProfile.firstName);
     });
   });
 
@@ -75,12 +75,12 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       console.error(err);
     }
     expect(response.body).toBeTruthy();
-    response.body[0].subjects[1].subjectName = 'New Subject Name';
+    response.body.subjects[1].subjectName = 'New Subject Name';
     let putResponse;
     try {
       putResponse = await superagent.put(`${apiUrl}/pointstracker`)
         .authBearer(mockData.profileData.adminToken)
-        .send(response.body[0]);
+        .send(response.body);
     } catch (err) {
       console.error(err);
     }
