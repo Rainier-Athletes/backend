@@ -8,25 +8,42 @@ const pointTrackerRouter = new Router();
 
 pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
   if (!request.profile) return next(new HttpErrors(401, 'GET POINTS ROUTER: not logged in', { expose: false }));
-  const queryType = Object.keys(request.query)[0];  
-  if (!['id', 'studentId', 'date'].includes(queryType)) return next(new HttpErrors(400, 'GET POINTS TRACKER: bad request', { expose: false }));
 
-  const modelMap = {
-    id: '_id',
-    studentId: 'studentId',
-    date: 'date',
-  };
-
-  PointTracker.init()
-    .then(() => {
-      PointTracker.find({ [modelMap[queryType]]: request.query[queryType] })
-        .then((scores) => {
-          if (!scores) return next(new HttpErrors(404, `GET POINTS ROUTER: ${request.query} not found.`));
-          return response.json(scores);
-        })
-        .catch(next);
-      return undefined;
-    });
+  if (request.query.id) {
+    PointTracker.init()
+      .then(() => {
+        PointTracker.findById(request.query.id)
+          .then((pointTracker) => {
+            return response.json(pointTracker);
+          })
+          .catch(next);
+      });
+    return undefined;
+  }
+  
+  if (Object.keys(request.query).length > 0) {
+    PointTracker.init()
+      .then(() => {
+        return PointTracker.find(request.query);
+      })
+      .then((queryReturn) => {
+        return response.json(queryReturn);
+      })
+      .catch(next);
+    return undefined;
+  }
+  
+  if (request.PointTracker.role === 'admin') {
+    PointTracker.init()
+      .then(() => {
+        return PointTracker.find();
+      })
+      .then((pointTracker) => {
+        return response.json(pointTracker);
+      })
+      .catch(next);
+    return undefined;
+  }
   return undefined;
 });
 
