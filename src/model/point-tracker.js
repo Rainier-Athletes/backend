@@ -1,43 +1,28 @@
 import mongoose from 'mongoose';
 import autopopulate from 'mongoose-autopopulate';
 import Profile from './profile';
-import logger from '../lib/logger';
 
 const pointTrackerSchema = mongoose.Schema({
   date: {
     type: Date,
     required: true,
   },
-
-//   studentId: {
-//     //  This is for mongoose autopopulation, should translate to the profiletId from profile.js
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: 'Profile',
-//     required: true,
-//   },
-  //Tracy and Chris changes
-
-  student: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile', autopopulate: true },
-  // required: true,
-
+  student: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Profile',
+    required: true,
+    autopopulate: true,
+  },
   subjects: [{
     subjectName: {
       type: String,
       required: true,
     },
-
-//     teacher: {
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: 'Profile',
-//       required: true,
-//     },
-    //Tracy and Chris changes
-       
-
-    teacher: 
-       { type: mongoose.Schema.Types.ObjectId, ref: 'Profile', autopopulate: true },
-    
-
+    teacher: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Profile', 
+      autopopulate: true,
+    },
     scoring: {
       excusedDays: Number,
       stamps: Number,
@@ -85,19 +70,10 @@ pointTrackerSchema.plugin(autopopulate);
 //     });
 // });
 
-pointTrackerSchema.post('save', (tracker) => {
-  Profile.findOne({ profileId: `${tracker.student}` })
-    .catch((err) => {
-      logger.log(logger.ERROR, `pointTracker post save error: ${err}`);
-    });
-});
-
-
-pointTrackerSchema.post('save', (tracker) => {
-  Profile.findOne({ teachers: `${tracker.teacher}` })
-    .catch((err) => {
-      throw err;
-    });
+pointTrackerSchema.post('save', async (tracker) => {
+  const student = await Profile.findById(tracker.student);
+  student.studentData.lastPointTracker = tracker._id;
+  return student.save();
 });
 
 const skipInit = process.env.NODE_ENV === 'development';

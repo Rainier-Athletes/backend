@@ -24,10 +24,6 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
       PointTracker.find({ [modelMap[queryType]]: request.query[queryType] })
         .then((scores) => {
           if (!scores) return next(new HttpErrors(404, `GET POINTS ROUTER: ${request.query} not found.`));
-          logger.log(logger.info, `GET POINTS ROUTER returning\n${JSON.stringify(scores, null, 2)}`);
-          return scores.populate('teacher');
-        })
-        .then((scores) => {
           return response.json(scores);
         })
         .catch(next);
