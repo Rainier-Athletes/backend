@@ -116,7 +116,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
         expect(response.status).toEqual(200);
         console.log(response.body);
         console.log(Object.keys(response.body[0]).student);
-        expect(response.body.student).toEqual(mockData.profileData.profile);
+        expect(response.body.student.firstname).toEqual(mockData.profileData.profile);
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
