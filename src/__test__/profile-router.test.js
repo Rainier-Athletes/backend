@@ -111,7 +111,7 @@ describe('TESTING ROUTER PROFILE', () => {
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
-      expect(response.body).toHaveLength(4);
+      expect(response.body).toHaveLength(5);
     });
 
     test('GET 200 on successful admin search of mentor role', async () => {
@@ -167,7 +167,7 @@ describe('TESTING ROUTER PROFILE', () => {
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
-      expect(response.body).toHaveLength(4);
+      expect(response.body).toHaveLength(5);
     });
 
     test('GET 200 on successful admin search for male profiles', async () => {
