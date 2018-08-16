@@ -65,7 +65,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       delete newPT._id;
       let response;
       try {
-        response = await superagent.post(`${apiUrl}/AndrewTodoPeacockCodedThisParticularTestAndShallLiveForeverThroughThisLineOfCode`)
+        response = await superagent.post(`${apiUrl}/AndrewTodoPeacockMadeThisParticularTestAndShallLiveForeverThroughThisLineOfCode`)
           .authBearer(mockData.mockProfiles.mentorToken)
           .send(newPT);
         expect(response.status).toEqual('this isnt getting hit tho');
@@ -108,7 +108,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       expect(response.body.student.firstName).toEqual(mockData.profileData.studentProfile.firstName);
     });
 
-    test('GET 404 bad request', async () => {
+    test('GET 404 not found', async () => {
       const modelMap = {
         id: 123456,
         studentId: 'helloBob',
@@ -137,7 +137,11 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       }
     });
 
+<<<<<<< HEAD
+    test('GET 400 BAD REQUEST', async () => {
+=======
     test('GET 200 retrieve all trackers as admin', async () => {
+>>>>>>> 99664358a0e82fd0aec96ed0670b208f58041b68
       let response; 
       try {
         response = await superagent.get(`${apiUrl}/pointstracker`)

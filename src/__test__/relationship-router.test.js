@@ -27,7 +27,7 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
     return undefined;
   });
 
-  describe.skip('GET ATTACH ROUTE TESTING', () => {
+  describe('GET ATTACH ROUTE TESTING', () => {
     test('GET 200 on successfull attach student to mentor by mentor', async () => {
       let response;
       const queryParams = {
@@ -76,12 +76,12 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         .authBearer(mockData.adminToken)
         .query({ id: mockData.coachProfile._id.toString() });
       expect(coach.status).toEqual(200);
-      expect(coach.body.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
+      expect(coach.body.students.map(v => v._id.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
       const student = await superagent.get(`${apiUrl}/profiles`)
         .authBearer(mockData.adminToken)
         .query({ id: mockData.studentProfile._id.toString() });
       expect(student.status).toEqual(200);
-      expect(student.body.studentData.coaches.map(v => v.toString()).includes(mockData.coachProfile._id.toString())).toBeTruthy();
+      expect(student.body.studentData.coaches.map(v => v._id.toString()).includes(mockData.coachProfile._id.toString())).toBeTruthy();
     });
     
     test('GET 200 on successfull attach student to teacher by mentor', async () => {
@@ -107,12 +107,12 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         .authBearer(mockData.adminToken)
         .query({ id: mockData.teacherProfile._id.toString() });
       expect(teacher.status).toEqual(200);
-      expect(teacher.body.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
+      expect(teacher.body.students.map(v => v._id.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
       const student = await superagent.get(`${apiUrl}/profiles`)
         .authBearer(mockData.adminToken)
         .query({ id: mockData.studentProfile._id.toString() });
       expect(student.status).toEqual(200);
-      expect(student.body.studentData.teachers.map(v => v.toString()).includes(mockData.teacherProfile._id.toString())).toBeTruthy();
+      expect(student.body.studentData.teachers.map(v => v._id.toString()).includes(mockData.teacherProfile._id.toString())).toBeTruthy();
     });
 
     test('GET 200 on successfull attach student to family by admin', async () => {
@@ -138,12 +138,12 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         .authBearer(mockData.adminToken)
         .query({ id: mockData.familyProfile._id.toString() });
       expect(family.status).toEqual(200);
-      expect(family.body.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
+      expect(family.body.students.map(v => v._id.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
       const student = await superagent.get(`${apiUrl}/profiles`)
         .authBearer(mockData.adminToken)
         .query({ id: mockData.studentProfile._id.toString() });
       expect(student.status).toEqual(200);
-      expect(student.body.studentData.family.map(v => v.toString()).includes(mockData.familyProfile._id.toString())).toBeTruthy();
+      expect(student.body.studentData.family.map(v => v._id.toString()).includes(mockData.familyProfile._id.toString())).toBeTruthy();
     });
 
     test('GET 200 on successfull attach student to coach by admin', async () => {
@@ -166,12 +166,12 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         .authBearer(mockData.adminToken)
         .query({ id: mockData.coachProfile._id.toString() });
       expect(coach.status).toEqual(200);
-      expect(coach.body.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
+      expect(coach.body.students.map(v => v._id.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
       const student = await superagent.get(`${apiUrl}/profiles`)
         .authBearer(mockData.adminToken)
         .query({ id: mockData.studentProfile._id.toString() });
       expect(student.status).toEqual(200);
-      expect(student.body.studentData.coaches.map(v => v.toString()).includes(mockData.coachProfile._id.toString())).toBeTruthy();
+      expect(student.body.studentData.coaches.map(v => v._id.toString()).includes(mockData.coachProfile._id.toString())).toBeTruthy();
     });
 
     test('GET 401 on attempt to attach student to coach by other than mentor or admin', async () => {
