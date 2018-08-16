@@ -48,11 +48,11 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body.role).toEqual(mockProfile.role);
     });
 
-    test('POST 400 for trying to post a profile with a bad token', async () => {
+    test('POST 401 for trying to post a profile with a bad token', async () => {
       try {
         const response = await superagent.post(`${apiUrl}/profiles`)
           .set('Authorization', 'Bearer THISABADTOKEN');
-        expect(response).toEqual('POST 400 in try block. Shouldn\'t be executed.');
+        expect(response).toEqual('POST 401 in try block. Shouldn\'t be executed.');
       } catch (err) {
         expect(err.status).toEqual(401);
       }

@@ -1,5 +1,6 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
+import faker from 'faker';
 import { createPointTrackerMockPromise, removeAllResources } from './lib/point-tracker-mock';
 import PointTracker from '../model/point-tracker';
 import { startServer } from '../lib/server';
@@ -32,6 +33,68 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       expect(response.status).toEqual(200);
       expect(response.body.student.toString()).toEqual(mockData.profileData.studentProfile._id.toString());
     });
+
+    test('POST 400 BAD REQUESSSST', async () => {
+      const newPT = JSON.parse(JSON.stringify(mockData.pointTracker));
+      delete newPT._id;
+      delete newPT.student;
+      let response;
+      try {
+        response = await superagent.post(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.mockProfiles.mentorToken)
+          .send(newPT);
+        expect(response.status).toEqual('this shouldnt get hit mateys');
+      } catch (err) {
+        expect(err.status).toEqual(400);
+      }
+    });
+
+    test('POST 401 BAD TOKEN', async () => {
+      const newPT = JSON.parse(JSON.stringify(mockData.pointTracker));
+      delete newPT._id;
+      try {
+        const response = await superagent.post(`${apiUrl}/pointstracker`) /*eslint-disable-line*/
+          .authBearer(mockData.mockProfiles.studentToken)
+          .send(newPT);
+      } catch (err) {
+        expect(err.status).toEqual(401);
+      }
+    });
+
+    test('POST 404 BAD ROUTERINO', async () => {
+      const newPT = JSON.parse(JSON.stringify(mockData.pointTracker));
+      delete newPT._id;
+      let response;
+      try {
+        response = await superagent.post(`${apiUrl}/AndrewTodoPeacockCodedThisParticularTestAndShallLiveForeverThroughThisLineOfCode`)
+          .authBearer(mockData.mockProfiles.mentorToken)
+          .send(newPT);
+        expect(response.status).toEqual('this isnt getting hit tho');
+      } catch (err) {
+        expect(err.status).toEqual(404);
+      }
+    });
+
+    test('POST 409 conflict', async () => {
+      const newPT = JSON.parse(JSON.stringify(mockData.pointTracker));
+      delete newPT._id;
+      let response;
+      let dupeResponse; /*eslint-disable-line*/
+      try {
+        response = await superagent.post(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.mockProfiles.mentorToken)
+          .send(newPT);
+        dupeResponse = await superagent.post(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.mockProfiles.mentorToken)
+          .send(newPT);
+      } catch (err) {
+        expect(err.status).toEqual(409);
+      }
+      expect(response.status).toEqual(200);
+      expect(response.body.student.toString()).toEqual(mockData.profileData.studentProfile._id.toString());
+    });
+    
+
   });
 
   describe('Testing point-tracker GET route', () => {
@@ -46,6 +109,47 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       }
       expect(response.status).toEqual(200);
       expect(response.body.student.firstName).toEqual(mockData.profileData.studentProfile.firstName);
+    });
+
+    test('GET 404 bad request', async () => {
+      const modelMap = {
+        id: 123456,
+        studentId: 'helloBob',
+        date: Date.now(),
+      };
+      try {
+        const response = await superagent.get(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.mockProfiles.adminToken)
+          .query('id=1234')
+          .query('studentId=hello')
+          .query(`date=${modelMap.date}`);
+        expect(response.status).toEqual('nothing to pass, should FAIL');
+      } catch (err) {
+        expect(err.status).toEqual(404);
+      }
+    });
+
+    test('GET 401 no access, not logged in', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/pointstracker`)
+          .authBearer();
+        expect(response).toEqual('GET whitelist should have failed with 401');
+      } catch (err) {
+        expect(err.status).toEqual(401);
+      }
+    });
+
+    test('GET 400 NOT FOUND', async () => {
+      let response; 
+      try {
+        response = await superagent.get(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.mockProfiles.adminToken)
+          .query({});
+        expect(response.status).toEqual('THIS SHOULD FAIL');
+      } catch (err) {
+        expect(err.status).toEqual(400);
+      }
     });
   });
 
