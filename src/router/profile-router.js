@@ -119,7 +119,7 @@ profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, respons
       return PointTracker.remove({ studentId: request.profile._id });
     })
     .then(() => {
-      return response.sendStatus(200);
+      return response.json(request.query.id);
     })
     .catch(() => {
       logger.log(logger.ERROR, 'DELETE PROFILE ROUTER: non-fatal errors deleting child resources');
