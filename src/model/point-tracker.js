@@ -11,7 +11,7 @@ const pointTrackerSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Profile',
     required: true,
-    autopopulate: true,
+    autopopulate: { maxDepth: 1 },
   },
   subjects: [{
     subjectName: {
@@ -56,19 +56,6 @@ const pointTrackerSchema = mongoose.Schema({
   },
 });
 pointTrackerSchema.plugin(autopopulate);
-
-// pointTrackerSchema.post('save', (tracker) => {
-//   Profile.findById(tracker.studentId)
-//     .then((profile) => {
-//       if (!profile.studentData.pointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
-//         profile.studentData.pointTrackers.push(tracker._id);
-//       }
-//       return profile.save();
-//     })
-//     .catch((err) => {
-//       throw err;
-//     });
-// });
 
 pointTrackerSchema.post('save', async (tracker) => {
   const student = await Profile.findById(tracker.student);
