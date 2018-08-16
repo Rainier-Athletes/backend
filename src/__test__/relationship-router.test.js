@@ -308,8 +308,9 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
       await mockData.mentorProfile.save();
       const student = await Profile.findById(mockData.studentProfile._id.toString());
       const mentor = await Profile.findById(mockData.mentorProfile._id.toString());
-      expect(student.studentData.mentor.toString()).toEqual(mockData.mentorProfile._id.toString());
-      expect(mentor.students[0].toString()).toEqual(mockData.studentProfile._id.toString());
+      console.log(student.studentData);
+      expect(student.studentData.mentor._id).toEqual(mockData.mentorProfile._id);
+      expect(mentor.students[0]._id).toEqual(mockData.studentProfile._id);
       // if we made it here we're ready to test detach route
       let response;
       const queryParams = {
@@ -335,8 +336,8 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
       await mockData.mentorProfile.save();
       const student = await Profile.findById(mockData.studentProfile._id.toString());
       const mentor = await Profile.findById(mockData.mentorProfile._id.toString());
-      expect(student.studentData.mentor.toString()).toEqual(mockData.mentorProfile._id.toString());
-      expect(mentor.students[0].toString()).toEqual(mockData.studentProfile._id.toString());
+      expect(student.studentData.mentor._id).toEqual(mockData.mentorProfile._id);
+      expect(mentor.students[0]._id.toString()).toEqual(mockData.studentProfile._id.toString());
       // if we made it here we're ready to test detach route
       let response;
       const queryParams = {
