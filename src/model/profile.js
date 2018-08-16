@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import autopopulate from 'mongoose-autopopulate';
 import jsonWebToken from 'jsonwebtoken';
 import logger from '../lib/logger';
 
@@ -38,22 +39,27 @@ const profileSchema = mongoose.Schema({
     lastPointTracker: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'PointTracker',
+      autopopulate: true,
     },
     coaches: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Profile',
+      autopopulate: true,
     }],
     mentor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Profile',
+      autopopulate: true,
     },
     teachers: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Profile',
+      autopopulate: true,
     }],
     family: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Profile',
+      autopopulate: true,
     }],
   },
   gender: String,
@@ -61,8 +67,11 @@ const profileSchema = mongoose.Schema({
   students: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Profile',
+    autopopulate: { maxDepth: 1 },
   }],  
 });
+
+profileSchema.plugin(autopopulate);
 
 profileSchema.methods.createTokenPromise = async function createTokenPromise(googleTokenResponse = {}) {
   try {
