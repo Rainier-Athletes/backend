@@ -27,7 +27,7 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
     return undefined;
   });
 
-  describe('GET ATTACH ROUTE TESTING', () => {
+  describe.skip('GET ATTACH ROUTE TESTING', () => {
     test('GET 200 on successfull attach student to mentor by mentor', async () => {
       let response;
       const queryParams = {
@@ -281,8 +281,8 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
       await mockData.coachProfile.save();
       const student = await Profile.findById(mockData.studentProfile._id.toString());
       const coach = await Profile.findById(mockData.coachProfile._id.toString());
-      expect(student.studentData.coaches[0].toString()).toEqual(mockData.coachProfile._id.toString());
-      expect(coach.students[0].toString()).toEqual(mockData.studentProfile._id.toString());
+      expect(student.studentData.coaches[0]._id).toEqual(mockData.coachProfile._id);
+      expect(coach.students[0]._id).toEqual(mockData.studentProfile._id);
       // if we made it here we're ready to test detach route
       let response;
       const queryParams = {
