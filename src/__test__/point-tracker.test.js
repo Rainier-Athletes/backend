@@ -133,7 +133,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       let response;
       try {
         response = await superagent.get(`${apiUrl}/pointstracker`)
-          .authBearer(mockData.mockProfiles.whateverToken);
+          .authBearer();
         expect(response).toEqual('GET whitelist should have failed with 401');
       } catch (err) {
         expect(err.status).toEqual(401);
