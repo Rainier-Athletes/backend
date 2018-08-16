@@ -10,20 +10,33 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 beforeAll(async () => { await startServer(); });
 let mockdata;
 
-beforeEach(async () => {
-  await removeAllResources();
-  mockdata = await createPointTrackerMockPromise();
-});
 
-describe('Testing point tracker post routes', () => {
-  test.only('Testing a posted point tracker', async () => {
-    const newPT = JSON.parse(JSON.stringify(mockdata.pointTracker));
-    delete newPT._id;
-    let response;
+// beforeEach(async () => {
+//   await removeAllResources();
+//   mockdata = await createPointTrackerMockPromise();
+// });
+
+// describe('Testing point tracker post routes', () => {
+//   test.only('Testing a posted point tracker', async () => {
+//     const newPT = JSON.parse(JSON.stringify(mockdata.pointTracker));
+//     delete newPT._id;
+//     let response;
+//     try {
+//       response = await superagent.post(`${apiUrl}/pointstracker`)
+//         .authBearer(mockdata.mockProfiles.mentorToken)
+//         .send(newPT);
+//Tracy and Chris changes
+
+describe('TESTING POINT-TRACKER MODEL', () => {
+  let mockData;
+  let token;
+  beforeEach(async () => {
+    await startServer();
+    await removeAllResources();
     try {
-      response = await superagent.post(`${apiUrl}/pointstracker`)
-        .authBearer(mockdata.mockProfiles.mentorToken)
-        .send(newPT);
+      mockData = await createPointTrackerMockPromise();
+      token = mockData.token; /*eslint-disable-line*/
+
     } catch (err) {
       expect(err).toEqual('unexpected error on point tracker post');
     } 
@@ -42,6 +55,7 @@ describe('Testing point tracker post routes', () => {
       }
     });
 
+
   //   test('/api/v1/pointstracker 200 POST SUCCESS', async () => {
   //     // const mockPointTracker = await createPointTrackerMockPromise();
   //     try {
@@ -57,6 +71,27 @@ describe('Testing point tracker post routes', () => {
   //       expect(err.message).toEqual('Unexpected error while testing point tracker POST');
   //     }
   //   });
+
+    test.only('/api/v1/pointstracker 200 POST SUCCESS', async () => {
+      // const mockPointTracker = await createPointTrackerMockPromise();
+      try {
+        // console.log(mockPointTracker.pointTracker);
+        const pointTracker = JSON.parse(JSON.stringify(mockData.pointTracker));
+        // console.log(pointTracker);
+        delete pointTracker._id;
+        const response = await superagent.post(`${apiUrl}/pointstracker`)
+          .authBearer(token)
+          .send(pointTracker);
+        expect(response.status).toEqual(200);
+        console.log('###################', response.body);
+        console.log('@@@@@@@@@@@@@@@', pointTracker);
+
+        expect(response.body.student.toString()).toEqual(pointTracker.student.toString());
+      } catch (err) {
+        expect(err.message).toEqual('Unexpected error while testing point tracker POST');
+      }
+    });
+
 
   //   test('api/v1/pointstracker 409 DUPLICATE POST', async () => {
   //     // const firstPointTracker = mockData.pointTracker;
@@ -85,6 +120,7 @@ describe('Testing point tracker post routes', () => {
   //   });
   // });
 
+
   // describe('Points Tracker information retrieval (GET requests)', () => {
   //   test('GET 200 to api/v1/pointstracker for successful retrieval of a points tracking sheet', async () => {
   //     try {
@@ -98,6 +134,20 @@ describe('Testing point tracker post routes', () => {
   //     }
   //   });
   // });
+
+  describe('Points Tracker information retrieval (GET requests)', () => {
+    test('GET 200 to api/v1/pointstracker for successful retrieval of a points tracking sheet', async () => {
+      try {
+        const response = await superagent.get(`${apiUrl}/pointstracker`);
+        expect(response.status).toEqual(200);
+        expect(response.body.token).toBeTruthy();
+        expect(response.body.studentId).toBeDefined();
+        expect(response.body.subjects).toEqual(mockData.subjects);
+      } catch (err) {
+        expect(err.status).toEqual('Unexpected error response from valid get request');
+      }
+    });
+
 
   //   test('GET 404 for pointstracker not found', async () => {
   //     const mockData = await createPointTrackerMockPromise();
@@ -125,5 +175,9 @@ describe('Testing point tracker post routes', () => {
   //       expect(err.status).toEqual(401);
   //     }
   //   });
+
+
+  // });
+
   });
 });

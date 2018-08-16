@@ -199,11 +199,21 @@ describe('TESTING ROUTER PROFILE', () => {
       try {
         response = await superagent.get(`${apiUrl}/profiles?gender=female&role=mentor`)
           .authBearer(mockData.adminToken);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
       expect(response.body).toHaveLength(1);
+    });
+
+    test('GET 200 on successful admin search for all active males', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles?active=true&gender=male`)
+          .authBearer(mockData.adminToken);
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(2);
     });
 
     test('GET 200 on successfull retrieval of profile by id', async () => {
