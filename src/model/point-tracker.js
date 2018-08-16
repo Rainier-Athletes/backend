@@ -8,19 +8,16 @@ const pointTrackerSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
-  studentId: {
-    //  This is for mongoose autopopulation, should translate to the profiletId from profile.js
-    studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile', autopopulate: true },
-    required: true,
-  },
+  student: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile', autopopulate: true },
+  // required: true,
   subjects: [{
     subjectName: {
       type: String,
       required: true,
     },
-    teacher: {
-      lead: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile', autopopulate: true },
-    },
+    teacher: 
+       { type: mongoose.Schema.Types.ObjectId, ref: 'Profile', autopopulate: true },
+    
     scoring: {
       excusedDays: Number,
       stamps: Number,
@@ -55,14 +52,31 @@ const pointTrackerSchema = mongoose.Schema({
 });
 pointTrackerSchema.plugin(autopopulate);
 
+// pointTrackerSchema.post('save', (tracker) => {
+//   Profile.findById(tracker.studentId)
+//     .then((profile) => {
+//       if (!profile.studentData.pointTrackers.map(v => v.toString()).includes(tracker._id.toString())) {
+//         profile.studentData.pointTrackers.push(tracker._id);
+//       }
+//       return profile.save();
+//     })
+//     .catch((err) => {
+//       throw err;
+//     });
+// });
+
 pointTrackerSchema.post('save', (tracker) => {
-  Profile.findById(tracker.studentId)
-    .then((student) => {
-      student.studentData.lastPointTracker = tracker._id;
-      return student.save();
-    })
+  Profile.findOne({ profileId: `${tracker.student}` })
     .catch((err) => {
       logger.log(logger.ERROR, `pointTracker post save error: ${err}`);
+    });
+});
+
+
+pointTrackerSchema.post('save', (tracker) => {
+  Profile.findOne({ teachers: `${tracker.teacher}` })
+    .catch((err) => {
+      throw err;
     });
 });
 
