@@ -48,7 +48,7 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         .authBearer(mockData.adminToken)
         .query({ id: mockData.mentorProfile._id.toString() });
       expect(mentor.status).toEqual(200);
-      expect(mentor.body.mentorData.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
+      expect(mentor.body.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
       const student = await superagent.get(`${apiUrl}/profiles`)
         .authBearer(mockData.adminToken)
         .query({ id: mockData.studentProfile._id.toString() });
@@ -76,7 +76,7 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         .authBearer(mockData.adminToken)
         .query({ id: mockData.coachProfile._id.toString() });
       expect(coach.status).toEqual(200);
-      expect(coach.body.coachData.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
+      expect(coach.body.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
       const student = await superagent.get(`${apiUrl}/profiles`)
         .authBearer(mockData.adminToken)
         .query({ id: mockData.studentProfile._id.toString() });
@@ -107,7 +107,7 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         .authBearer(mockData.adminToken)
         .query({ id: mockData.teacherProfile._id.toString() });
       expect(teacher.status).toEqual(200);
-      expect(teacher.body.teacherData.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
+      expect(teacher.body.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
       const student = await superagent.get(`${apiUrl}/profiles`)
         .authBearer(mockData.adminToken)
         .query({ id: mockData.studentProfile._id.toString() });
@@ -138,7 +138,7 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         .authBearer(mockData.adminToken)
         .query({ id: mockData.familyProfile._id.toString() });
       expect(family.status).toEqual(200);
-      expect(family.body.familyData.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
+      expect(family.body.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
       const student = await superagent.get(`${apiUrl}/profiles`)
         .authBearer(mockData.adminToken)
         .query({ id: mockData.studentProfile._id.toString() });
@@ -166,7 +166,7 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         .authBearer(mockData.adminToken)
         .query({ id: mockData.coachProfile._id.toString() });
       expect(coach.status).toEqual(200);
-      expect(coach.body.coachData.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
+      expect(coach.body.students.map(v => v.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
       const student = await superagent.get(`${apiUrl}/profiles`)
         .authBearer(mockData.adminToken)
         .query({ id: mockData.studentProfile._id.toString() });
@@ -276,13 +276,13 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
     test('GET 200 on successful detach of student from coach by admin', async () => {
       // first attach them and verify they're attached.
       mockData.studentProfile.studentData.coaches.push(mockData.coachProfile._id);
-      mockData.coachProfile.coachData.students.push(mockData.studentProfile._id);
+      mockData.coachProfile.students.push(mockData.studentProfile._id);
       await mockData.studentProfile.save();
       await mockData.coachProfile.save();
       const student = await Profile.findById(mockData.studentProfile._id.toString());
       const coach = await Profile.findById(mockData.coachProfile._id.toString());
       expect(student.studentData.coaches[0].toString()).toEqual(mockData.coachProfile._id.toString());
-      expect(coach.coachData.students[0].toString()).toEqual(mockData.studentProfile._id.toString());
+      expect(coach.students[0].toString()).toEqual(mockData.studentProfile._id.toString());
       // if we made it here we're ready to test detach route
       let response;
       const queryParams = {
@@ -303,13 +303,13 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
     test('GET 200 on successful detach of student from mentor by mentor', async () => {
       // first attach them and verify they're attached.
       mockData.studentProfile.studentData.mentor = mockData.mentorProfile._id;
-      mockData.mentorProfile.mentorData.students.push(mockData.studentProfile._id);
+      mockData.mentorProfile.students.push(mockData.studentProfile._id);
       await mockData.studentProfile.save();
       await mockData.mentorProfile.save();
       const student = await Profile.findById(mockData.studentProfile._id.toString());
       const mentor = await Profile.findById(mockData.mentorProfile._id.toString());
       expect(student.studentData.mentor.toString()).toEqual(mockData.mentorProfile._id.toString());
-      expect(mentor.mentorData.students[0].toString()).toEqual(mockData.studentProfile._id.toString());
+      expect(mentor.students[0].toString()).toEqual(mockData.studentProfile._id.toString());
       // if we made it here we're ready to test detach route
       let response;
       const queryParams = {
@@ -330,13 +330,13 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
     test('GET 401 on authorization error trying detach of student from mentor by coach', async () => {
       // first attach them and verify they're attached.
       mockData.studentProfile.studentData.mentor = mockData.mentorProfile._id;
-      mockData.mentorProfile.mentorData.students.push(mockData.studentProfile._id);
+      mockData.mentorProfile.students.push(mockData.studentProfile._id);
       await mockData.studentProfile.save();
       await mockData.mentorProfile.save();
       const student = await Profile.findById(mockData.studentProfile._id.toString());
       const mentor = await Profile.findById(mockData.mentorProfile._id.toString());
       expect(student.studentData.mentor.toString()).toEqual(mockData.mentorProfile._id.toString());
-      expect(mentor.mentorData.students[0].toString()).toEqual(mockData.studentProfile._id.toString());
+      expect(mentor.students[0].toString()).toEqual(mockData.studentProfile._id.toString());
       // if we made it here we're ready to test detach route
       let response;
       const queryParams = {
