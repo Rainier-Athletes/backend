@@ -102,11 +102,35 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
         response = await superagent.get(`${apiUrl}/pointstracker`)
           .authBearer(mockData.mockProfiles.mentorToken)
           .query({ id: mockData.pointTracker._id.toString() });
+        expect(response.status).toEqual(200);
+        expect(response.body.student.firstName).toEqual(mockData.profileData.studentProfile.firstName);
       } catch (err) {
         expect(err.status).toEqual('Unexpected error on good get from point-tracker');
       }
-      expect(response.status).toEqual(200);
-      expect(response.body.student.firstName).toEqual(mockData.profileData.studentProfile.firstName);
+    });
+
+    test.only('GET 200 on successfull admin retrieval, looking for first save in DB', async () => {
+      try {
+        const response = await superagent.get(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.mockProfiles.adminToken);
+        expect(response.status).toEqual(200);
+        console.log(response.body);
+        console.log(Object.keys(response.body[0]).student);
+        expect(response.body.student).toEqual(mockData.profileData.profile);
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+    });
+
+    test('GET 200 admin access searching for student role', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/pointstracker?role=student`)
+          .authBearer(mockData.mockProfiles.adminToken);
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(0);
     });
 
     test('GET 404 bad request', async () => {
@@ -118,8 +142,8 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       try {
         const response = await superagent.get(`${apiUrl}/pointstracker`)
           .authBearer(mockData.mockProfiles.adminToken)
-          .query('id=1234')
-          .query('studentId=hello')
+          .query(`id=${modelMap.id}`)
+          .query(`studentId=${modelMap.studentId}`)
           .query(`date=${modelMap.date}`);
         expect(response.status).toEqual('nothing to pass, should FAIL');
       } catch (err) {
@@ -132,21 +156,9 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       try {
         response = await superagent.get(`${apiUrl}/pointstracker`)
           .authBearer();
-        expect(response).toEqual('GET whitelist should have failed with 401');
+        expect(response.status).toEqual('GET whitelist should have failed with 401');
       } catch (err) {
         expect(err.status).toEqual(401);
-      }
-    });
-
-    test('GET 400 NOT FOUND', async () => {
-      let response; 
-      try {
-        response = await superagent.get(`${apiUrl}/pointstracker`)
-          .authBearer(mockData.mockProfiles.adminToken)
-          .query({});
-        expect(response.status).toEqual('THIS SHOULD FAIL');
-      } catch (err) {
-        expect(err.status).toEqual(400);
       }
     });
   });

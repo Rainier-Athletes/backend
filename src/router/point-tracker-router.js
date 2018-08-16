@@ -7,8 +7,6 @@ const pointTrackerRouter = new Router();
 
 
 pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
-  if (!request.profile) return next(new HttpErrors(401, 'GET POINTS ROUTER: not logged in', { expose: false }));
-
   if (request.query.id) {
     PointTracker.init()
       .then(() => {
@@ -33,7 +31,7 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
     return undefined;
   }
   
-  if (request.PointTracker.role === 'admin') {
+  if (request.profile.role === 'admin') {
     PointTracker.init()
       .then(() => {
         return PointTracker.find();
