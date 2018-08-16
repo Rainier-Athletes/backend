@@ -109,29 +109,29 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       }
     });
 
-    test.only('GET 200 on successfull admin retrieval, looking for first save in DB', async () => {
+    test('GET 200 on successfull admin retrieval, looking for first save in DB', async () => {
       try {
         const response = await superagent.get(`${apiUrl}/pointstracker`)
           .authBearer(mockData.mockProfiles.adminToken);
         expect(response.status).toEqual(200);
-        console.log(response.body);
-        console.log(Object.keys(response.body[0]).student);
-        expect(response.body.student.firstname).toEqual(mockData.profileData.profile);
+        // console.log(response.body);
+        // console.log(Object.keys(response.body[0]).student);
+        expect(response.body[0].student.firstName).toEqual(mockData.profileData.studentProfile.firstName);
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
     });
 
-    test('GET 200 admin access searching for student role', async () => {
-      let response;
-      try {
-        response = await superagent.get(`${apiUrl}/pointstracker?role=student`)
-          .authBearer(mockData.mockProfiles.adminToken);
-      } catch (err) {
-        expect(err).toEqual('Failure of profile GET unexpected');
-      }
-      expect(response.body).toHaveLength(0);
-    });
+    // test('GET 200 admin access searching for student role', async () => {
+    //   let response;
+    //   try {
+    //     response = await superagent.get(`${apiUrl}/pointstracker?role=student`)
+    //       .authBearer(mockData.mockProfiles.adminToken);
+    //     expect(response.body).toHaveLength(0);
+    //   } catch (err) {
+    //     expect(err).toEqual('Failure of profile GET unexpected');
+    //   }
+    // });
 
     test('GET 404 bad request', async () => {
       const modelMap = {
@@ -159,6 +159,16 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
         expect(response.status).toEqual('GET whitelist should have failed with 401');
       } catch (err) {
         expect(err.status).toEqual(401);
+      }
+    });
+
+    test('GET 400 Bad request. Non-admin with no query,', async () => {
+      try {
+        await superagent.get(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.mockProfiles.studentToken)
+          .send({});
+      } catch (err) {
+        expect(err.status).toEqual(400);
       }
     });
   });
