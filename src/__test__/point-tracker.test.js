@@ -93,8 +93,6 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       expect(response.status).toEqual(200);
       expect(response.body.student.toString()).toEqual(mockData.profileData.studentProfile._id.toString());
     });
-    
-
   });
 
   describe('Testing point-tracker GET route', () => {
@@ -205,6 +203,16 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       expect(response.status).toEqual(200);
       response = await PointTracker.findById(mockData.pointTracker._id);
       expect(response).toBeNull();
+    });
+
+    test('DELETE 400 bad query', async () => {
+      try {
+        await superagent.delete(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.mockProfiles.adminToken);
+        expect(true).toEqual('Missing query');
+      } catch (err) {
+        expect(err.status).toEqual(400);
+      }
     });
   });
 });
