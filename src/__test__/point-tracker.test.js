@@ -66,7 +66,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       delete newPT._id;
       let response;
       try {
-        response = await superagent.post(`${apiUrl}/AndrewTodoPeacockCodedThisParticularTestAndShallLiveForeverThroughThisLineOfCode`)
+        response = await superagent.post(`${apiUrl}/AndrewTodoPeacockMadeThisParticularTestAndShallLiveForeverThroughThisLineOfCode`)
           .authBearer(mockData.mockProfiles.mentorToken)
           .send(newPT);
         expect(response.status).toEqual('this isnt getting hit tho');
@@ -122,18 +122,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       }
     });
 
-    // test('GET 200 admin access searching for student role', async () => {
-    //   let response;
-    //   try {
-    //     response = await superagent.get(`${apiUrl}/pointstracker?role=student`)
-    //       .authBearer(mockData.mockProfiles.adminToken);
-    //     expect(response.body).toHaveLength(0);
-    //   } catch (err) {
-    //     expect(err).toEqual('Failure of profile GET unexpected');
-    //   }
-    // });
-
-    test('GET 404 bad request', async () => {
+    test('GET 404 not found', async () => {
       const modelMap = {
         id: 123456,
         studentId: 'helloBob',
@@ -163,10 +152,12 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
     });
 
     test('GET 400 Bad request. Non-admin with no query,', async () => {
+      let response;
       try {
-        await superagent.get(`${apiUrl}/pointstracker`)
+        response = await superagent.get(`${apiUrl}/pointstracker`)
           .authBearer(mockData.mockProfiles.studentToken)
           .send({});
+        expect(response.status).toEqual('unexpected success');
       } catch (err) {
         expect(err.status).toEqual(400);
       }
