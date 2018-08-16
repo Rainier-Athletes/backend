@@ -32,12 +32,25 @@ const createProfileMockPromise = async () => {
     role: 'admin',
   };
 
+  const mockTeacherProfile = {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    role: 'teacher',
+  };
+
+
   const newProfile = new Profile(mockProfile);
   const profile = await newProfile.save();
   const newMentor = new Profile(mockMentorProfile);
   const mentor = await newMentor.save();
   const coach = await new Profile(mockCoachProfile).save();
   const admin = await new Profile(mockAdminProfile).save();
+
+  const teacher = await new Profile(mockTeacherProfile).save();
+  mockData.teacherProfile = teacher;
+  mockData.teacherToken = await teacher.createTokenPromise();
+
 
   mockData.mentorProfile = mentor;
   mockData.mentorToken = await mentor.createTokenPromise();

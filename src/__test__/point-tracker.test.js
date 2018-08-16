@@ -2,23 +2,32 @@ import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
 import { createPointTrackerMockPromise, removeAllResources } from './lib/point-tracker-mock';
 
-import { startServer, stopServer } from '../lib/server';
+import { startServer } from '../lib/server';
 
 bearerAuth(superagent);
 
 const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 beforeAll(async () => { await startServer(); });
-afterAll(stopServer);
-beforeEach(removeAllResources);
+let mockdata;
 
-describe('Adding points to point tracker, POST test', () => {
-  test('Testing a posted point tracker', async () => {
+beforeEach(async () => {
+  await removeAllResources();
+  mockdata = await createPointTrackerMockPromise();
+});
+
+describe('Testing point tracker post routes', () => {
+  test.only('Testing a posted point tracker', async () => {
+    const newPT = JSON.parse(JSON.stringify(mockdata.pointTracker));
+    delete newPT._id;
+    let response;
     try {
-      const response = await superagent.get(`${apiUrl}/fakeroute`);
-      expect(response.status).toEqual('404 Bad Route should be returned');
+      const response = await superagent.post(`${apiUrl}/pointstracker`)
+        .authBearer(mockdata.mockProfiles.mentorToken)
+        .send(newPT);
     } catch (err) {
-      expect(err.status).toEqual(404);
-    }
+      expect(err).toEqual('unexpected error on point tracker post');
+    } 
+    expect(response.status).toEqual(200);
   });
 
   test('/api/v1/pointstracker 200 POST SUCCESS', async () => {
