@@ -9,6 +9,10 @@ const createProfileMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'student',
+    address: faker.address.streetAddress(),
+    phone: faker.phone.phoneNumberFormat(3),
+    gender: 'male',
+    school: 'skyline high school',
   };
 
   const mockMentorProfile = {
@@ -16,6 +20,9 @@ const createProfileMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'mentor',
+    address: faker.address.streetAddress(),
+    phone: faker.phone.phoneNumberFormat(3),
+    gender: 'female',
   };
 
   const mockCoachProfile = {
@@ -23,6 +30,9 @@ const createProfileMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'coach',
+    address: faker.address.streetAddress(),
+    phone: faker.phone.phoneNumberFormat(3),
+    gender: 'male',
   };
 
   const mockAdminProfile = {
@@ -30,6 +40,9 @@ const createProfileMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'admin',
+    address: faker.address.streetAddress(),
+    phone: faker.phone.phoneNumberFormat(3),
+    gender: 'female',
   };
 
   const newProfile = new Profile(mockProfile);

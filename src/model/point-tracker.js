@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import autopopulate from 'mongoose-autopopulate';
 import Profile from './profile';
+import logger from '../lib/logger';
 
 const pointTrackerSchema = mongoose.Schema({
   date: {
@@ -67,9 +68,10 @@ pointTrackerSchema.plugin(autopopulate);
 pointTrackerSchema.post('save', (tracker) => {
   Profile.findOne({ profileId: `${tracker.student}` })
     .catch((err) => {
-      throw err;
+      logger.log(logger.ERROR, `pointTracker post save error: ${err}`);
     });
 });
+
 
 pointTrackerSchema.post('save', (tracker) => {
   Profile.findOne({ teachers: `${tracker.teacher}` })
@@ -77,7 +79,6 @@ pointTrackerSchema.post('save', (tracker) => {
       throw err;
     });
 });
-
 
 const skipInit = process.env.NODE_ENV === 'development';
 export default mongoose.model('PointTracker', pointTrackerSchema, 'pointTrackers', skipInit);
