@@ -114,6 +114,86 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body).toHaveLength(4);
     });
 
+    test('GET 200 on successful admin search of mentor role', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles?role=mentor`)
+          .authBearer(mockData.adminToken);
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(1);
+    });
+
+    test('GET 200 on successful admin search of student role', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles?role=student`)
+          .authBearer(mockData.adminToken);
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(1);
+    });
+
+    test('GET 200 on successful admin search of coach role', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles?role=coach`)
+          .authBearer(mockData.adminToken);
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(1);
+    });
+
+    test('GET 200 on successful admin search for skyline high school', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles?school=skyline%20high%20school`)
+          .authBearer(mockData.adminToken);
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(1);
+    });
+
+    test('GET 200 on successful admin search for active profiles', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles?active=true`)
+          .authBearer(mockData.adminToken);
+        // profileResult = response.body;
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(4);
+    });
+
+    test('GET 200 on successful admin search for male profiles', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles?gender=male`)
+          .authBearer(mockData.adminToken);
+        // profileResult = response.body;
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(2);
+    });
+
+    test('GET 200 on successful admin search for female profiles', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles?gender=female`)
+          .authBearer(mockData.adminToken);
+        // profileResult = response.body;
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(2);
+    });
+
     test('GET 200 on successfull retrieval of profile by id', async () => {
       let response;
       try {
