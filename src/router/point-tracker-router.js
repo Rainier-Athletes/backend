@@ -7,8 +7,6 @@ const pointTrackerRouter = new Router();
 
 
 pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
-  if (!request.profile) return next(new HttpErrors(401, 'GET POINTS ROUTER: not logged in', { expose: false }));
-
   if (request.query.id) {
     PointTracker.init()
       .then(() => {
@@ -21,30 +19,18 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
     return undefined;
   }
   
-  if (Object.keys(request.query).length > 0) {
-    PointTracker.init()
-      .then(() => {
-        return PointTracker.find(request.query);
-      })
-      .then((queryReturn) => {
-        return response.json(queryReturn);
-      })
-      .catch(next);
-    return undefined;
-  }
-  
   if (request.profile.role === 'admin') {
     PointTracker.init()
       .then(() => {
         return PointTracker.find();
       })
       .then((pointTracker) => {
-        return response.json(pointTracker);
+        return response.json(pointTracker).status(200);
       })
       .catch(next);
     return undefined;
-  }
-  return undefined;
+  } 
+  return next(new HttpErrors(400, 'POINT-TRACKER GET: Bad request. Non-admin with no query.'));
 });
 
 pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {

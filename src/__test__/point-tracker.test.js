@@ -1,6 +1,5 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
-import faker from 'faker';
 import { createPointTrackerMockPromise, removeAllResources } from './lib/point-tracker-mock';
 import PointTracker from '../model/point-tracker';
 import { startServer } from '../lib/server';
@@ -96,7 +95,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
   });
 
   describe('Testing point-tracker GET route', () => {
-    test('GET 200 good request', async () => {
+    test('GET 200 good request using id query', async () => {
       let response;
       try {
         response = await superagent.get(`${apiUrl}/pointstracker`)
@@ -138,15 +137,15 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       }
     });
 
-    test('GET 400 NOT FOUND', async () => {
+    test('GET 200 retrieve all trackers as admin', async () => {
       let response; 
       try {
         response = await superagent.get(`${apiUrl}/pointstracker`)
           .authBearer(mockData.mockProfiles.adminToken)
           .query({});
-        expect(response.status).toEqual('THIS SHOULD FAIL');
+        expect(response.status).toEqual(200);
       } catch (err) {
-        expect(err.status).toEqual(400);
+        expect(err.status).toEqual('Unexpected failure admin get all points trackers.');
       }
     });
   });
