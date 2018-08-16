@@ -2,7 +2,6 @@ import { Router } from 'express';
 import HttpErrors from 'http-errors';
 import PointTracker from '../model/point-tracker';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
-import logger from '../lib/logger';
 
 const pointTrackerRouter = new Router();
 
