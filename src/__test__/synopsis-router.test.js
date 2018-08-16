@@ -1,6 +1,5 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
-
 import { startServer } from '../lib/server';
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
 
