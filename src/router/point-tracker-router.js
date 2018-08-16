@@ -52,10 +52,12 @@ pointTrackerRouter.put('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
     .then(() => {
       return PointTracker.findOneAndUpdate(request.body);
     })
-    .then(() => {
+    .then((result) => {
+      if (!result) return next(new HttpErrors(500, 'Unable to update point tracker'));
       return PointTracker.findById(request.body._id.toString());
     })
     .then((updated) => {
+      if (!updated) return next(new HttpErrors(500, 'Unable to retrieve updated point tracker'));
       return response.json(updated).status(200);
     })
     .catch(next);

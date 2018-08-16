@@ -22,8 +22,9 @@ profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response,
 });
 
 profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, next) => {
-  if (request.query.id && request.profile.role !== 'admin') return next(new HttpErrors(401, 'User not authorized to query by id.', { expose: false }));
-  
+  if (request.query.id && request.profile.role !== 'admin' && request.profile.role !== 'mentor') {
+    return next(new HttpErrors(401, 'User not authorized to query by id.', { expose: false }));
+  }
   if (request.query.id) {
     Profile.init()
       .then(() => {

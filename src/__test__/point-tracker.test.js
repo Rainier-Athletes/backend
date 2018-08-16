@@ -65,6 +65,29 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
     });
   });
 
+  test('Get populated then Put test', async () => {
+    let response;
+    try {
+      response = await superagent.get(`${apiUrl}/pointstracker`)
+        .authBearer(mockData.profileData.adminToken)
+        .query({ id: mockData.pointTracker._id.toString() });
+    } catch (err) {
+      console.error(err);
+    }
+    expect(response.body).toBeTruthy();
+    response.body[0].subjects[1].subjectName = 'New Subject Name';
+    let putResponse;
+    try {
+      putResponse = await superagent.put(`${apiUrl}/pointstracker`)
+        .authBearer(mockData.profileData.adminToken)
+        .send(response.body[0]);
+    } catch (err) {
+      console.error(err);
+    }
+    expect(putResponse.status).toEqual(200);
+    expect(putResponse.body.subjects[1].subjectName).toEqual('New Subject Name');
+  });
+
   describe('Testing point-tracker DELETE route', () => {
     test('DELETE 200 good request', async () => {
       let response;
