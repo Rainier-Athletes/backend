@@ -33,7 +33,7 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
     return undefined;
   }
   
-  if (request.PointTracker.role === 'admin') {
+  if (request.profile.role === 'admin') {
     PointTracker.init()
       .then(() => {
         return PointTracker.find();
