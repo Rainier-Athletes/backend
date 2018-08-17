@@ -12,6 +12,7 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING ROUTER PROFILE', () => {
   let mockData;
+
   afterEach(async () => { await stopServer(); });
 
   beforeEach(async () => {
@@ -23,6 +24,9 @@ describe('TESTING ROUTER PROFILE', () => {
       return logger.log(logger.ERROR, `Unexpected error in profile-router.test beforeEach: ${err}`);
     }
     return undefined;
+  });
+  afterEach(async () => {
+    await stopServer();
   });
 
   describe('POST PROFILE ROUTES TESTING', () => {
