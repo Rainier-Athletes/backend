@@ -49,7 +49,7 @@ profileRouter.get('/api/v1/profiles', bearerAuthMiddleware, (request, response, 
     return undefined;
   }
   
-  if (request.profile.role === 'admin') {
+  if (request.profile.role === 'admin' || request.profile.role === 'mentor') {
     Profile.init()
       .then(() => {
         return Profile.find();
