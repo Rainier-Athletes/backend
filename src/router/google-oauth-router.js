@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import superagent from 'superagent';
-// import { google } from 'googleapis';
 import HttpErrors from 'http-errors';
 import Profile from '../model/profile';
 
@@ -109,11 +108,15 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   const raToken = await profile.createTokenPromise(googleTokenResponse.body);
 
   // send raToken as cookie and in response json
+  const firstDot = process.env.CLIENT_URL.indexOf('.');
+  const domain = firstDot > 0 ? process.env.CLIENT_URL.slice(firstDot) : null;
+  console.log('>>>>>>>>>>>>. oauth domain', domain);
   const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
+  if (domain) cookieOptions.domain = domain;
   response.cookie('RaToken', raToken, cookieOptions);
   response.cookie('RaUser', Buffer.from(profile.role)
     .toString('base64'), cookieOptions);
-  return response.redirect(process.env.CLIENT_URL);
+  return response.redirect(`${process.env.CLIENT_URL}#GET-TOKEN`);
 });
 
 export default googleOAuthRouter;

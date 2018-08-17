@@ -16,6 +16,20 @@ Relationships between models can be deduced from the mock JSON below, but in bri
 	- PointTracker to Profile[role=teacher], 1:Many
 	- PointTracker to Profile[role=student], 1:1
 
+## Setup: .env file
+```
+NODE_ENV=[ development|production ] // pick one
+PORT=3000 // server port in dev (localhost)
+MONGODB_URI=mongodb://localhost:27017/<your db name> 
+SECRET=<your jwt secret> // used to sign web tokens
+GOOGLE_OAUTH_ID=<your google oauth id>
+GOOGLE_OAUTH_SECRET=<your google oauth secret>
+CLIENT_URL=http://localhost:8080 // set this to your deployed frontend when you deploy
+API_URL=http://localhost:3000/api/v1 // set this to your deployed backend when you deploy
+CORS_ORIGINS=["http://localhost:8080", "<another client url>", "<etc>"] // CORS whitelist for origins
+ROOT_ADMIN={"email": "selpilot@gmail.com", "role": "admin"} // use this id to bootstrap oauth signin
+```
+
 ## Routes
 
 ### POST
@@ -541,7 +555,7 @@ others |  - | -
 }
 ```
 
-### Mentor Profile: GET /api/v1/profiles?id=5b75bbdd2d60007306e782c8
+### Mentor (or any adult role) Profile: GET /api/v1/profiles?id=5b75bbdd2d60007306e782c8
 ```
 {
     "studentData": {
@@ -598,27 +612,6 @@ others |  - | -
     "phone": "843.176.0624",
     "gender": "female",
     "__v": 0
-}
-```
-
-### Teacher/Family/Staff profile (everybody else): GET /api/v1/profiles?id=1EF12348902093DECBA908
-```
-{
-  "_id": "1EF12348902093DECBA908",
-	"firstName": "Generic",
-	"lastName": "Person",
-	"email": "anybody@gmail.com",
-	"address": {
-		"street": "12345 67th St NW",
-		"apt": "",
-		"city": "Bellevue",
-		"state": "WA",
-		"zip": "98007"
-	},
-	"phone": "425-648-5555",
-	"role": "teacher",
-	"studentData": {},
-	"mentorData": {}
 }
 ```
 
