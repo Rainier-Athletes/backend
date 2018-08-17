@@ -35,7 +35,7 @@ ROOT_ADMIN={"email": "selpilot@gmail.com", "role": "admin"} // use this id to bo
 ### POST
   - /api/v1/profiles
   - /api/v1/pointstracker
-	- /api/v1/synopsis
+  - /api/v1/synopsis
 
 ### GET
 	- /api/v1/oauth/google
