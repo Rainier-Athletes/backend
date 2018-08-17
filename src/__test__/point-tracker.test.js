@@ -15,6 +15,9 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
     await removeAllResources();
     mockData = await createPointTrackerMockPromise();
   });
+  afterEach(async () => {
+    await stopServer();
+  });
 
   afterEach(async () => { stopServer(); });
 
@@ -159,6 +162,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
         expect(err.status).toEqual(401);
       }
     });
+
 
     test('GET 400 Bad request. Non-admin with no query,', async () => {
       let response;
