@@ -33,6 +33,8 @@ pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
 });
 
 pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
+  if (!request.body) return next(new HttpErrors(400, 'POINT-TRACKER ROUTER POST: Missing request body', { expose: false }));
+
   PointTracker.init()
     .then(() => {
       return new PointTracker(request.body).save();
@@ -45,16 +47,14 @@ pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request,
 });
 
 pointTrackerRouter.put('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
-  if (!request.profile) return next(new HttpErrors(404, 'POINT-TRACKER ROUTER GET: Point tracker not found. Missing login info.', { expose: false }));
-
-  if (!request.body) return next(new HttpErrors(400, 'PUT POINT-TRACKER ROUTER: Missing request body', { expose: false }));
+  if (!request.body._id) return next(new HttpErrors(400, 'POINT-TRACKER ROUTER PUT: Missing request body', { expose: false }));
   
   PointTracker.init()
     .then(() => {
       return PointTracker.findOneAndUpdate(request.body);
     })
     .then((result) => {
-      if (!result) return next(new HttpErrors(500, 'Unable to update point tracker'));
+      if (!result) return next(new HttpErrors(404, 'Unable to update point tracker'));
       return PointTracker.findById(request.body._id.toString());
     })
     .then((updated) => {
