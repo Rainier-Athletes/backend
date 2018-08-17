@@ -9,7 +9,6 @@ bearerAuth(superagent);
 const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING POINT-TRACKER ROUTER', () => {
-
   let mockData;
   beforeEach(async () => {
     await startServer();
@@ -62,15 +61,15 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       }
     });
 
-    test('POST 404 BAD ROUTERINO', async () => {
+    test('POST 404 BAD ROUTER PATH', async () => {
       const newPT = JSON.parse(JSON.stringify(mockData.pointTracker));
       delete newPT._id;
       let response;
       try {
-        response = await superagent.post(`${apiUrl}/AndrewTodoPeacockMadeThisParticularTestAndShallLiveForeverThroughThisLineOfCode`)
+        response = await superagent.post(`${apiUrl}/thisisabadroute`)
           .authBearer(mockData.mockProfiles.mentorToken)
           .send(newPT);
-        expect(response.status).toEqual('this isnt getting hit tho');
+        expect(response.status).toEqual('unexpected success. expecting 404');
       } catch (err) {
         expect(err.status).toEqual(404);
       }
@@ -115,8 +114,6 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
         const response = await superagent.get(`${apiUrl}/pointstracker`)
           .authBearer(mockData.mockProfiles.adminToken);
         expect(response.status).toEqual(200);
-        // console.log(response.body);
-        // console.log(Object.keys(response.body[0]).student);
         expect(response.body[0].student.firstName).toEqual(mockData.profileData.studentProfile.firstName);
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');

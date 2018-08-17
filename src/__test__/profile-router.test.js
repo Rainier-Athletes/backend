@@ -1,7 +1,7 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
 import faker from 'faker';
-import { startServer } from '../lib/server';
+import { startServer, stopServer } from '../lib/server';
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
 import logger from '../lib/logger';
 // import Profile from '../model/profile';
@@ -12,9 +12,10 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING ROUTER PROFILE', () => {
   let mockData;
-  beforeAll(startServer);
-  // afterAll(stopServer);
+  afterEach(async () => { await stopServer(); });
+
   beforeEach(async () => {
+    await startServer();
     await removeAllResources();
     try {
       mockData = await createProfileMockPromise();
@@ -26,7 +27,6 @@ describe('TESTING ROUTER PROFILE', () => {
 
   describe('POST PROFILE ROUTES TESTING', () => {
     test('POST 200 to successfully save mentor', async () => {
-      console.log('mockData: ', JSON.stringify(mockData, null, 4));
       const mockProfile = {
         role: 'mentor',
         email: faker.internet.email(),
@@ -82,7 +82,6 @@ describe('TESTING ROUTER PROFILE', () => {
       try {
         response = await superagent.get(`${apiUrl}/profiles`)
           .authBearer(mockData.studentToken);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -95,7 +94,6 @@ describe('TESTING ROUTER PROFILE', () => {
       try {
         response = await superagent.get(`${apiUrl}/profiles/me`)
           .authBearer(mockData.adminToken);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -107,7 +105,6 @@ describe('TESTING ROUTER PROFILE', () => {
       try {
         response = await superagent.get(`${apiUrl}/profiles`)
           .authBearer(mockData.adminToken);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -163,7 +160,6 @@ describe('TESTING ROUTER PROFILE', () => {
       try {
         response = await superagent.get(`${apiUrl}/profiles?active=true`)
           .authBearer(mockData.adminToken);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -175,7 +171,6 @@ describe('TESTING ROUTER PROFILE', () => {
       try {
         response = await superagent.get(`${apiUrl}/profiles?gender=male`)
           .authBearer(mockData.adminToken);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -187,7 +182,6 @@ describe('TESTING ROUTER PROFILE', () => {
       try {
         response = await superagent.get(`${apiUrl}/profiles?gender=female`)
           .authBearer(mockData.adminToken);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -222,7 +216,6 @@ describe('TESTING ROUTER PROFILE', () => {
         response = await superagent.get(`${apiUrl}/profiles`)
           .authBearer(mockData.adminToken)
           .query({ id: mockData.coachProfile._id.toString() });
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }

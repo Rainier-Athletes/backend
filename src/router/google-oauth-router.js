@@ -2,13 +2,7 @@ import { Router } from 'express';
 import superagent from 'superagent';
 import HttpErrors from 'http-errors';
 import Profile from '../model/profile';
-
-// These are modules you will need to create a MongoDB account based off the Google response
-// import crypto from 'crypto'; // maybe you want to use this to create a password for your MongoDB account
-// import jwt from 'jsonwebtoken'; // you will DEFINITELY need this to "sign" your Google token
-// import Account from '../model/account';
 import logger from '../lib/logger';
-// import Whitelist from '../model/whitelist';
 
 const GOOGLE_OAUTH_URL = 'https://www.googleapis.com/oauth2/v4/token';
 
@@ -20,11 +14,9 @@ const googleOAuthRouter = new Router();
 
 googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) => {
   if (!request.query.code) {
-    // logger.log(logger.ERROR, 'DID NOT GET CODE FROM GOOGLE');
     response.redirect(process.env.CLIENT_URL);
     return next(new HttpErrors(500, 'Google OAuth Code Error'));
   }
-  // logger.log(logger.INFO, `RECVD CODE FROM GOOGLE AND SENDING IT BACK TO GOOGLE: ${request.query.code}`);
 
   let googleTokenResponse;
   try {
@@ -39,11 +31,9 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
         redirect_uri: `${process.env.API_URL}/oauth/google`,
       });
   } catch (err) {
-    // logger.log(logger.ERROR, `ERROR FROM GOOGLE: ${JSON.stringify(err)}`);
     return next(new HttpErrors(err.status, 'Error from Google Oauth error fetching authorization tokens'));
   }
 
-  // I'm thinking this code is pointless...
   if (!googleTokenResponse.body.access_token) {
     logger.log(logger.ERROR, 'No Token from Google');
     return response.redirect(process.env.CLIENT_URL);
@@ -97,20 +87,13 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   }
   logger.log(logger.INFO, 'Profile validated');
 
-  // in the previous version where we logged in and the fetched profile
-  // basic and bearer auth middleware was invoked which put account,
-  // profile and other stuff on the request object.  We need to keep 
-  // at least the profile and auth stuff around...
-
   // this call returns a jwt with profileId and google tokens
   // as payload
-
   const raToken = await profile.createTokenPromise(googleTokenResponse.body);
 
   // send raToken as cookie and in response json
   const firstDot = process.env.CLIENT_URL.indexOf('.');
   const domain = firstDot > 0 ? process.env.CLIENT_URL.slice(firstDot) : null;
-  console.log('>>>>>>>>>>>>. oauth domain', domain);
   const cookieOptions = { maxAge: 7 * 1000 * 60 * 60 * 24 };
   if (domain) cookieOptions.domain = domain;
   response.cookie('RaToken', raToken, cookieOptions);

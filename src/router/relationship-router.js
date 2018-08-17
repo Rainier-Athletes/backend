@@ -1,13 +1,8 @@
-// import multer from 'multer';
-// import fs from 'fs-extra';
 import { Router } from 'express';
 import HttpErrors from 'http-errors';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import Profile from '../model/profile';
-// import { s3Upload, s3Remove } from '../lib/s3';
 import logger from '../lib/logger';
-
-// const multerUpload = multer({ dest: `${__dirname}/../temp` });
 
 const relationshipRouter = new Router();
 
