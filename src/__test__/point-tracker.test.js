@@ -96,6 +96,17 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       expect(response.status).toEqual(200);
       expect(response.body.student.toString()).toEqual(mockData.profileData.studentProfile._id.toString());
     });
+
+    test('POST 400 bad request', async () => {
+      let response;
+      try {
+        response = await superagent.post(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.profileData.adminToken);
+        expect(response.status).toEqual('nothing this is supposed to fail');
+      } catch (err) {
+        expect(err.status).toEqual(400);
+      }
+    });
   });
 
   describe('Testing point-tracker GET route', () => {
@@ -181,7 +192,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       expect(response.body.synopsisComments.extraPlayingTime).toEqual('This is a change to Extra Play Time comment');
     });
 
-    test('Put test', async () => {
+    test('Get populated then Put test', async () => {
       let response;
       try {
         response = await superagent.get(`${apiUrl}/pointstracker`)
@@ -205,12 +216,13 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
     });
 
     test('PUT 404 NOT FOUND', async () => {
-      // await mockData.profile.remove();
+      let response;
+      const newPt = JSON.parse(JSON.stringify(mockData.pointTracker));
+      newPt._id = '12345234590823490182341234';
       try {
-        const response = await superagent.put(`${apiUrl}/pointstracker`)
+        response = await superagent.put(`${apiUrl}/pointstracker`)
           .authBearer(mockData.profileData.adminToken)
-          .send(mockData);
-          console.log(mockData);
+          .send(newPt);
         expect(response).toEqual('unexpecte passing, THIS IS ERROR');
       } catch (err) {
         expect(err.status).toEqual(404);
@@ -221,8 +233,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       let response;
       try {
         response = await superagent.put(`${apiUrl}/pointstracker`)
-          .authBearer(mockData.profileData.adminToken)
-          .send({});
+          .authBearer(mockData.profileData.adminToken);
         expect(response.status).toEqual('nothing this is supposed to fail');
       } catch (err) {
         expect(err.status).toEqual(400);
