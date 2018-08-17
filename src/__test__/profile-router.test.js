@@ -1,7 +1,7 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
 import faker from 'faker';
-import { startServer } from '../lib/server';
+import { startServer, stopServer } from '../lib/server';
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
 import logger from '../lib/logger';
 // import Profile from '../model/profile';
@@ -12,9 +12,10 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING ROUTER PROFILE', () => {
   let mockData;
-  beforeAll(startServer);
+  // beforeAll(startServer);
   // afterAll(stopServer);
   beforeEach(async () => {
+    await startServer();
     await removeAllResources();
     try {
       mockData = await createProfileMockPromise();
@@ -22,6 +23,9 @@ describe('TESTING ROUTER PROFILE', () => {
       return logger.log(logger.ERROR, `Unexpected error in profile-router.test beforeEach: ${err}`);
     }
     return undefined;
+  });
+  afterEach(async () => {
+    await stopServer();
   });
 
   describe('POST PROFILE ROUTES TESTING', () => {

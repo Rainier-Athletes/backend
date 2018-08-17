@@ -1,22 +1,25 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
-// import faker from 'faker';
 import { createPointTrackerMockPromise, removeAllResources } from './lib/point-tracker-mock';
 import PointTracker from '../model/point-tracker';
-import { startServer } from '../lib/server';
+import { startServer, stopServer } from '../lib/server';
 
 bearerAuth(superagent);
 
 const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING POINT-TRACKER ROUTER', () => {
-  beforeAll(async () => { await startServer(); });
-
   let mockData;
   beforeEach(async () => {
+    await startServer();
     await removeAllResources();
     mockData = await createPointTrackerMockPromise();
   });
+  afterEach(async () => {
+    await stopServer();
+  });
+
+  afterEach(async () => { stopServer(); });
 
   describe('Testing point-tracker POST route', () => {
     test('POST 200 good request', async () => {
@@ -148,6 +151,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
         expect(err.status).toEqual(401);
       }
     });
+
 
     test('GET 400 Bad request. Non-admin with no query,', async () => {
       let response;

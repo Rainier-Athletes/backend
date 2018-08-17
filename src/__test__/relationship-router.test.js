@@ -1,7 +1,7 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
 // import faker from 'faker';
-import { startServer } from '../lib/server';
+import { startServer, stopServer } from '../lib/server';
 // import { createAccountMockPromise } from './lib/account-mock';
 // import { createAttachmentMockPromise } from './lib/attachment-mock';
 import { createProfileMockPromise, removeAllResources } from './lib/profile-mock';
@@ -15,9 +15,10 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 describe('TESTING RELATIONSHIP ROUTER', () => {
   let mockData;
 
-  beforeAll(startServer);
+  // beforeAll(startServer);
   // afterAll(stopServer);
   beforeEach(async () => {
+    await startServer();
     await removeAllResources();
     try {
       mockData = await createProfileMockPromise(); 
@@ -25,6 +26,9 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
       return logger.log(logger.ERROR, `Unexpected error in profile-router beforeEach: ${err}`);
     }
     return undefined;
+  });
+  afterEach(async () => {
+    await stopServer();
   });
 
   describe('GET ATTACH ROUTE TESTING', () => {
