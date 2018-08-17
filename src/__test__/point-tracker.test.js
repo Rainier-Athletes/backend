@@ -9,12 +9,14 @@ bearerAuth(superagent);
 const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING POINT-TRACKER ROUTER', () => {
-
   let mockData;
   beforeEach(async () => {
     await startServer();
     await removeAllResources();
     mockData = await createPointTrackerMockPromise();
+  });
+  afterEach(async () => {
+    await stopServer();
   });
 
   afterEach(async () => { stopServer(); });
@@ -151,6 +153,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
         expect(err.status).toEqual(401);
       }
     });
+
 
     test('GET 400 Bad request. Non-admin with no query,', async () => {
       let response;

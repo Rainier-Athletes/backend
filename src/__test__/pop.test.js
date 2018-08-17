@@ -1,18 +1,21 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
 import { createPointTrackerMockPromise, removeAllResources } from './lib/point-tracker-mock';
-import { startServer } from '../lib/server';
+import { startServer, stopServer } from '../lib/server';
 
 bearerAuth(superagent);
 
 const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('MODEL AUTO POPULATE TESTS', () => {
-  beforeAll(startServer);
   let mock;
   beforeEach(async () => {
+    await startServer();
     await removeAllResources();
     mock = await createPointTrackerMockPromise();
+  });
+  afterEach(async () => {
+    await stopServer();
   });
   
   test('Get point tracker mock from database', async () => {
