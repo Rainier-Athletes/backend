@@ -1,6 +1,6 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
-import faker from 'faker';
+// import faker from 'faker';
 import { createPointTrackerMockPromise, removeAllResources } from './lib/point-tracker-mock';
 import PointTracker from '../model/point-tracker';
 import { startServer } from '../lib/server';
@@ -114,8 +114,6 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
         const response = await superagent.get(`${apiUrl}/pointstracker`)
           .authBearer(mockData.mockProfiles.adminToken);
         expect(response.status).toEqual(200);
-        // console.log(response.body);
-        // console.log(Object.keys(response.body[0]).student);
         expect(response.body[0].student.firstName).toEqual(mockData.profileData.studentProfile.firstName);
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
@@ -178,29 +176,54 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       expect(response.status).toEqual(200);
       expect(response.body.synopsisComments.extraPlayingTime).toEqual('This is a change to Extra Play Time comment');
     });
-  });
 
-  test('Get populated then Put test', async () => {
-    let response;
-    try {
-      response = await superagent.get(`${apiUrl}/pointstracker`)
-        .authBearer(mockData.profileData.adminToken)
-        .query({ id: mockData.pointTracker._id.toString() });
-    } catch (err) {
-      console.error(err);
-    }
-    expect(response.body).toBeTruthy();
-    response.body.subjects[1].subjectName = 'New Subject Name';
-    let putResponse;
-    try {
-      putResponse = await superagent.put(`${apiUrl}/pointstracker`)
-        .authBearer(mockData.profileData.adminToken)
-        .send(response.body);
-    } catch (err) {
-      console.error(err);
-    }
-    expect(putResponse.status).toEqual(200);
-    expect(putResponse.body.subjects[1].subjectName).toEqual('New Subject Name');
+    test('Put test', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.profileData.adminToken)
+          .query({ id: mockData.pointTracker._id.toString() });
+      } catch (err) {
+        console.error(err);
+      }
+      expect(response.body).toBeTruthy();
+      response.body.subjects[1].subjectName = 'New Subject Name';
+      let putResponse;
+      try {
+        putResponse = await superagent.put(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.profileData.adminToken)
+          .send(response.body);
+      } catch (err) {
+        console.error(err);
+      }
+      expect(putResponse.status).toEqual(200);
+      expect(putResponse.body.subjects[1].subjectName).toEqual('New Subject Name');
+    });
+
+    test('PUT 404 NOT FOUND', async () => {
+      // await mockData.profile.remove();
+      try {
+        const response = await superagent.put(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.profileData.adminToken)
+          .send(mockData);
+          console.log(mockData);
+        expect(response).toEqual('unexpecte passing, THIS IS ERROR');
+      } catch (err) {
+        expect(err.status).toEqual(404);
+      }
+    });
+
+    test('PUT 400 bad request', async () => {
+      let response;
+      try {
+        response = await superagent.put(`${apiUrl}/pointstracker`)
+          .authBearer(mockData.profileData.adminToken)
+          .send({});
+        expect(response.status).toEqual('nothing this is supposed to fail');
+      } catch (err) {
+        expect(err.status).toEqual(400);
+      }
+    });
   });
 
   describe('Testing point-tracker DELETE route', () => {
