@@ -15,8 +15,8 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 describe('TESTING RELATIONSHIP ROUTER', () => {
   let mockData;
 
-  // beforeAll(startServer);
-  // afterAll(stopServer);
+  afterEach(async () => { await stopServer(); });
+
   beforeEach(async () => {
     await startServer();
     await removeAllResources();
@@ -43,7 +43,6 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         response = await superagent.get(`${apiUrl}/attach`)
           .authBearer(mockData.mentorToken)
           .query(queryParams);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -71,7 +70,6 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         response = await superagent.get(`${apiUrl}/attach`)
           .authBearer(mockData.mentorToken)
           .query(queryParams);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -102,7 +100,6 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         response = await superagent.get(`${apiUrl}/attach`)
           .authBearer(mockData.mentorToken)
           .query(queryParams);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -133,7 +130,6 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         response = await superagent.get(`${apiUrl}/attach`)
           .authBearer(mockData.adminToken)
           .query(queryParams);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -161,7 +157,6 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
         response = await superagent.get(`${apiUrl}/attach`)
           .authBearer(mockData.adminToken)
           .query(queryParams);
-        // profileResult = response.body;
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -312,7 +307,6 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
       await mockData.mentorProfile.save();
       const student = await Profile.findById(mockData.studentProfile._id.toString());
       const mentor = await Profile.findById(mockData.mentorProfile._id.toString());
-      console.log(student.studentData);
       expect(student.studentData.mentor._id).toEqual(mockData.mentorProfile._id);
       expect(mentor.students[0]._id).toEqual(mockData.studentProfile._id);
       // if we made it here we're ready to test detach route

@@ -5,7 +5,6 @@ import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 
 const pointTrackerRouter = new Router();
 
-
 pointTrackerRouter.get('/api/v1/pointstracker', bearerAuthMiddleware, (request, response, next) => {
   if (request.query.id) {
     PointTracker.init()
