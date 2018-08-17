@@ -1,13 +1,8 @@
-// import multer from 'multer';
-// import fs from 'fs-extra';
 import { Router } from 'express';
 import HttpErrors from 'http-errors';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import Profile from '../model/profile';
-// import { s3Upload, s3Remove } from '../lib/s3';
 import logger from '../lib/logger';
-
-// const multerUpload = multer({ dest: `${__dirname}/../temp` });
 
 const relationshipRouter = new Router();
 
@@ -125,7 +120,7 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
 
   // remove student's id from support role profile
   const dataArray = roleProfile.students;
-  const newDataArray = dataArray.map(id => id.toString()).filter(id => id !== request.query.student);
+  const newDataArray = dataArray.map(s => s._id.toString()).filter(id => id !== request.query.student);
   roleProfile.students = newDataArray;
 
   // now remove support role ID from student profile.
@@ -135,15 +130,15 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
       studentProfile.studentData.mentor = null;
       break;
     case 'coach':
-      newSupportersArray = studentProfile.studentData.coaches.map(id => id.toString()).filter(id => id !== request.query[role]);
+      newSupportersArray = studentProfile.studentData.coaches.map(c => c._id.toString()).filter(id => id !== request.query[role]);
       studentProfile.studentData.coaches = newSupportersArray;
       break;
     case 'teacher':
-      newSupportersArray = studentProfile.studentData.teachers.map(id => id.toString()).filter(id => id !== request.query[role]);
+      newSupportersArray = studentProfile.studentData.teachers.map(t => t._id.toString()).filter(id => id !== request.query[role]);
       studentProfile.studentData.teachers = newSupportersArray;
       break;
     case 'family':
-      newSupportersArray = studentProfile.studentData.family.map(id => id.toString()).filter(id => id !== request.query[role]);
+      newSupportersArray = studentProfile.studentData.family.map(f => f._id.toString()).filter(id => id !== request.query[role]);
       studentProfile.studentData.family = newSupportersArray;
       break;
     default:

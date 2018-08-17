@@ -2,15 +2,11 @@
 
 import logger from '../logger';
 
-// in express, error handling middleware must follow this exact signature of four args, where the first arg is considered the error, and is followed by request, response, next
 export default (error, request, response, next) => { /*eslint-disable-line*/
-  // I might have a status property
   if (error.status) {
     logger.log(logger.ERROR, `ERROR MIDDLEWARE: Responding with a ${error.status} code and message ${error.message}`);
     return response.sendStatus(error.status);
   }
-
-  // if we make it this far, it's another type of error potentially related to MongoDB
 
   const errorMessage = error.message.toLowerCase();
   logger.log(logger.INFO, `ERROR MIDDLEWARE message: ${errorMessage}`);

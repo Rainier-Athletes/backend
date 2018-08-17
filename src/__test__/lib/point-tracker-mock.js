@@ -9,7 +9,6 @@ const createPointTrackerMockPromise = async () => {
 
   const profileData = await createProfileMockPromise();
 
-  // profileData.profile.role = 'student';
   mockData.profileData = profileData;
 
 

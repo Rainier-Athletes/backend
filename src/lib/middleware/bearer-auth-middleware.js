@@ -1,13 +1,11 @@
 import HttpErrors from 'http-errors';
 import jsonWebToken from 'jsonwebtoken';
 import { promisify } from 'util';
-import logger from '../logger';
 import Profile from '../../model/profile';
 
 const jwtVerify = promisify(jsonWebToken.verify);
 
 export default (request, response, next) => {
-  logger.log(logger.INFO, `BEARER AUTH token: ${request.headers.authorization}`);
   if (!request.headers.authorization) return next(new HttpErrors(400, 'BEARER AUTH MIDDLEWARE: no headers auth', { expose: false }));
 
   const token = request.headers.authorization.split('Bearer ')[1];
@@ -19,12 +17,6 @@ export default (request, response, next) => {
       return Promise.reject(new HttpErrors(401, `BEARER AUTH - unable to verify token ${JSON.stringify(error)}`, { expose: false }));
     })
     .then((decryptedToken) => {
-      /*
-        decryptedToken = {
-          tokenSeed: asdfast45249wa0dfasfdsadfsdf.....
-          iat: some date....
-        }
-      */
       tokenPayload = decryptedToken;
       return Profile.findOne({ _id: tokenPayload.profileId });
     })
