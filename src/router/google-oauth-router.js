@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import superagent from 'superagent';
-// import { google } from 'googleapis';
 import HttpErrors from 'http-errors';
 import Profile from '../model/profile';
 
