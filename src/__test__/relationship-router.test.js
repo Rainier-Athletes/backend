@@ -17,7 +17,6 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
 
   afterEach(async () => { await stopServer(); });
 
-  
   beforeEach(async () => {
     await startServer();
     await removeAllResources();
@@ -27,6 +26,9 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
       return logger.log(logger.ERROR, `Unexpected error in profile-router beforeEach: ${err}`);
     }
     return undefined;
+  });
+  afterEach(async () => {
+    await stopServer();
   });
 
   describe('GET ATTACH ROUTE TESTING', () => {

@@ -18,8 +18,10 @@ describe('MODEL AUTO POPULATE TESTS', () => {
     mock = await createPointTrackerMockPromise();
   });
 
-  afterEach(async () => { stopServer(); });
-
+  afterEach(async () => {
+    await stopServer();
+  });
+  
   test('Get point tracker mock from database', async () => {
     let response;
     try {
