@@ -15,6 +15,10 @@ describe('POINT TRACKER DATA EXPORT TESTS', () => {
   beforeEach(async () => {
     await startServer();
     await removeAllResources();
+    await createPointTrackerMockPromise();
+    await createPointTrackerMockPromise();
+    await createPointTrackerMockPromise();
+    await createPointTrackerMockPromise();
     mock = await createPointTrackerMockPromise();
   });
 
@@ -31,7 +35,7 @@ describe('POINT TRACKER DATA EXPORT TESTS', () => {
     } catch (err) {
       console.error(err);
     }
-    expect(response.body).toBeTruthy();
+    expect(response.status).toEqual(200);
     // console.log('POINT TRACKER POPULATED');
     // console.log(JSON.stringify(response.body, null, 4));
   });
