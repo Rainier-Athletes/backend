@@ -117,7 +117,7 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   
   pdf.create(html).toFile(`${TEMP_DIR}/${title}.pdf`,
     (err) => {
-      if (err) return next(new HttpError(500, 'Error creating pdf from html'));
+      if (err) return next(new HttpError(500, 'Error creating pdf from html', { expose: false }));
       return sendFileToGoogleDrive();
     });
 });

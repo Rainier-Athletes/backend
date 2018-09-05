@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import autopopulate from 'mongoose-autopopulate';
+// import mongooseToCsv from 'mongoose-to-csv';
+
 import Profile from './profile';
 
 const pointTrackerSchema = mongoose.Schema({
@@ -23,12 +25,10 @@ const pointTrackerSchema = mongoose.Schema({
       ref: 'Profile', 
       autopopulate: true,
     },
-    scoring: {
-      excusedDays: Number,
-      stamps: Number,
-      halfStamp: Number,
-      tutorials: Number,
-    },
+    excusedDays: Number,
+    stamps: Number,
+    halfStamp: Number,
+    tutorials: Number,
     grade: Number,
   }],
   surveyQuestions: {
@@ -54,8 +54,9 @@ const pointTrackerSchema = mongoose.Schema({
     sportsUpdate: String,
     additionalComments: String,
   },
-});
+}, { timestamps: true });
 pointTrackerSchema.plugin(autopopulate);
+// pointTrackerSchema.plugin(mongooseToCsv, { headers: [] });
 
 pointTrackerSchema.post('save', async (tracker) => {
   const student = await Profile.findById(tracker.student);
