@@ -325,6 +325,7 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
       response.sendStatus(200);
     })
     .catch(console.error);
+  return undefined;
 });
   
 export default extractRouter;
