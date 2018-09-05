@@ -14,6 +14,7 @@ import profileRouter from '../router/profile-router';
 import pointTrackerRouter from '../router/point-tracker-router';
 import synopsisRouter from '../router/synopsis-router';
 import relationshipRouter from '../router/relationship-router';
+import extractRouter from '../router/extract-router';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -46,6 +47,7 @@ app.use(googleOauthRouter);
 app.use(profileRouter);
 app.use(pointTrackerRouter);
 app.use(synopsisRouter);
+app.use(extractRouter);
 app.use(relationshipRouter);
 
 app.all('*', (request, response, next) => {
