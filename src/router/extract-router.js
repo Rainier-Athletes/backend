@@ -70,6 +70,7 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
         resource: fileMetadata,
         media,
       };
+
       let result;
       try {
         result = await drive.files.create(params);
@@ -96,7 +97,7 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
         return response.json(metaData.data).status(200);
       });
       return undefined; // to satisfy linter
-    };
+    }; // end uploadFileToFolder
 
     let res;
 
@@ -119,24 +120,22 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
     let folderId;
     if (res.data.files[0]) {
       // folder exists
-      folderId = res.data.files[0].id; 
-            
-      return uploadFileToFolder(folderId);     
-    }
-  
-    // create the folder
-    let file;
-    try {
-      file = await drive.files.create({
-        resource: folderMetadata,
-      });
-    } catch (error) {
-      // Handle error
-      logger(logger.ERROR, `Error creating creating folder ${error}`);
-      return next(new HttpError(500, `Error creating creating folder ${error}`));
+      folderId = res.data.files[0].id;     
+    } else {  
+      // create the folder
+      let file;
+      try {
+        file = await drive.files.create({
+          resource: folderMetadata,
+        });
+      } catch (error) {
+        // Handle error
+        logger(logger.ERROR, `Error creating creating folder ${error}`);
+        return next(new HttpError(500, `Error creating creating folder ${error}`));
+      }
+      folderId = file.data.id; 
     }
 
-    folderId = file.data.id; 
     return uploadFileToFolder(folderId);
   } // end of sendFileToGoogleDrive
   
@@ -268,6 +267,7 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
 
   const builder = new CsvBuilder({ headers, alias });
 
+  // query the database and dump results to temp csv file
   PointTracker.where('createdAt').gte(new Date(fromDate)).lte(new Date(toDate))
     .then((data) => {
       if (data.length === 0) return next(HttpError(404, 'No data found in specified range', { expose: false }));
@@ -288,7 +288,8 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
           if (werr) return next(HttpError(500, `Error writing to temp csv file: ${werr}`, { expose: false }));
           return fs.close(fd, (cerr) => {
             if (cerr) return next(HttpError(500, `Error closing temp csv file: ${cerr}`, { expose: false }));
-            return sendFileToGoogleDrive(); // http response from here
+            // push csv file to google drive and send response
+            return sendFileToGoogleDrive(); 
           });
         });
       });
