@@ -77,7 +77,19 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
       } catch (cerr) {
         return next(new HttpError(500, `Unable to create csv file on google drive: ${cerr}`, { expose: false }));
       }
-
+      // now set permissions so a shareable link will work
+      try {
+        await drive.permissions.create({
+          resource: {
+            type: 'anyone',
+            role: 'reader',
+          },
+          fileId: result.data.id,
+          fields: 'id',
+        });
+      } catch (err) {
+        return next(new HttpError(500, `permissions.create error: ${err}`));
+      }
       // if that worked get the file's metadata
       let metaData;
       try {
@@ -304,7 +316,6 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
     .catch((err) => {
       return next(new HttpError(500, `Unknown server error: ${err}`));
     });
-  logger.log(logger.ERROR, 'Unexpected exit at end of route');
   return undefined;
 });
   

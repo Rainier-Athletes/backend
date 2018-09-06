@@ -75,7 +75,19 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
       } catch (cerr) {
         return next(new HttpError(500, `Unable to create PDF file on google drive: ${cerr}`, { expose: false }));
       }
-
+      // now set permissions so a shareable link will work
+      try {
+        await drive.permissions.create({
+          resource: {
+            type: 'anyone',
+            role: 'reader',
+          },
+          fileId: result.data.id,
+          fields: 'id',
+        });
+      } catch (err) {
+        return next(new HttpError(500, `permissions.create error: ${err}`));
+      }
       // if that worked get the file's metadata
       let metaData;
       try {
