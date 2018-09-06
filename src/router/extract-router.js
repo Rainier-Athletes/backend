@@ -8,7 +8,6 @@ import { Router } from 'express';
 import { google } from 'googleapis';
 import HttpError from 'http-errors';
 import fs from 'fs';
-// import Json2csvParser from 'json2csv';
 import CsvBuilder from 'csv-builder';
 
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
@@ -42,123 +41,89 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
 
   const drive = google.drive({ version: 'v3', auth: oAuth2Client }); 
   
-  const sendFileToGoogleDrive = async () => {
+  // const sendFileToGoogleDrive = async () => {
+  async function sendFileToGoogleDrive() {
     const filePath = `${TEMP_DIR}/${extractName}.csv`;
-    
-    console.log('sendFileToGoogleDrive from to', fromDate, toDate);
 
     let readStream;
     try {
       readStream = fs.createReadStream(filePath);
     } catch (err) {
       logger(logger.ERROR, `Error creating readStream ${err}`);
+      return next(new HttpError(500, `Error creating readStream ${err}`));
     }
 
-    
-    let result;
-    const uploadFileToFolder = async (folderId) => {    
+    const uploadFileToFolder = async (folderId) => {
+      // once folder is created, upload csv file to it 
       const fileMetadata = {
-        name: `${extractName}`,
+        name: `${extractName}.csv`,
         writersCanShare: true,
         parents: [folderId],
       };
 
-      const requestBody = {
-        name: `${extractName}.csv`,
-        mimeType: 'text/csv',
-
-      };
       const media = {
         mimeType: 'text/csv',
         body: readStream,
       };
 
-      result = await drive.files.create({
+      const params = {
         resource: fileMetadata,
-        requestBody,
         media,
-      });
-      return response.json(result);
+      };
+      try {
+        const result = await drive.files.create(params);
+        fs.unlink(`${TEMP_DIR}/${extractName}.csv`, (derr) => {
+          if (derr) return next(new HttpError(502, `CSV uploaded to google but unable to delete temp file: ${derr}`));
+          return response.json(result.data).status(200);
+        });
+      } catch (err) {
+        return next(new HttpError(500, `Unable to upload csv to google drive: ${err}`));
+      }
+      return undefined;
     };
 
+    let res;
+
+    // see if extract folder exists
+    const folderMetadata = {
+      name: setFolderName,
+      mimeType: 'application/vnd.google-apps.folder',
+      fields: 'id',
+    };
     try {
-      const folderMetadata = {
-        name: setFolderName,
+      res = await drive.files.list({ 
         mimeType: 'application/vnd.google-apps.folder',
-        fields: 'id',
-      };     
-      drive.files.list({
         q: `name='${setFolderName}'`,
-      }, (err, res) => {
-        let folderId;
-        if (err) {
-          logger(logger.ERROR, `Error retrieving drive file list ${err}`);
-        } else {
-          if (res.data.files[0]) {
-            folderId = res.data.files[0].id;      
-          } else {
-            return drive.files.create({
-              resource: folderMetadata,
-            }, (error, file) => {
-              if (err) {
-                // Handle error
-                logger(logger.ERROR, `Error creating creating folder ${err}`);
-              } else {
-                folderId = file.data.id;      
-                return uploadFileToFolder(folderId);
-              }
-              return undefined;
-            });
-          }                
-          uploadFileToFolder(folderId);  
-        }
-        return response;        
-      });
+      }); 
     } catch (err) {
-      return next(new HttpError(err.status, 'Error saving PDF to google drive.', { expose: false }));
+      logger(logger.ERROR, `Error retrieving drive file list ${err}`);
+      return next(new HttpError(500, `Error retrieving drive file list ${err}`));
     }
-    return undefined;
-  }; // end of sendFileToGoogleDrive
+
+    let folderId;
+    if (res.data.files[0]) {
+      // folder exists
+      folderId = res.data.files[0].id; 
+            
+      return uploadFileToFolder(folderId);     
+    }
   
-  console.log('extract get calling PointTracker.find with', fromDate, toDate);
-  // Model.where('created').gte(twoWeeksAgo).stream().pipe(writeStream);
-  // const builder = new CsvBuilder({ headers: ['mentorAttendedCheckin',
-  //   'metFaceToFace', 'hadOtherCommunication'],
-  // });
+    // create the folder
+    let file;
+    try {
+      file = await drive.files.create({
+        resource: folderMetadata,
+      });
+    } catch (error) {
+      // Handle error
+      logger(logger.ERROR, `Error creating creating folder ${error}`);
+      return next(new HttpError(500, `Error creating creating folder ${error}`));
+    }
 
-  // const fields = ['date',
-  //   'student.active',
-  //   'student.firstName',
-  //   'student.lastName',
-  //   'student.email',
-  //   'student.phone',
-  //   'student.gender',
-  //   'student.school',
-  //   'surveyQuestions.mentorAttendedCheckin',
-  //   'surveyQuestions.metFaceToFace', 
-  //   'surveyQuestions.hadOtherCommunication',
-  //   'surveyQuestions.hadNoCommunication',
-  //   'surveyQuestions.scoreSheetTurnedIn',
-  //   'surveyQuestions.scoreSheetLostOrIncomplete',
-  //   'surveyQuestions.scoreSheetWillBeLate',
-  //   'surveyQuestions.scoreSheetOther',
-  //   'surveyQuestions.scoreSheetOtherReason',
-  //   'surveyQuestions.synopsisInformationComplete',
-  //   'surveyQuestions.synopsisInformationIncomplete',
-  //   'surveyQuestions.synopsisCompletedByRaStaff',
-  //   'synopsisComments.extraPlayingTime',
-  //   'synopsisComments.mentorGrantedPlayingTime',
-  //   'synopsisComments.studentActionItems',
-  //   'synopsisComments.sportsUpdate',
-  //   'synopsisComments.additionalComments',
-  //   'subjects.subjectName',
-  //   'subjects.excusedDays',
-  //   'subjects.stamps',
-  //   'subjects.halfStamp',
-  //   'subjects.tutorials',
-  //   'subjects.grade',
-  // ];
-
+    folderId = file.data.id; 
+    return uploadFileToFolder(folderId);
+  } // end of sendFileToGoogleDrive
+  
   const headers = ['date',
     'student.active',
     'student.firstName',
@@ -236,95 +201,86 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
 
   const alias = {
     'subject.1': 'subjects[0].subjectName',
-    'subject.1.excusedDays': 'subjects[0].excusedDays',
-    'subject.1.stamps': 'subjects[0].stamps',
-    'subject.1.halfStamp': 'subjects[0].halfStamp',
-    'subject.1.tutorials': 'subjects[0].tutorials',
+    'subject.1.excusedDays': 'subjects[0].scoring.excusedDays',
+    'subject.1.stamps': 'subjects[0].scoring.stamps',
+    'subject.1.halfStamp': 'subjects[0].scoring.halfStamp',
+    'subject.1.tutorials': 'subjects[0].scoring.tutorials',
     'subject.1.grade': 'subjects[0].grade',
     'subject.2': 'subjects[1].subjectName',
-    'subject.2.excusedDays': 'subjects[1].excusedDays',
-    'subject.2.stamps': 'subjects[1].stamps',
-    'subject.2.halfStamp': 'subjects[1].halfStamp',
-    'subject.2.tutorials': 'subjects[1].tutorials',
+    'subject.2.excusedDays': 'subjects[1].scoring.excusedDays',
+    'subject.2.stamps': 'subjects[1].scoring.stamps',
+    'subject.2.halfStamp': 'subjects[1].scoring.halfStamp',
+    'subject.2.tutorials': 'subjects[1].scoring.tutorials',
     'subject.2.grade': 'subjects[1].grade',
     'subject.3': 'subjects[2].subjectName',
-    'subject.3.excusedDays': 'subjects[2].excusedDays',
-    'subject.3.stamps': 'subjects[2].stamps',
-    'subject.3.halfStamp': 'subjects[2].halfStamp',
-    'subject.3.tutorials': 'subjects[2].tutorials',
+    'subject.3.excusedDays': 'subjects[2].scoring.excusedDays',
+    'subject.3.stamps': 'subjects[2].scoring.stamps',
+    'subject.3.halfStamp': 'subjects[2].scoring.halfStamp',
+    'subject.3.tutorials': 'subjects[2].scoring.tutorials',
     'subject.3.grade': 'subjects[2].grade',
     'subject.4': 'subjects[3].subjectName',
-    'subject.4.excusedDays': 'subjects[3].excusedDays',
-    'subject.4.stamps': 'subjects[3].stamps',
-    'subject.4.halfStamp': 'subjects[3].halfStamp',
-    'subject.4.tutorials': 'subjects[3].tutorials',
+    'subject.4.excusedDays': 'subjects[3].scoring.excusedDays',
+    'subject.4.stamps': 'subjects[3].scoring.stamps',
+    'subject.4.halfStamp': 'subjects[3].scoring.halfStamp',
+    'subject.4.tutorials': 'subjects[3].scoring.tutorials',
     'subject.4.grade': 'subjects[3].grade',
     'subject.5': 'subjects[4].subjectName',
-    'subject.5.excusedDays': 'subjects[4].excusedDays',
-    'subject.5.stamps': 'subjects[4].stamps',
-    'subject.5.halfStamp': 'subjects[4].halfStamp',
-    'subject.5.tutorials': 'subjects[4].tutorials',
+    'subject.5.excusedDays': 'subjects[4].scoring.excusedDays',
+    'subject.5.stamps': 'subjects[4].scoring.stamps',
+    'subject.5.halfStamp': 'subjects[4].scoring.halfStamp',
+    'subject.5.tutorials': 'subjects[4].scoring.tutorials',
     'subject.5.grade': 'subjects[4].grade',
     'subject.6': 'subjects[5].subjectName',
-    'subject.6.excusedDays': 'subjects[5].excusedDays',
-    'subject.6.stamps': 'subjects[5].stamps',
-    'subject.6.halfStamp': 'subjects[5].halfStamp',
-    'subject.6.tutorials': 'subjects[5].tutorials',
+    'subject.6.excusedDays': 'subjects[5].scoring.excusedDays',
+    'subject.6.stamps': 'subjects[5].scoring.stamps',
+    'subject.6.halfStamp': 'subjects[5].scoring.halfStamp',
+    'subject.6.tutorials': 'subjects[5].scoring.tutorials',
     'subject.6.grade': 'subjects[5].grade',
     'subject.7': 'subjects[6].subjectName',
-    'subject.7.excusedDays': 'subjects[6].excusedDays',
-    'subject.7.stamps': 'subjects[6].stamps',
-    'subject.7.halfStamp': 'subjects[6].halfStamp',
-    'subject.7.tutorials': 'subjects[6].tutorials',
+    'subject.7.excusedDays': 'subjects[6].scoring.excusedDays',
+    'subject.7.stamps': 'subjects[6].scoring.stamps',
+    'subject.7.halfStamp': 'subjects[6].scoring.halfStamp',
+    'subject.7.tutorials': 'subjects[6].scoring.tutorials',
     'subject.7.grade': 'subjects[6].grade',
     'subject.8': 'subjects[7].subjectName',
-    'subject.8.excusedDays': 'subjects[7].excusedDays',
-    'subject.8.stamps': 'subjects[7].stamps',
-    'subject.8.halfStamp': 'subjects[7].halfStamp',
-    'subject.8.tutorials': 'subjects[7].tutorials',
+    'subject.8.excusedDays': 'subjects[7].scoring.excusedDays',
+    'subject.8.stamps': 'subjects[7].scoring.stamps',
+    'subject.8.halfStamp': 'subjects[7].scoring.halfStamp',
+    'subject.8.tutorials': 'subjects[7].scoring.tutorials',
     'subject.8.grade': 'subjects[7].grade',
   };
 
   const builder = new CsvBuilder({ headers, alias });
 
-  // const fields = ['student.studentData.firstName'];
-  // const opts = { fields, unwind: ['subjects'], unwindBlank: true };
-  // const parser = new Json2csvParser.Parser(opts);
- 
   PointTracker.where('createdAt').gte(new Date(fromDate)).lte(new Date(toDate))
     .then((data) => {
-      // console.log(JSON.stringify(data));
+      if (data.length === 0) return next(HttpError(404, 'No data found in specified range', { expose: false }));
+
       let csv = '';
       csv += builder.getHeaders();
       try {
         data.forEach((item) => {
-          // console.log(item);
-          // const json = JSON.stringify(item);
-          // console.log(json);
-          // const csv = parser.parse(item);
           csv += builder.getRow(item);
         });
-        console.log(csv);
-        console.log('opening file', `${TEMP_DIR}/${extractName}.csv`);
-        fs.open(`${TEMP_DIR}/${extractName}.csv`, 'wx', (oerr, fd) => {
-          if (oerr) return console.error('error creating file', oerr); // new HttpError(500, 'Could not create temp csv file', { expose: false });
-          console.log('writing file');
-          return fs.writeFile(fd, csv, (werr) => {
-            if (werr) return new HttpError(500, 'Error writing to temp csv file', { expose: false });
-            console.log('closing file');
-            return fs.close(fd, (cerr) => {
-              if (cerr) return new HttpError(500, 'Error closing temp csv file', { expose: false });
-              console.log('calling sendFileToGoogleDrive');
-              return sendFileToGoogleDrive();
-            });
+      } catch (err) {
+        return next(new HttpError(500, `Error building csv string: ${err}`));
+      }
+
+      fs.open(`${TEMP_DIR}/${extractName}.csv`, 'wx', (oerr, fd) => {
+        if (oerr) return next(HttpError(500, `Could not create temp csv file: ${oerr}`, { expose: false }));
+        return fs.writeFile(fd, csv, (werr) => {
+          if (werr) return next(HttpError(500, `Error writing to temp csv file: ${werr}`, { expose: false }));
+          return fs.close(fd, (cerr) => {
+            if (cerr) return next(HttpError(500, `Error closing temp csv file: ${cerr}`, { expose: false }));
+            return sendFileToGoogleDrive(); // http response from here
           });
         });
-      } catch (err) {
-        console.error(err);
-      }
-      response.sendStatus(200);
+      });
+      return undefined;
     })
-    .catch(console.error);
+    .catch((err) => {
+      return next(new HttpError(500, `Unknown server error: ${err}`));
+    });
   return undefined;
 });
   
