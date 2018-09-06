@@ -36,6 +36,13 @@ ROOT_ADMIN={"email": "selpilot@gmail.com", "role": "admin"} // use this id to bo
   - /api/v1/profiles
   - /api/v1/pointstracker
   - /api/v1/synopsis
+    - Returns webViewLink, a shareable URL, for the PDF file in the user's google drive:
+    ```
+    {
+        "webViewLink": "https://drive.google.com/file/d/150JHOsRJ0-FqEr6gH4eoufLISAu-aOgA/view?usp=drivesdk"
+    }
+    ```
+    - Body requires name and html parameters. Name is student's name. Html is html string for the synopsis report.
 
 ### GET
 	- /api/v1/oauth/google
@@ -45,6 +52,14 @@ ROOT_ADMIN={"email": "selpilot@gmail.com", "role": "admin"} // use this id to bo
     - We'll need to experiment with the date query to be sure date is formatted correctly. And that it's a valid report date (a Friday).
 	-/api/v1/attach?student=mongoose._id&[mentor|coach|teacher|family]=mongoose._id
 	-/api/v1/detach?student=mongoose._id&[mentor|coach|teacher|family]=mongoose._id
+  - /api/v1/extract?from=date&to=date
+    - Extracts pointstracker data to csv and posts to user's google drive.
+    - Returns webViewLink, a shareable URL, for the CSV file in the user's google drive:
+    ```
+    {
+        "webViewLink": "https://drive.google.com/file/d/150JHOsRJ0-FqEr6gH4eoufLISAu-aOgA/view?usp=drivesdk"
+    }
+    ```
 
 
 ### PUT

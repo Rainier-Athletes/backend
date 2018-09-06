@@ -25,10 +25,12 @@ const pointTrackerSchema = mongoose.Schema({
       ref: 'Profile', 
       autopopulate: true,
     },
-    excusedDays: Number,
-    stamps: Number,
-    halfStamp: Number,
-    tutorials: Number,
+    scoring: {
+      excusedDays: Number,
+      stamps: Number,
+      halfStamp: Number,
+      tutorials: Number,
+    },
     grade: Number,
   }],
   surveyQuestions: {
