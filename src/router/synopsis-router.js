@@ -142,6 +142,8 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
       if (err) return next(new HttpError(500, 'Error creating pdf from html', { expose: false }));
       return sendFileToGoogleDrive();
     });
+
+  return undefined; // to satisfy linter...
 });
   
 export default synopsisRouter;

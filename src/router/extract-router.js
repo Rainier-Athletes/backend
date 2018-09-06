@@ -49,7 +49,7 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
     try {
       readStream = fs.createReadStream(filePath);
     } catch (err) {
-      logger(logger.ERROR, `Error creating readStream ${err}`);
+      logger.log(logger.ERROR, `Error creating readStream ${err}`);
       return next(new HttpError(500, `Error creating readStream ${err}`));
     }
 
@@ -113,9 +113,15 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
         q: `name='${setFolderName}'`,
       }); 
     } catch (err) {
-      logger(logger.ERROR, `Error retrieving drive file list ${err}`);
-      return next(new HttpError(500, `Error retrieving drive file list ${err}`));
+      logger.log(logger.ERROR, `Error retrieving drive file list ${err}`);
+      // delete temp file then return error response
+      fs.unlink(`${TEMP_DIR}/${extractName}.csv`, (derr) => {
+        if (derr) return logger.log(`OAuth error as well as fs.unlink error: ${derr}`);
+        return undefined;
+      });      
+      return next(new HttpError(401, 'Error retrieving drive file list. Likely bad OAuth.'));
     }
+    // if we didn't catch an error above then oauth is good. Subsequent errors will be status 500
 
     let folderId;
     if (res.data.files[0]) {
@@ -130,7 +136,7 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
         });
       } catch (error) {
         // Handle error
-        logger(logger.ERROR, `Error creating creating folder ${error}`);
+        logger.log(logger.ERROR, `Error creating creating folder ${error}`);
         return next(new HttpError(500, `Error creating creating folder ${error}`));
       }
       folderId = file.data.id; 
@@ -298,6 +304,7 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
     .catch((err) => {
       return next(new HttpError(500, `Unknown server error: ${err}`));
     });
+  logger.log(logger.ERROR, 'Unexpected exit at end of route');
   return undefined;
 });
   
