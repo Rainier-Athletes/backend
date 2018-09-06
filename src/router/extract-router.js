@@ -70,16 +70,32 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
         resource: fileMetadata,
         media,
       };
+      let result;
       try {
-        const result = await drive.files.create(params);
-        fs.unlink(`${TEMP_DIR}/${extractName}.csv`, (derr) => {
-          if (derr) return next(new HttpError(502, `CSV uploaded to google but unable to delete temp file: ${derr}`));
-          return response.json(result.data).status(200);
-        });
-      } catch (err) {
-        return next(new HttpError(500, `Unable to upload csv to google drive: ${err}`));
+        result = await drive.files.create(params);
+      } catch (cerr) {
+        return next(new HttpError(500, `Unable to create csv file on google drive: ${cerr}`, { expose: false }));
       }
-      return undefined;
+
+      // if that worked get the file's metadata
+      let metaData;
+      try {
+        metaData = await drive.files.get({ 
+          fileId: result.data.id, 
+          fields: 'webViewLink', 
+        });
+      } catch (gerr) {
+        return next(new HttpError(500, `Unable to get csv file info from google drive: ${gerr}`));
+      }
+
+      // delete the temp file and return our http response
+      fs.unlink(`${TEMP_DIR}/${extractName}.csv`, (derr) => {
+        if (derr) return next(new HttpError(502, `CSV uploaded to google but unable to delete temp file: ${derr}`));
+
+        // this is our success response:
+        return response.json(metaData.data).status(200);
+      });
+      return undefined; // to satisfy linter
     };
 
     let res;
