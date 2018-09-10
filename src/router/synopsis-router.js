@@ -11,7 +11,7 @@ const cleanDate = () => {
   const month = dateObj.getUTCMonth() + 1;
   const day = dateObj.getUTCDate();
   const year = dateObj.getUTCFullYear();
-  const newDate = `${year}/${month}/${day}`;
+  const newDate = `${year}-${month}-${day}`;
   return newDate;
 };
 
@@ -20,12 +20,14 @@ const TEMP_DIR = `${__dirname}/temp`;
 const synopsisRouter = new Router();
 
 synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, response, next) => {
-  const { name } = request.body;
+  const name = typeof request.body.name === 'string' && request.body.name !== '' ? request.body.name : false;
+  const html = typeof request.body.html === 'string' && request.body.html !== '' ? request.body.html : false;
+  if (!(name && html)) return next(new HttpError(400, 'Missing or invalid name or html parameters on request body', { expose: false }));
+
   const date = cleanDate(); 
   const title = `${name} ${date}`;
-  const { html } = request.body;
   const { googleTokenResponse } = request;
-  const setFolderName = `Rainier Athletes - ${name}`;
+  const setFolderName = `RA Reports for ${name}`;
 
   const oAuth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_OAUTH_ID,
@@ -47,80 +49,113 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
       readStream = fs.createReadStream(filePath);
     } catch (err) {
       logger(logger.ERROR, `Error creating readStream ${err}`);
+      return next(new HttpError(500, `Error creating readStream ${err}`));
     }
 
-    
-    let result;
     const uploadFileToFolder = async (folderId) => {    
       const fileMetadata = {
-        name: `${title}`,
+        name: `${title}.pdf`,
         writersCanShare: true,
         parents: [folderId],
       };
 
-      const requestBody = {
-        name: `${title}.pdf`,
-        mimeType: 'application/pdf',
-
-      };
       const media = {
         mimeType: 'application/pdf',
         body: readStream,
       };
 
-      result = await drive.files.create({
+      const params = {
         resource: fileMetadata,
-        requestBody,
         media,
+      };
+
+      let result;
+      try {
+        result = await drive.files.create(params);
+      } catch (cerr) {
+        return next(new HttpError(500, `Unable to create PDF file on google drive: ${cerr}`, { expose: false }));
+      }
+      // now set permissions so a shareable link will work
+      try {
+        await drive.permissions.create({
+          resource: {
+            type: 'anyone',
+            role: 'reader',
+          },
+          fileId: result.data.id,
+          fields: 'id',
+        });
+      } catch (err) {
+        return next(new HttpError(500, `permissions.create error: ${err}`));
+      }
+      // if that worked get the file's metadata
+      let metaData;
+      try {
+        metaData = await drive.files.get({ 
+          fileId: result.data.id, 
+          fields: 'webViewLink', 
+        });
+      } catch (gerr) {
+        return next(new HttpError(500, `Unable to get PDF file info from google drive: ${gerr}`));
+      }
+
+      // delete the temp file and return our http response
+      fs.unlink(`${TEMP_DIR}/${title}.pdf`, (derr) => {
+        if (derr) return next(new HttpError(502, `PDF uploaded to google but unable to delete temp file: ${derr}`));
+
+        // this is our success response:
+        return response.json(metaData.data).status(200);
       });
-      return response.json(result);
+      return undefined; // to satisfy linter
     };
 
+    let res;
+
+    // see if extract folder exists
+    const folderMetadata = {
+      name: setFolderName,
+      mimeType: 'application/vnd.google-apps.folder',
+      fields: 'id',
+    };
     try {
-      const folderMetadata = {
-        name: setFolderName,
+      res = await drive.files.list({ 
         mimeType: 'application/vnd.google-apps.folder',
-        fields: 'id',
-      };     
-      drive.files.list({
         q: `name='${setFolderName}'`,
-      }, (err, res) => {
-        let folderId;
-        if (err) {
-          logger(logger.ERROR, `Error retrieving drive file list ${err}`);
-        } else {
-          if (res.data.files[0]) {
-            folderId = res.data.files[0].id;      
-          } else {
-            return drive.files.create({
-              resource: folderMetadata,
-            }, (error, file) => {
-              if (err) {
-                // Handle error
-                logger(logger.ERROR, `Error creating creating folder ${err}`);
-              } else {
-                folderId = file.data.id;      
-                return uploadFileToFolder(folderId);
-              }
-              return undefined;
-            });
-          }                
-          uploadFileToFolder(folderId);  
-        }
-        return response;        
-      });
+      }); 
     } catch (err) {
-      return next(new HttpError(err.status, 'Error saving PDF to google drive.', { expose: false }));
+      logger(logger.ERROR, `Error retrieving drive file list ${err}`);
+      return next(new HttpError(500, `Error retrieving drive file list ${err}`));
     }
-    return undefined;
-  }; // end of pdf.create callback
+
+    let folderId;
+    if (res.data.files[0]) {
+      // folder exists
+      folderId = res.data.files[0].id;     
+    } else {  
+      // create the folder
+      let file;
+      try {
+        file = await drive.files.create({
+          resource: folderMetadata,
+        });
+      } catch (error) {
+        // Handle error
+        logger(logger.ERROR, `Error creating creating folder ${error}`);
+        return next(new HttpError(500, `Error creating creating folder ${error}`));
+      }
+      folderId = file.data.id; 
+    }
+
+    return uploadFileToFolder(folderId);
+  }; // end of sendFileToGoogleDrive
   
   pdf.create(html).toFile(`${TEMP_DIR}/${title}.pdf`,
     (err) => {
       if (err) return next(new HttpError(500, 'Error creating pdf from html', { expose: false }));
       return sendFileToGoogleDrive();
     });
+
+  return undefined; // to satisfy linter...
 });
   
-
 export default synopsisRouter;
