@@ -148,17 +148,6 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body).toHaveLength(1);
     });
 
-    test('GET 200 on successful admin search for skyline high school', async () => {
-      let response;
-      try {
-        response = await superagent.get(`${apiUrl}/profiles?school=skyline%20high%20school`)
-          .authBearer(mockData.adminToken);
-      } catch (err) {
-        expect(err).toEqual('Failure of profile GET unexpected');
-      }
-      expect(response.body).toHaveLength(1);
-    });
-
     test('GET 200 on successful admin search for active profiles', async () => {
       let response;
       try {
@@ -170,32 +159,10 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body).toHaveLength(5);
     });
 
-    test('GET 200 on successful admin search for male profiles', async () => {
+    test('GET 200 on successful admin search by gender', async () => {
       let response;
       try {
-        response = await superagent.get(`${apiUrl}/profiles?gender=male`)
-          .authBearer(mockData.adminToken);
-      } catch (err) {
-        expect(err).toEqual('Failure of profile GET unexpected');
-      }
-      expect(response.body).toHaveLength(2);
-    });
-
-    test('GET 200 on successful admin search for female profiles', async () => {
-      let response;
-      try {
-        response = await superagent.get(`${apiUrl}/profiles?gender=female`)
-          .authBearer(mockData.adminToken);
-      } catch (err) {
-        expect(err).toEqual('Failure of profile GET unexpected');
-      }
-      expect(response.body).toHaveLength(2);
-    });
-
-    test('GET 200 on successful admin search for female mentors', async () => {
-      let response;
-      try {
-        response = await superagent.get(`${apiUrl}/profiles?gender=female&role=mentor`)
+        response = await superagent.get(`${apiUrl}/profiles?studentData.gender=male`)
           .authBearer(mockData.adminToken);
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
@@ -203,15 +170,26 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body).toHaveLength(1);
     });
 
-    test('GET 200 on successful admin search for all active males', async () => {
+    test('GET 200 on successful admin search for male students', async () => {
       let response;
       try {
-        response = await superagent.get(`${apiUrl}/profiles?active=true&gender=male`)
+        response = await superagent.get(`${apiUrl}/profiles?studentData.gender=male&role=student`)
           .authBearer(mockData.adminToken);
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
-      expect(response.body).toHaveLength(2);
+      expect(response.body).toHaveLength(1);
+    });
+
+    test('GET 200 on successful admin search for all active male students', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/profiles?active=true&studentData.gender=male`)
+          .authBearer(mockData.adminToken);
+      } catch (err) {
+        expect(err).toEqual('Failure of profile GET unexpected');
+      }
+      expect(response.body).toHaveLength(1);
     });
 
     test('GET 200 on successfull retrieval of profile by id', async () => {
@@ -252,7 +230,7 @@ describe('TESTING ROUTER PROFILE', () => {
     test('PUT 200 successful update of existing profile', async () => {
       let response;
       // now change one property of the profile and update it.
-      mockData.profile.email = 'thisis@updated.email';
+      mockData.profile.raEmail = 'thisis@updated.email';
       try {
         response = await superagent.put(`${apiUrl}/profiles`)
           .authBearer(mockData.adminToken)
@@ -261,7 +239,7 @@ describe('TESTING ROUTER PROFILE', () => {
         expect(err).toEqual('POST 200 test that should pass');
       }
       expect(response.status).toEqual(200);
-      expect(response.body.email).toEqual('thisis@updated.email');
+      expect(response.body.raEmail).toEqual('thisis@updated.email');
     });
 
     test('PUT 400  update of existing profile without body', async () => {
