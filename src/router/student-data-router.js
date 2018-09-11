@@ -41,6 +41,26 @@ studentDataRouter.get('/api/v1/studentdata', bearerAuthMiddleware, (request, res
       return response.json(result).status(result ? 200 : 404);
     })
     .catch(next);
+  return undefined;
+});
+
+studentDataRouter.put('/api/v1/studentdata', bearerAuthMiddleware, (request, response, next) => {
+  const body = request.body && typeof request.body === 'object' && request.body !== null && Object.keys(request.body).length > 0 ? request.body : false;
+
+  if (!body) return next(new HttpErrors(400, 'Missing PUT request body', { expose: false }));
+
+  StudentData.init()
+    .then(() => {
+      return StudentData.findOneAndUpdate({ _id: request.body._id }, request.body, { runValidators: true });
+    })
+    .then((data) => {
+      return StudentData.findOne(data._id);
+    })
+    .then((data) => {
+      response.json(data).status(200);
+    })
+    .catch(next);
+  return undefined;
 });
 
 export default studentDataRouter;

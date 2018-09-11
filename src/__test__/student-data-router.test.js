@@ -1,6 +1,6 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
-import faker from 'faker';
+
 import { startServer, stopServer } from '../lib/server';
 import { createStudentDataMockPromise, removeAllResources } from './lib/student-data-mock';
 import logger from '../lib/logger';
@@ -120,6 +120,35 @@ describe('TESTING STUDENT DATA ROUTER', () => {
         expect(response.status).toEqual('GET should have failed');
       } catch (err) {
         expect(err.status).toEqual(404);
+      }
+    });
+  });
+
+  describe('PUT STUDENT DATA TESTING', () => {
+    test('PUT 200 valid update to student data', async () => {
+      expect(mockData.studentData.grade).toEqual(7);
+      mockData.studentData.grade = 8;
+      let response;
+      try {
+        response = await superagent.put(`${apiUrl}/studentdata`)
+          .authBearer(mockProfiles.adminToken)
+          .send(mockData.studentData);
+      } catch (err) {
+        expect(err).toEqual('Put of mock data should have worked');
+      }
+      expect(response.status).toEqual(200);
+      expect(response.body.grade).toEqual(8);
+    });
+
+    test('PUT 400 bad request', async () => {
+      let response;
+      try {
+        response = await superagent.put(`${apiUrl}/studentdata`)
+          .authBearer(mockProfiles.adminToken);
+        // missing body
+        expect(response.status).toEqual('Test should have failed with 400');
+      } catch (err) {
+        expect(err.status).toEqual(400);
       }
     });
   });
