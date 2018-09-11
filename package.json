@@ -47,7 +47,6 @@
   "dependencies": {
     "aws-sdk": "^2.270.1",
     "babel-polyfill": "^6.26.0",
-    "bcrypt": "^3.0.0",
     "client-oauth2": "^4.2.1",
     "cors": "^2.8.4",
     "csv-builder": "^1.0.1",
