@@ -63,8 +63,8 @@ const createProfileMockPromise = async () => {
   const profile = await newProfile.save();
   const coach = await new Profile(mockCoachProfile).save();
   const admin = await new Profile(mockAdminProfile).save();
-
   const teacher = await new Profile(mockTeacherProfile).save();
+  
   mockData.teacherProfile = teacher;
   mockData.teacherToken = await teacher.createTokenPromise();
 

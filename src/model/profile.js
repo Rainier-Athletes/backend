@@ -47,9 +47,9 @@ const profileSchema = mongoose.Schema({
       id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Profile',
-        autopopulate: true,
+        autopopulate: { maxDepth: 1 },
       },
-      currentCoach: Boolean,
+      currentCoach: Boolean, // note: A student can have more than one current coach
     }],
     sports: [{ 
       sportName: String,
@@ -61,23 +61,23 @@ const profileSchema = mongoose.Schema({
       id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Profile',
-        autopopulate: true,
+        autopopulate: { maxDepth: 1 },
       },
-      currentMentor: Boolean,
+      currentMentor: Boolean, // note: A student can only have ONE current mentor
     }],
     teachers: [{
       id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Profile',
-        autopopulate: true,
+        autopopulate: { maxDepth: 1 },
       },
-      currentTeacher: Boolean,
+      currentTeacher: Boolean, // multiple current likely
     }],
     family: [{
       id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Profile',
-        autopopulate: true,
+        autopopulate: { maxDepth: 1 },
       },
       weekdayGaurdian: Boolean,
       weekendGaurdian: Boolean,
