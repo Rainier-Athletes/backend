@@ -29,8 +29,6 @@ const createPointTrackerMockPromise = async () => {
   const mockPointTracker = {
     date: new Date().toISOString(),
     student: mockData.profileData.studentProfile._id,
-    mentor: mockData.profileData.mentorProfile._id,
-    mentorIsSubstitute: false,
     subjects: [
       {
         subjectName: faker.name.firstName(),

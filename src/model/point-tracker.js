@@ -15,13 +15,6 @@ const pointTrackerSchema = mongoose.Schema({
     required: true,
     autopopulate: { maxDepth: 1 },
   },
-  mentor: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Profile',
-    required: true,
-    autopopulate: { maxDepth: 1 },
-  },
-  mentorIsSubstitute: Boolean, 
   subjects: [{
     subjectName: {
       type: String,

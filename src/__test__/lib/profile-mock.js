@@ -11,14 +11,8 @@ const createProfileMockPromise = async () => {
     role: 'student',
     address: faker.address.streetAddress(),
     phone: faker.phone.phoneNumberFormat(3),
-    studentData: {
-      gender: 'male',
-      mentors: [],
-      school: [{ 
-        schoolName: 'skyline high school', 
-        currentSchool: true, 
-      }],
-    },
+    gender: 'male',
+    school: 'skyline high school',
   };
 
   const mockMentorProfile = {
@@ -28,6 +22,7 @@ const createProfileMockPromise = async () => {
     role: 'mentor',
     address: faker.address.streetAddress(),
     phone: faker.phone.phoneNumberFormat(3),
+    gender: 'female',
   };
 
   const mockCoachProfile = {
@@ -37,6 +32,7 @@ const createProfileMockPromise = async () => {
     role: 'coach',
     address: faker.address.streetAddress(),
     phone: faker.phone.phoneNumberFormat(3),
+    gender: 'male',
   };
 
   const mockAdminProfile = {
@@ -46,6 +42,7 @@ const createProfileMockPromise = async () => {
     role: 'admin',
     address: faker.address.streetAddress(),
     phone: faker.phone.phoneNumberFormat(3),
+    gender: 'female',
   };
 
   const mockTeacherProfile = {
@@ -56,11 +53,10 @@ const createProfileMockPromise = async () => {
   };
 
 
-  const newMentor = new Profile(mockMentorProfile);
-  const mentor = await newMentor.save();
-  mockProfile.studentData.mentors.push({ id: mentor._id.toString(), currentMentor: true });
   const newProfile = new Profile(mockProfile);
   const profile = await newProfile.save();
+  const newMentor = new Profile(mockMentorProfile);
+  const mentor = await newMentor.save();
   const coach = await new Profile(mockCoachProfile).save();
   const admin = await new Profile(mockAdminProfile).save();
 
