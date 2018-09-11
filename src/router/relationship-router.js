@@ -48,10 +48,24 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
   const dataArray = roleProfile.students;
   if (!dataArray.map(id => id.toString()).includes(studentProfile._id.toString())) dataArray.push(request.query.student);
 
+  console.log('student PRE:', JSON.stringify(studentProfile, null, 4));
+  console.log('roleProfile PRE:', JSON.stringify(roleProfile, null, 4));
+
   // update student to reference support role's profile _id
   switch (role) {
     case 'mentor':
-      studentProfile.studentData.mentor = roleProfile._id;
+      // set currentMentor to false on all current mentors
+      studentProfile.studentData.mentors.forEach((m) => { m.currentMentor = false; });
+
+      if (!(studentProfile.studentData.mentors.map(v => v.id._id.toString()).includes(request.query[role]))) {
+        // push new mentor connection (as currentMentor) into student's mentors array
+        studentProfile.studentData.mentors.unshift({ id: request.query[role], currentMentor: true });
+      } else {
+        // mentor is already in the student's array. Set them to currentMentor
+        studentProfile.studentData.mentors.forEach((m) => { 
+          if (m.id._id.toString() === request.query[role]) m.currentMentor = true;
+        });
+      }
       break;
     case 'coach':
       if (!(studentProfile.studentData.coaches.map(v => v.toString()).includes(request.query[role]))) {
@@ -75,6 +89,8 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
   try {
     await roleProfile.save();
     await studentProfile.save();
+    console.log('student POST:', JSON.stringify(studentProfile, null, 4));
+    console.log('roleProfile POST:', JSON.stringify(roleProfile, null, 4));
     return response.sendStatus(200);
   } catch (err) {
     return new HttpErrors(500, 'ATTACH ROUTER GET: Unable to save updated profiles');

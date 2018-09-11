@@ -32,16 +32,17 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
   });
 
   describe('GET ATTACH ROUTE TESTING', () => {
-    test('GET 200 on successfull attach student to mentor by mentor', async () => {
+    test.only('GET 200 on successfull attach student to mentor by mentor', async () => {
       let response;
+      const testMock = await createProfileMockPromise();
       const queryParams = {
-        student: mockData.studentProfile._id.toString(),
+        student: testMock.studentProfile._id.toString(),
         mentor: mockData.mentorProfile._id.toString(),
       };
 
       try {
         response = await superagent.get(`${apiUrl}/attach`)
-          .authBearer(mockData.mentorToken)
+          .authBearer(mockData.adminToken)
           .query(queryParams);
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
@@ -50,13 +51,15 @@ describe('TESTING RELATIONSHIP ROUTER', () => {
       const mentor = await superagent.get(`${apiUrl}/profiles`)
         .authBearer(mockData.adminToken)
         .query({ id: mockData.mentorProfile._id.toString() });
+      // console.log('mentor post attach', JSON.stringify(JSON.parse(mentor.body), null, 4));
       expect(mentor.status).toEqual(200);
-      expect(mentor.body.students.map(v => v._id.toString()).includes(mockData.studentProfile._id.toString())).toBeTruthy();
+      expect(mentor.body.students.map(v => v._id.toString()).includes(testMock.studentProfile._id.toString())).toBeTruthy();
       const student = await superagent.get(`${apiUrl}/profiles`)
         .authBearer(mockData.adminToken)
-        .query({ id: mockData.studentProfile._id.toString() });
+        .query({ id: testMock.studentProfile._id.toString() });
+      // console.log('student post attach', JSON.stringify(JSON.parse(student.body), null, 4));
       expect(student.status).toEqual(200);
-      expect(student.body.studentData.mentor._id.toString()).toEqual(mockData.mentorProfile._id.toString());
+      expect(student.body.studentData.mentors.map(v => v.id._id.toString()).includes(mockData.mentorProfile._id.toString())).toBeTruthy();
     });
 
     test('GET 200 on successfull attach student to coach by mentor', async () => {
