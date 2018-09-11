@@ -31,7 +31,7 @@ describe('TESTING STUDENT DATA ROUTER', () => {
     await stopServer();
   });
 
-  describe('POST STUDENT DATA ROUTES TESTING', () => {
+  describe('POST STUDENT DATA TESTING', () => {
     test('POST 200 to successfully save student data', async () => {
       const newData = {
         student: mockProfiles.studentProfile._id.toString(),
@@ -58,6 +58,69 @@ describe('TESTING STUDENT DATA ROUTER', () => {
         .query({ id: newData.student });
       expect(student.status).toEqual(200);
       expect(student.body.studentData._id.toString()).toEqual(response.body._id.toString());
+    });
+
+    test('POST 400 bad request', async () => {
+      let response;
+      try {
+        response = await superagent.post(`${apiUrl}/studentdata`)
+          .authBearer(mockProfiles.adminToken);
+        // missing body
+        expect(response.status).toEqual('Test should have failed with 400');
+      } catch (err) {
+        expect(err.status).toEqual(400);
+      }
+    });
+  });
+
+  describe('GET STUDENT DATA TESTING', () => {
+    test('GET 200 to successfully retrieve student data by studentData id', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/studentdata`)
+          .authBearer(mockProfiles.adminToken)
+          .query({ id: mockData.studentData._id.toString() });
+      } catch (err) {
+        expect(err).toEqual('Get of mock data should have worked');
+      }
+      expect(response.status).toEqual(200);
+      expect(response.body[0].sports[0].sportName).toEqual(mockData.studentData.sports[0].sportName);
+    });
+
+    test('GET 200 to successfully retrieve student data by studentData student id', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/studentdata`)
+          .authBearer(mockProfiles.adminToken)
+          .query({ student: mockProfiles.studentProfile._id.toString() });
+      } catch (err) {
+        expect(err).toEqual('Get of mock data should have worked');
+      }
+      expect(response.status).toEqual(200);
+      expect(response.body[0].sports[0].sportName).toEqual(mockData.studentData.sports[0].sportName);
+    });
+
+    test('GET 400 missing query string', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/studentdata`)
+          .authBearer(mockProfiles.adminToken);
+        expect(response.status).toEqual('GET should have failed');
+      } catch (err) {
+        expect(err.status).toEqual(400);
+      }
+    });
+
+    test('GET 404 to retrieve nonexistant student data', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/studentdata`)
+          .authBearer(mockProfiles.adminToken)
+          .query({ id: 'THISISNOTANOBJECTID' });
+        expect(response.status).toEqual('GET should have failed');
+      } catch (err) {
+        expect(err.status).toEqual(404);
+      }
     });
   });
 });
