@@ -12,6 +12,7 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('TESTING STUDENT DATA ROUTER', () => {
   let mockData;
+  let mockProfiles;
 
   afterEach(async () => { await stopServer(); });
 
@@ -20,6 +21,7 @@ describe('TESTING STUDENT DATA ROUTER', () => {
     await removeAllResources();
     try {
       mockData = await createStudentDataMockPromise();
+      mockProfiles = mockData.profiles;
     } catch (err) {
       logger.log(logger.ERROR, `Unexpected error in student-data-router.test beforeEach: ${err}`);
     }
@@ -29,31 +31,33 @@ describe('TESTING STUDENT DATA ROUTER', () => {
     await stopServer();
   });
 
-  describe('POST PROFILE ROUTES TESTING', () => {
-    test('POST 200 to successfully save mentor', async () => {
-      // console.log(JSON.stringify(mockData, null, 4));
-      expect(true).toBeTruthy();
-      /*
-      const mockProfile = {
-        role: 'mentor',
-        email: faker.internet.email(),
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
+  describe('POST STUDENT DATA ROUTES TESTING', () => {
+    test('POST 200 to successfully save student data', async () => {
+      const newData = {
+        student: mockProfiles.studentProfile._id.toString(),
+        lastPointTracker: mockData.pointTracker._id.toString(),
+        sports: {
+          sportName: 'quidich',
+        },
       };
+
       let response;
       try {
-        response = await superagent.post(`${apiUrl}/profiles`)
-          .authBearer(mockData.adminToken)
-          .send(mockProfile);
+        response = await superagent.post(`${apiUrl}/studentdata`)
+          .authBearer(mockProfiles.adminToken)
+          .send(newData);
       } catch (err) {
         expect(err).toEqual('POST 200 test that should pass');
       }
+
       expect(response.status).toEqual(200);
-      expect(response.body.firstName).toEqual(mockProfile.firstName);
-      expect(response.body.lastName).toEqual(mockProfile.lastName);
-      expect(response.body.email).toEqual(mockProfile.email);
-      expect(response.body.role).toEqual(mockProfile.role);
-      */
+      expect(response.body.student.toString()).toEqual(mockProfiles.studentProfile._id.toString());
+
+      const student = await superagent.get(`${apiUrl}/profiles`)
+        .authBearer(mockProfiles.adminToken)
+        .query({ id: newData.student });
+      expect(student.status).toEqual(200);
+      expect(student.body.studentData._id.toString()).toEqual(response.body._id.toString());
     });
   });
 });

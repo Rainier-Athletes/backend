@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import autopopulate from 'mongoose-autopopulate';
+import Profile from './profile';
 
 const studentDataSchema = mongoose.Schema({
   student: {
@@ -68,6 +69,12 @@ const studentDataSchema = mongoose.Schema({
 });
 
 studentDataSchema.plugin(autopopulate);
+
+studentDataSchema.post('save', async (data) => {
+  const student = await Profile.findById(data.student);
+  if (student) student.studentData = data._id;
+  return student ? student.save() : undefined;
+});
 
 const skipInit = process.env.NODE_ENV === 'development';
 const StudentData = mongoose.model('StudentData', studentDataSchema, 'studentData', skipInit);
