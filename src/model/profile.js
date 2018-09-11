@@ -20,7 +20,6 @@ const profileSchema = mongoose.Schema({
     type: String,
     unique: true,
   },
-  raEmail: String,
   role: {
     type: String,
     required: true,
@@ -35,7 +34,6 @@ const profileSchema = mongoose.Schema({
     zip: String,
   },
   phone: String,
-  cellPhone: String,
   picture: String,
   studentData: {
     lastPointTracker: {
@@ -44,59 +42,28 @@ const profileSchema = mongoose.Schema({
       autopopulate: true,
     },
     coaches: [{
-      id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Profile',
-        autopopulate: true,
-      },
-      currentCoach: Boolean,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Profile',
+      autopopulate: true,
     }],
-    sports: [{ 
-      sportName: String,
-      team: String,
-      league: String,
-      currentlyPlaying: Boolean,
-    }],
-    mentors: [{
-      id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Profile',
-        autopopulate: true,
-      },
-      currentMentor: Boolean,
-    }],
+    mentor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Profile',
+      autopopulate: true,
+    },
     teachers: [{
-      id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Profile',
-        autopopulate: true,
-      },
-      currentTeacher: Boolean,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Profile',
+      autopopulate: true,
     }],
     family: [{
-      id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Profile',
-        autopopulate: true,
-      },
-      weekdayGaurdian: Boolean,
-      weekendGaurdian: Boolean,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Profile',
+      autopopulate: true,
     }],
-    gender: String,
-    school: [{ 
-      schoolName: String, 
-      currentSchool: Boolean,
-    }],
-    dateOfBirth: Date,
-    grade: Number,
-    synopsisReportArchiveUrl: String,
-    googleCalendarUrl: String,
-    googleDocsUrl: String,
-    synergy: {
-      username: String,
-      password: String, // this should probably be at least base64 encoded
-    },
   },
+  gender: String,
+  school: String,
   students: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Profile',

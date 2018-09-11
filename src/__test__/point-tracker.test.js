@@ -22,10 +22,9 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
   afterEach(async () => { stopServer(); });
 
   describe('Testing point-tracker POST route', () => {
-    test('POST 200 good request, mentor submitting', async () => {
+    test('POST 200 good request', async () => {
       const newPT = JSON.parse(JSON.stringify(mockData.pointTracker));
       delete newPT._id;
-      newPT.mentorIsSubstitute = false;
       let response;
       try {
         response = await superagent.post(`${apiUrl}/pointstracker`)
@@ -36,30 +35,12 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       }
       expect(response.status).toEqual(200);
       expect(response.body.student.toString()).toEqual(mockData.profileData.studentProfile._id.toString());
-      expect(response.body.mentor.toString()).toEqual(mockData.profileData.studentProfile.studentData.mentors[0].id.toString());
     });
 
-    test('POST 200 good request, substitute (admin) submitting', async () => {
+    test('POST 400 BAD REQUESSSST', async () => {
       const newPT = JSON.parse(JSON.stringify(mockData.pointTracker));
       delete newPT._id;
-      newPT.mentorIsSubstitute = true;
-      let response;
-      try {
-        response = await superagent.post(`${apiUrl}/pointstracker`)
-          .authBearer(mockData.mockProfiles.adminToken)
-          .send(newPT);
-      } catch (err) {
-        expect(err.status).toEqual('Unexpected error on good post to point-tracker');
-      }
-      expect(response.status).toEqual(200);
-      expect(response.body.student.toString()).toEqual(mockData.profileData.studentProfile._id.toString());
-      expect(response.body.mentor.toString()).toEqual(mockData.profileData.adminProfile._id.toString());
-    });
-
-    test('POST 400 BAD REQUEST', async () => {
-      const newPT = JSON.parse(JSON.stringify(mockData.pointTracker));
-      delete newPT._id;
-      delete newPT.student; // student is a require property
+      delete newPT.student;
       let response;
       try {
         response = await superagent.post(`${apiUrl}/pointstracker`)
@@ -116,7 +97,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       expect(response.body.student.toString()).toEqual(mockData.profileData.studentProfile._id.toString());
     });
 
-    test('POST 400 bad request: no body', async () => {
+    test('POST 400 bad request', async () => {
       let response;
       try {
         response = await superagent.post(`${apiUrl}/pointstracker`)

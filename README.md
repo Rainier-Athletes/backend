@@ -85,8 +85,8 @@ others |  - | -
 ## Mock JSON
 
 ### GET /api/v1/pointstracker?id=5b75bbdd2d60007306e782ef JSON
-NOTE: an admin can GET with no query string to retrieve all points trackers, in which case the result will be an array of populated objects
 ```
+[
     {
         "surveyQuestions": {
             "mentorAttendedCheckin": true,
@@ -103,67 +103,33 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
             "synopsisCompletedByRaStaff": false
         },
         "synopsisComments": {
-            "extraPlayingTime": "ut nemo reprehenderit",
+            "extraPlayingTime": "saepe id in",
             "mentorGrantedPlayingTime": "one quarter",
-            "studentActionItems": "velit est ab",
-            "sportsUpdate": "nam repudiandae odit",
-            "additionalComments": "cum odio corrupti"
+            "studentActionItems": "ea est recusandae",
+            "sportsUpdate": "magnam repellat quo",
+            "additionalComments": "sint quia aut"
         },
-        "_id": "5b96f6ab4be48399f6a56d66",
-        "date": "2018-09-10T22:56:43.361Z",
+        "_id": "5b75bbdd2d60007306e782ef",
+        "date": "2018-08-16T18:01:01.836Z",
         "student": {
             "studentData": {
-                "gender": "male",
-                "mentors": [
-                    {
-                        "_id": "5b96f6aa4be48399f6a56d30",
-                        "id": "5b96f6aa4be48399f6a56d2e",
-                        "currentMentor": true
-                    }
-                ],
-                "school": [
-                    {
-                        "_id": "5b96f6aa4be48399f6a56d31",
-                        "schoolName": "skyline high school",
-                        "currentSchool": true
-                    }
-                ],
                 "coaches": [],
-                "sports": [],
                 "teachers": [],
                 "family": [],
-                "lastPointTracker": "5b96f6ab4be48399f6a56d66"
+                "lastPointTracker": "5b75bbdd2d60007306e782ef"
             },
             "active": true,
             "role": "student",
             "students": [],
-            "_id": "5b96f6aa4be48399f6a56d2f",
-            "firstName": "Daniella",
-            "lastName": "Effertz",
-            "email": "Giovanni41@hotmail.com",
-            "phone": "397.230.9032",
+            "_id": "5b75bbdd2d60007306e782c7",
+            "firstName": "Xzavier",
+            "lastName": "Macejkovic",
+            "email": "Theodora_Nicolas79@yahoo.com",
+            "phone": "069.155.4058",
+            "gender": "male",
+            "school": "skyline high school",
             "__v": 0
         },
-        "mentor": {
-            "studentData": {
-                "coaches": [],
-                "sports": [],
-                "mentors": [],
-                "teachers": [],
-                "family": [],
-                "school": []
-            },
-            "active": true,
-            "role": "mentor",
-            "students": [],
-            "_id": "5b96f6aa4be48399f6a56d2e",
-            "firstName": "Darien",
-            "lastName": "Doyle",
-            "email": "Rosalinda_Gerhold30@hotmail.com",
-            "phone": "400.385.7439",
-            "__v": 0
-        },
-        "mentorIsSubstitute": false,
         "subjects": [
             {
                 "scoring": {
@@ -172,24 +138,21 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 3,
                     "tutorials": 2
                 },
-                "_id": "5b96f6ab4be48399f6a56d6d",
-                "subjectName": "Gloria",
+                "_id": "5b75bbdd2d60007306e782f6",
+                "subjectName": "Ada",
                 "teacher": {
                     "studentData": {
                         "coaches": [],
-                        "sports": [],
-                        "mentors": [],
                         "teachers": [],
-                        "family": [],
-                        "school": []
+                        "family": []
                     },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d3b",
-                    "firstName": "Iliana",
-                    "lastName": "Collier",
-                    "email": "Stuart_Boyle@gmail.com",
+                    "_id": "5b75bbdd2d60007306e782d0",
+                    "firstName": "Dexter",
+                    "lastName": "Schamberger",
+                    "email": "Rylan.Kassulke@yahoo.com",
                     "__v": 0
                 },
                 "grade": 70
@@ -201,24 +164,21 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 1,
                     "tutorials": 1
                 },
-                "_id": "5b96f6ab4be48399f6a56d6c",
-                "subjectName": "Ubaldo",
+                "_id": "5b75bbdd2d60007306e782f5",
+                "subjectName": "Viva",
                 "teacher": {
                     "studentData": {
                         "coaches": [],
-                        "sports": [],
-                        "mentors": [],
                         "teachers": [],
-                        "family": [],
-                        "school": []
+                        "family": []
                     },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d42",
-                    "firstName": "Madie",
-                    "lastName": "Dare",
-                    "email": "Dayna56@hotmail.com",
+                    "_id": "5b75bbdd2d60007306e782d5",
+                    "firstName": "Cristobal",
+                    "lastName": "Stiedemann",
+                    "email": "Pierce2@gmail.com",
                     "__v": 0
                 },
                 "grade": 90
@@ -230,24 +190,21 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 3,
                     "tutorials": 2
                 },
-                "_id": "5b96f6ab4be48399f6a56d6b",
-                "subjectName": "Orland",
+                "_id": "5b75bbdd2d60007306e782f4",
+                "subjectName": "Caleigh",
                 "teacher": {
                     "studentData": {
                         "coaches": [],
-                        "sports": [],
-                        "mentors": [],
                         "teachers": [],
-                        "family": [],
-                        "school": []
+                        "family": []
                     },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d49",
-                    "firstName": "Edmond",
-                    "lastName": "Hartmann",
-                    "email": "Chris_Rolfson@hotmail.com",
+                    "_id": "5b75bbdd2d60007306e782da",
+                    "firstName": "Diamond",
+                    "lastName": "Corwin",
+                    "email": "Ahmad.Reichert88@hotmail.com",
                     "__v": 0
                 },
                 "grade": 70
@@ -259,24 +216,21 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 1,
                     "tutorials": 1
                 },
-                "_id": "5b96f6ab4be48399f6a56d6a",
-                "subjectName": "Bo",
+                "_id": "5b75bbdd2d60007306e782f3",
+                "subjectName": "Samanta",
                 "teacher": {
                     "studentData": {
                         "coaches": [],
-                        "sports": [],
-                        "mentors": [],
                         "teachers": [],
-                        "family": [],
-                        "school": []
+                        "family": []
                     },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d50",
-                    "firstName": "Turner",
-                    "lastName": "Jenkins",
-                    "email": "Holden_Strosin@yahoo.com",
+                    "_id": "5b75bbdd2d60007306e782df",
+                    "firstName": "Lexi",
+                    "lastName": "Runolfsdottir",
+                    "email": "Harmon_Paucek73@gmail.com",
                     "__v": 0
                 },
                 "grade": 90
@@ -288,24 +242,21 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 1,
                     "tutorials": 1
                 },
-                "_id": "5b96f6ab4be48399f6a56d69",
-                "subjectName": "Alana",
+                "_id": "5b75bbdd2d60007306e782f2",
+                "subjectName": "Antonio",
                 "teacher": {
                     "studentData": {
                         "coaches": [],
-                        "sports": [],
-                        "mentors": [],
                         "teachers": [],
-                        "family": [],
-                        "school": []
+                        "family": []
                     },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d57",
-                    "firstName": "Frank",
-                    "lastName": "Cole",
-                    "email": "Dejah.Renner14@hotmail.com",
+                    "_id": "5b75bbdd2d60007306e782e4",
+                    "firstName": "Helmer",
+                    "lastName": "Hansen",
+                    "email": "Reuben.Farrell8@yahoo.com",
                     "__v": 0
                 },
                 "grade": 90
@@ -317,24 +268,21 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 3,
                     "tutorials": 2
                 },
-                "_id": "5b96f6ab4be48399f6a56d68",
-                "subjectName": "Barton",
+                "_id": "5b75bbdd2d60007306e782f1",
+                "subjectName": "Lila",
                 "teacher": {
                     "studentData": {
                         "coaches": [],
-                        "sports": [],
-                        "mentors": [],
                         "teachers": [],
-                        "family": [],
-                        "school": []
+                        "family": []
                     },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d5e",
-                    "firstName": "Kelly",
-                    "lastName": "Klocko",
-                    "email": "Tressie_Tremblay@gmail.com",
+                    "_id": "5b75bbdd2d60007306e782e9",
+                    "firstName": "Sam",
+                    "lastName": "Hilll",
+                    "email": "Brayan.Nader@hotmail.com",
                     "__v": 0
                 },
                 "grade": 70
@@ -346,486 +294,339 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 1,
                     "tutorials": 1
                 },
-                "_id": "5b96f6ab4be48399f6a56d67",
-                "subjectName": "Jordan",
+                "_id": "5b75bbdd2d60007306e782f0",
+                "subjectName": "Sabryna",
                 "teacher": {
                     "studentData": {
                         "coaches": [],
-                        "sports": [],
-                        "mentors": [],
                         "teachers": [],
-                        "family": [],
-                        "school": []
+                        "family": []
                     },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d65",
-                    "firstName": "Macy",
-                    "lastName": "Hartmann",
-                    "email": "Burley_Carroll79@gmail.com",
+                    "_id": "5b75bbdd2d60007306e782ee",
+                    "firstName": "Woodrow",
+                    "lastName": "Rippin",
+                    "email": "Zoila3@hotmail.com",
                     "__v": 0
                 },
                 "grade": 90
             }
         ],
-        "createdAt": "2018-09-10T22:56:43.387Z",
-        "updatedAt": "2018-09-10T22:56:43.387Z",
         "__v": 0
     }
-
+]
 ```
 
 ### Student Profile: GET /api/v1/profiles?id=5b75bbdd2d60007306e782c7
 ```
-    {
-        "studentData": {
-            "gender": "male",
-            "mentors": [
+{
+    "studentData": {
+        "coaches": [],
+        "teachers": [],
+        "family": [],
+        "lastPointTracker": {
+            "surveyQuestions": {
+                "mentorAttendedCheckin": true,
+                "metFaceToFace": true,
+                "hadOtherCommunication": false,
+                "hadNoCommunication": false,
+                "scoreSheetTurnedIn": true,
+                "scoreSheetLostOrIncomplete": false,
+                "scoreSheetWillBeLate": false,
+                "scoreSheetOther": false,
+                "scoreSheetOtherReason": "no reason needed in this case",
+                "synopsisInformationComplete": true,
+                "synopsisInformationIncomplete": false,
+                "synopsisCompletedByRaStaff": false
+            },
+            "synopsisComments": {
+                "extraPlayingTime": "saepe id in",
+                "mentorGrantedPlayingTime": "one quarter",
+                "studentActionItems": "ea est recusandae",
+                "sportsUpdate": "magnam repellat quo",
+                "additionalComments": "sint quia aut"
+            },
+            "_id": "5b75bbdd2d60007306e782ef",
+            "date": "2018-08-16T18:01:01.836Z",
+            "student": {
+                "studentData": {
+                    "coaches": [],
+                    "teachers": [],
+                    "family": [],
+                    "lastPointTracker": "5b75bbdd2d60007306e782ef"
+                },
+                "active": true,
+                "role": "student",
+                "students": [],
+                "_id": "5b75bbdd2d60007306e782c7",
+                "firstName": "Xzavier",
+                "lastName": "Macejkovic",
+                "email": "Theodora_Nicolas79@yahoo.com",
+                "phone": "069.155.4058",
+                "gender": "male",
+                "school": "skyline high school",
+                "__v": 0
+            },
+            "subjects": [
                 {
-                    "_id": "5b96f6ab4be48399f6a56d70",
-                    "id": {
+                    "scoring": {
+                        "excusedDays": 1,
+                        "stamps": 2,
+                        "halfStamp": 3,
+                        "tutorials": 2
+                    },
+                    "_id": "5b75bbdd2d60007306e782f6",
+                    "subjectName": "Ada",
+                    "teacher": {
                         "studentData": {
                             "coaches": [],
-                            "sports": [],
-                            "mentors": [],
                             "teachers": [],
-                            "family": [],
-                            "school": []
+                            "family": []
                         },
                         "active": true,
-                        "role": "mentor",
+                        "role": "teacher",
                         "students": [],
-                        "_id": "5b96f6ab4be48399f6a56d6e",
-                        "firstName": "Gerard",
-                        "lastName": "Vandervort",
-                        "email": "Kirstin_Rippin71@gmail.com",
-                        "phone": "257.659.5795",
+                        "_id": "5b75bbdd2d60007306e782d0",
+                        "firstName": "Dexter",
+                        "lastName": "Schamberger",
+                        "email": "Rylan.Kassulke@yahoo.com",
                         "__v": 0
                     },
-                    "currentMentor": true
-                }
-            ],
-            "school": [
-                {
-                    "_id": "5b96f6ab4be48399f6a56d71",
-                    "schoolName": "skyline high school",
-                    "currentSchool": true
-                }
-            ],
-            "coaches": [
-                {
-                    "_id": "5b96f6ab4be48399f6a56d72"
+                    "grade": 70
                 },
                 {
-                    "_id": "5b96f6ab4be48399f6a56d72"
-                }
-            ],
-            "sports": [],
-            "teachers": [],
-            "family": [
+                    "scoring": {
+                        "excusedDays": 3,
+                        "stamps": 4,
+                        "halfStamp": 1,
+                        "tutorials": 1
+                    },
+                    "_id": "5b75bbdd2d60007306e782f5",
+                    "subjectName": "Viva",
+                    "teacher": {
+                        "studentData": {
+                            "coaches": [],
+                            "teachers": [],
+                            "family": []
+                        },
+                        "active": true,
+                        "role": "teacher",
+                        "students": [],
+                        "_id": "5b75bbdd2d60007306e782d5",
+                        "firstName": "Cristobal",
+                        "lastName": "Stiedemann",
+                        "email": "Pierce2@gmail.com",
+                        "__v": 0
+                    },
+                    "grade": 90
+                },
                 {
-                    "_id": "5b96f6ab4be48399f6a56d74"
+                    "scoring": {
+                        "excusedDays": 1,
+                        "stamps": 2,
+                        "halfStamp": 3,
+                        "tutorials": 2
+                    },
+                    "_id": "5b75bbdd2d60007306e782f4",
+                    "subjectName": "Caleigh",
+                    "teacher": {
+                        "studentData": {
+                            "coaches": [],
+                            "teachers": [],
+                            "family": []
+                        },
+                        "active": true,
+                        "role": "teacher",
+                        "students": [],
+                        "_id": "5b75bbdd2d60007306e782da",
+                        "firstName": "Diamond",
+                        "lastName": "Corwin",
+                        "email": "Ahmad.Reichert88@hotmail.com",
+                        "__v": 0
+                    },
+                    "grade": 70
+                },
+                {
+                    "scoring": {
+                        "excusedDays": 3,
+                        "stamps": 4,
+                        "halfStamp": 1,
+                        "tutorials": 1
+                    },
+                    "_id": "5b75bbdd2d60007306e782f3",
+                    "subjectName": "Samanta",
+                    "teacher": {
+                        "studentData": {
+                            "coaches": [],
+                            "teachers": [],
+                            "family": []
+                        },
+                        "active": true,
+                        "role": "teacher",
+                        "students": [],
+                        "_id": "5b75bbdd2d60007306e782df",
+                        "firstName": "Lexi",
+                        "lastName": "Runolfsdottir",
+                        "email": "Harmon_Paucek73@gmail.com",
+                        "__v": 0
+                    },
+                    "grade": 90
+                },
+                {
+                    "scoring": {
+                        "excusedDays": 3,
+                        "stamps": 4,
+                        "halfStamp": 1,
+                        "tutorials": 1
+                    },
+                    "_id": "5b75bbdd2d60007306e782f2",
+                    "subjectName": "Antonio",
+                    "teacher": {
+                        "studentData": {
+                            "coaches": [],
+                            "teachers": [],
+                            "family": []
+                        },
+                        "active": true,
+                        "role": "teacher",
+                        "students": [],
+                        "_id": "5b75bbdd2d60007306e782e4",
+                        "firstName": "Helmer",
+                        "lastName": "Hansen",
+                        "email": "Reuben.Farrell8@yahoo.com",
+                        "__v": 0
+                    },
+                    "grade": 90
+                },
+                {
+                    "scoring": {
+                        "excusedDays": 1,
+                        "stamps": 2,
+                        "halfStamp": 3,
+                        "tutorials": 2
+                    },
+                    "_id": "5b75bbdd2d60007306e782f1",
+                    "subjectName": "Lila",
+                    "teacher": {
+                        "studentData": {
+                            "coaches": [],
+                            "teachers": [],
+                            "family": []
+                        },
+                        "active": true,
+                        "role": "teacher",
+                        "students": [],
+                        "_id": "5b75bbdd2d60007306e782e9",
+                        "firstName": "Sam",
+                        "lastName": "Hilll",
+                        "email": "Brayan.Nader@hotmail.com",
+                        "__v": 0
+                    },
+                    "grade": 70
+                },
+                {
+                    "scoring": {
+                        "excusedDays": 3,
+                        "stamps": 4,
+                        "halfStamp": 1,
+                        "tutorials": 1
+                    },
+                    "_id": "5b75bbdd2d60007306e782f0",
+                    "subjectName": "Sabryna",
+                    "teacher": {
+                        "studentData": {
+                            "coaches": [],
+                            "teachers": [],
+                            "family": []
+                        },
+                        "active": true,
+                        "role": "teacher",
+                        "students": [],
+                        "_id": "5b75bbdd2d60007306e782ee",
+                        "firstName": "Woodrow",
+                        "lastName": "Rippin",
+                        "email": "Zoila3@hotmail.com",
+                        "__v": 0
+                    },
+                    "grade": 90
                 }
             ],
-            "lastPointTracker": {
-                "surveyQuestions": {
-                    "mentorAttendedCheckin": true,
-                    "metFaceToFace": true,
-                    "hadOtherCommunication": false,
-                    "hadNoCommunication": false,
-                    "scoreSheetTurnedIn": true,
-                    "scoreSheetLostOrIncomplete": false,
-                    "scoreSheetWillBeLate": false,
-                    "scoreSheetOther": false,
-                    "scoreSheetOtherReason": "no reason needed in this case",
-                    "synopsisInformationComplete": true,
-                    "synopsisInformationIncomplete": false,
-                    "synopsisCompletedByRaStaff": false
-                },
-                "synopsisComments": {
-                    "extraPlayingTime": "doloribus esse illum",
-                    "mentorGrantedPlayingTime": "one quarter",
-                    "studentActionItems": "enim non itaque",
-                    "sportsUpdate": "non omnis nostrum",
-                    "additionalComments": "aut quis delectus"
-                },
-                "_id": "5b96f6ab4be48399f6a56da6",
-                "date": "2018-09-10T22:56:43.878Z",
-                "student": {
-                    "studentData": {
-                        "gender": "male",
-                        "mentors": [
-                            {
-                                "_id": "5b96f6ab4be48399f6a56d70",
-                                "id": "5b96f6ab4be48399f6a56d6e",
-                                "currentMentor": true
-                            }
-                        ],
-                        "school": [
-                            {
-                                "_id": "5b96f6ab4be48399f6a56d71",
-                                "schoolName": "skyline high school",
-                                "currentSchool": true
-                            }
-                        ],
-                        "coaches": [
-                            {
-                                "_id": "5b96f6ab4be48399f6a56d72"
-                            },
-                            {
-                                "_id": "5b96f6ab4be48399f6a56d72"
-                            }
-                        ],
-                        "sports": [],
-                        "teachers": [],
-                        "family": [
-                            {
-                                "_id": "5b96f6ab4be48399f6a56d74"
-                            }
-                        ],
-                        "lastPointTracker": "5b96f6ab4be48399f6a56da6"
-                    },
-                    "active": true,
-                    "role": "student",
-                    "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d6f",
-                    "firstName": "Kayden",
-                    "lastName": "Yost",
-                    "email": "Gerson43@yahoo.com",
-                    "phone": "325.785.4792",
-                    "__v": 0
-                },
-                "mentor": {
-                    "studentData": {
-                        "coaches": [],
-                        "sports": [],
-                        "mentors": [],
-                        "teachers": [],
-                        "family": [],
-                        "school": []
-                    },
-                    "active": true,
-                    "role": "mentor",
-                    "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d6e",
-                    "firstName": "Gerard",
-                    "lastName": "Vandervort",
-                    "email": "Kirstin_Rippin71@gmail.com",
-                    "phone": "257.659.5795",
-                    "__v": 0
-                },
-                "mentorIsSubstitute": false,
-                "subjects": [
-                    {
-                        "scoring": {
-                            "excusedDays": 1,
-                            "stamps": 2,
-                            "halfStamp": 3,
-                            "tutorials": 2
-                        },
-                        "_id": "5b96f6ab4be48399f6a56dad",
-                        "subjectName": "Abby",
-                        "teacher": {
-                            "studentData": {
-                                "coaches": [],
-                                "sports": [],
-                                "mentors": [],
-                                "teachers": [],
-                                "family": [],
-                                "school": []
-                            },
-                            "active": true,
-                            "role": "teacher",
-                            "students": [],
-                            "_id": "5b96f6ab4be48399f6a56d7b",
-                            "firstName": "Stephanie",
-                            "lastName": "Davis",
-                            "email": "Reagan.Bode@hotmail.com",
-                            "__v": 0
-                        },
-                        "grade": 70
-                    },
-                    {
-                        "scoring": {
-                            "excusedDays": 3,
-                            "stamps": 4,
-                            "halfStamp": 1,
-                            "tutorials": 1
-                        },
-                        "_id": "5b96f6ab4be48399f6a56dac",
-                        "subjectName": "Jason",
-                        "teacher": {
-                            "studentData": {
-                                "coaches": [],
-                                "sports": [],
-                                "mentors": [],
-                                "teachers": [],
-                                "family": [],
-                                "school": []
-                            },
-                            "active": true,
-                            "role": "teacher",
-                            "students": [],
-                            "_id": "5b96f6ab4be48399f6a56d82",
-                            "firstName": "Elroy",
-                            "lastName": "O'Hara",
-                            "email": "Eileen64@gmail.com",
-                            "__v": 0
-                        },
-                        "grade": 90
-                    },
-                    {
-                        "scoring": {
-                            "excusedDays": 1,
-                            "stamps": 2,
-                            "halfStamp": 3,
-                            "tutorials": 2
-                        },
-                        "_id": "5b96f6ab4be48399f6a56dab",
-                        "subjectName": "Noel",
-                        "teacher": {
-                            "studentData": {
-                                "coaches": [],
-                                "sports": [],
-                                "mentors": [],
-                                "teachers": [],
-                                "family": [],
-                                "school": []
-                            },
-                            "active": true,
-                            "role": "teacher",
-                            "students": [],
-                            "_id": "5b96f6ab4be48399f6a56d89",
-                            "firstName": "Jedediah",
-                            "lastName": "Yundt",
-                            "email": "Beverly16@gmail.com",
-                            "__v": 0
-                        },
-                        "grade": 70
-                    },
-                    {
-                        "scoring": {
-                            "excusedDays": 3,
-                            "stamps": 4,
-                            "halfStamp": 1,
-                            "tutorials": 1
-                        },
-                        "_id": "5b96f6ab4be48399f6a56daa",
-                        "subjectName": "Fern",
-                        "teacher": {
-                            "studentData": {
-                                "coaches": [],
-                                "sports": [],
-                                "mentors": [],
-                                "teachers": [],
-                                "family": [],
-                                "school": []
-                            },
-                            "active": true,
-                            "role": "teacher",
-                            "students": [],
-                            "_id": "5b96f6ab4be48399f6a56d90",
-                            "firstName": "Marcia",
-                            "lastName": "Schinner",
-                            "email": "Sierra60@yahoo.com",
-                            "__v": 0
-                        },
-                        "grade": 90
-                    },
-                    {
-                        "scoring": {
-                            "excusedDays": 3,
-                            "stamps": 4,
-                            "halfStamp": 1,
-                            "tutorials": 1
-                        },
-                        "_id": "5b96f6ab4be48399f6a56da9",
-                        "subjectName": "Westley",
-                        "teacher": {
-                            "studentData": {
-                                "coaches": [],
-                                "sports": [],
-                                "mentors": [],
-                                "teachers": [],
-                                "family": [],
-                                "school": []
-                            },
-                            "active": true,
-                            "role": "teacher",
-                            "students": [],
-                            "_id": "5b96f6ab4be48399f6a56d97",
-                            "firstName": "Keshawn",
-                            "lastName": "Kozey",
-                            "email": "Helena56@gmail.com",
-                            "__v": 0
-                        },
-                        "grade": 90
-                    },
-                    {
-                        "scoring": {
-                            "excusedDays": 1,
-                            "stamps": 2,
-                            "halfStamp": 3,
-                            "tutorials": 2
-                        },
-                        "_id": "5b96f6ab4be48399f6a56da8",
-                        "subjectName": "Fiona",
-                        "teacher": {
-                            "studentData": {
-                                "coaches": [],
-                                "sports": [],
-                                "mentors": [],
-                                "teachers": [],
-                                "family": [],
-                                "school": []
-                            },
-                            "active": true,
-                            "role": "teacher",
-                            "students": [],
-                            "_id": "5b96f6ab4be48399f6a56d9e",
-                            "firstName": "Eileen",
-                            "lastName": "Koss",
-                            "email": "Dorthy60@yahoo.com",
-                            "__v": 0
-                        },
-                        "grade": 70
-                    },
-                    {
-                        "scoring": {
-                            "excusedDays": 3,
-                            "stamps": 4,
-                            "halfStamp": 1,
-                            "tutorials": 1
-                        },
-                        "_id": "5b96f6ab4be48399f6a56da7",
-                        "subjectName": "Zelma",
-                        "teacher": {
-                            "studentData": {
-                                "coaches": [],
-                                "sports": [],
-                                "mentors": [],
-                                "teachers": [],
-                                "family": [],
-                                "school": []
-                            },
-                            "active": true,
-                            "role": "teacher",
-                            "students": [],
-                            "_id": "5b96f6ab4be48399f6a56da5",
-                            "firstName": "Myrtie",
-                            "lastName": "Zboncak",
-                            "email": "Enoch.Nienow67@gmail.com",
-                            "__v": 0
-                        },
-                        "grade": 90
-                    }
-                ],
-                "createdAt": "2018-09-10T22:56:43.898Z",
-                "updatedAt": "2018-09-10T22:56:43.898Z",
-                "__v": 0
-            }
-        },
-        "active": true,
-        "role": "student",
-        "students": [],
-        "_id": "5b96f6ab4be48399f6a56d6f",
-        "firstName": "Kayden",
-        "lastName": "Yost",
-        "email": "Gerson43@yahoo.com",
-        "phone": "325.785.4792",
-        "__v": 0
-    }
-
+            "__v": 0
+        }
+    },
+    "active": true,
+    "role": "student",
+    "students": [],
+    "_id": "5b75bbdd2d60007306e782c7",
+    "firstName": "Xzavier",
+    "lastName": "Macejkovic",
+    "email": "Theodora_Nicolas79@yahoo.com",
+    "phone": "069.155.4058",
+    "gender": "male",
+    "school": "skyline high school",
+    "__v": 0
+}
 ```
 
 ### Mentor (or any adult role) Profile: GET /api/v1/profiles?id=5b75bbdd2d60007306e782c8
 ```
-    {
-        "studentData": {
-            "coaches": [],
-            "sports": [],
-            "mentors": [],
-            "teachers": [],
-            "family": [],
-            "school": []
-        },
-        "active": true,
-        "role": "mentor",
-        "students": [
-            {
-                "studentData": {
-                    "gender": "male",
-                    "mentors": [
-                        {
-                            "_id": "5b96f6ac4be48399f6a56db8",
-                            "id": "5b96f6ac4be48399f6a56db6",
-                            "currentMentor": true
-                        }
-                    ],
-                    "school": [
-                        {
-                            "_id": "5b96f6ac4be48399f6a56db9",
-                            "schoolName": "skyline high school",
-                            "currentSchool": true
-                        }
-                    ],
-                    "coaches": [],
-                    "sports": [],
-                    "teachers": [],
-                    "family": [],
-                    "lastPointTracker": "5b96f6ac4be48399f6a56dee"
-                },
-                "active": true,
-                "role": "student",
-                "students": [],
-                "_id": "5b96f6ac4be48399f6a56db7",
-                "firstName": "Alysa",
-                "lastName": "Pollich",
-                "email": "Geovanny_Ratke@gmail.com",
-                "phone": "644.412.6889",
-                "__v": 0
+{
+    "studentData": {
+        "coaches": [],
+        "teachers": [],
+        "family": []
+    },
+    "active": true,
+    "role": "mentor",
+    "students": [
+        {
+            "studentData": {
+                "coaches": [],
+                "teachers": [],
+                "family": [],
+                "lastPointTracker": "5b75bbdd2d60007306e782ef"
             },
-            {
-                "studentData": {
-                    "gender": "male",
-                    "mentors": [
-                        {
-                            "_id": "5b96f6ac4be48399f6a56db8",
-                            "id": "5b96f6ac4be48399f6a56db6",
-                            "currentMentor": true
-                        }
-                    ],
-                    "school": [
-                        {
-                            "_id": "5b96f6ac4be48399f6a56db9",
-                            "schoolName": "skyline high school",
-                            "currentSchool": true
-                        }
-                    ],
-                    "coaches": [],
-                    "sports": [],
-                    "teachers": [],
-                    "family": [],
-                    "lastPointTracker": "5b96f6ac4be48399f6a56dee"
-                },
-                "active": true,
-                "role": "student",
-                "students": [],
-                "_id": "5b96f6ac4be48399f6a56db7",
-                "firstName": "Alysa",
-                "lastName": "Pollich",
-                "email": "Geovanny_Ratke@gmail.com",
-                "phone": "644.412.6889",
-                "__v": 0
-            }
-        ],
-        "_id": "5b96f6ac4be48399f6a56db6",
-        "firstName": "Candelario",
-        "lastName": "Welch",
-        "email": "Alicia_Zieme38@gmail.com",
-        "phone": "910.080.2409",
-        "__v": 0
-    }
+            "active": true,
+            "role": "student",
+            "students": [],
+            "_id": "5b75bbdd2d60007306e782c7",
+            "firstName": "Xzavier",
+            "lastName": "Macejkovic",
+            "email": "Theodora_Nicolas79@yahoo.com",
+            "phone": "069.155.4058",
+            "gender": "male",
+            "school": "skyline high school",
+            "__v": 0
+        },
+        {
+            "studentData": {
+                "coaches": [],
+                "teachers": [],
+                "family": [],
+                "lastPointTracker": "5b75bbdd2d60007306e782ef"
+            },
+            "active": true,
+            "role": "student",
+            "students": [],
+            "_id": "5b75bbdd2d60007306e782c7",
+            "firstName": "Xzavier",
+            "lastName": "Macejkovic",
+            "email": "Theodora_Nicolas79@yahoo.com",
+            "phone": "069.155.4058",
+            "gender": "male",
+            "school": "skyline high school",
+            "__v": 0
+        }
+    ],
+    "_id": "5b75bbdd2d60007306e782c8",
+    "firstName": "Conner",
+    "lastName": "Mosciski",
+    "email": "Brant_Rowe@hotmail.com",
+    "phone": "843.176.0624",
+    "gender": "female",
+    "__v": 0
+}
 ```
 
