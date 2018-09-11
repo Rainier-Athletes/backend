@@ -2,6 +2,7 @@ import { Router } from 'express';
 import HttpErrors from 'http-errors';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import Profile from '../model/profile';
+import logger from '../lib/logger';
 
 const relationshipRouter = new Router();
 
@@ -27,6 +28,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
     return next(new HttpErrors(400, 'ATTACH ROUTER GET ERROR: missing valid role query parameter', { expose: false }));
   }
   // at this point query parameters and user's role are good.
+  logger.log(logger.INFO, `ATTACH ROUTER GET: attaching student ${request.query.student} to ${role}=${request.query[role]}`);
 
   // retrieve student and support role profiles
   let studentProfile;
@@ -49,41 +51,22 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
   // update student to reference support role's profile _id
   switch (role) {
     case 'mentor':
-      // set currentMentor to false on all current mentors
-      studentProfile.studentData.mentors.forEach((m) => { m.currentMentor = false; });
-
-      if (!(studentProfile.studentData.mentors.map(v => v.id._id.toString()).includes(request.query[role]))) {
-        // push new mentor connection (as currentMentor) into student's mentors array
-        studentProfile.studentData.mentors.unshift({ id: request.query[role], currentMentor: true });
-      } else {
-        // mentor is already in the student's array. Set them to currentMentor
-        studentProfile.studentData.mentors.forEach((m) => { 
-          if (m.id._id.toString() === request.query[role]) m.currentMentor = true;
-        });
-      }
+      studentProfile.studentData.mentor = roleProfile._id;
       break;
     case 'coach':
       if (!(studentProfile.studentData.coaches.map(v => v.toString()).includes(request.query[role]))) {
-        studentProfile.studentData.coaches.push({ id: request.query[role], currentCoach: true });
-      } else {
-        studentProfile.studentData.coaches.forEach((c) => { 
-          if (c.id._id.toString() === request.query[role]) c.currentCoach = true;
-        });
+        studentProfile.studentData.coaches.push(request.query[role]);
       }
       break;
     case 'teacher':
       if (!(studentProfile.studentData.teachers.map(v => v.toString()).includes(request.query[role]))) {
-        studentProfile.studentData.teachers.push({ id: request.query[role], currentTeacher: true });
-      } else {
-        studentProfile.studentData.teachers.forEach((c) => { 
-          if (c.id._id.toString() === request.query[role]) c.currentTeacher = true;
-        });
+        studentProfile.studentData.teachers.push(request.query[role]);
       }
       break;
     case 'family':
       if (!(studentProfile.studentData.family.map(v => v.toString()).includes(request.query[role]))) {
-        studentProfile.studentData.family.push({ id: request.query[role] });
-      } 
+        studentProfile.studentData.family.push(request.query[role]);
+      }
       break;
     default:
   }
@@ -119,6 +102,8 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
   if (!['mentor', 'coach', 'teacher', 'family'].includes(role)) {
     return next(new HttpErrors(400, 'DETACH ROUTER GET ERROR: missing valid role query parameter', { expose: false }));
   }
+  
+  logger.log(logger.INFO, `DETACH ROUTER GET: detaching student ${request.query.student} from ${role}=${request.query[role]}`);
 
   let studentProfile;
   let roleProfile;
@@ -140,44 +125,25 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
 
   // now remove support role ID from student profile.
   let newSupportersArray;
-  let found = false;
   switch (role) {
     case 'mentor':
-      studentProfile.studentData.mentors.forEach((m) => {
-        if (m.id._id.toString() === request.query[role]) {
-          m.currentMentor = false;
-          found = true;
-        }
-      });
+      studentProfile.studentData.mentor = null;
       break;
     case 'coach':
-      studentProfile.studentData.coaches.forEach((c) => {
-        if (c.id._id.toString() === request.query[role]) {
-          c.currentCoach = false;
-          found = true;
-        }
-      });
+      newSupportersArray = studentProfile.studentData.coaches.map(c => c._id.toString()).filter(id => id !== request.query[role]);
+      studentProfile.studentData.coaches = newSupportersArray;
       break;
     case 'teacher':
-      studentProfile.studentData.teachers.forEach((t) => {
-        if (t.id._id.toString() === request.query[role]) {
-          t.currentTeacher = false;
-          found = true;
-        }
-      });
+      newSupportersArray = studentProfile.studentData.teachers.map(t => t._id.toString()).filter(id => id !== request.query[role]);
+      studentProfile.studentData.teachers = newSupportersArray;
       break;
     case 'family':
-      newSupportersArray = studentProfile.studentData.family.filter((f) => { 
-        return f.id._id.toString() !== request.query[role];
-      });
+      newSupportersArray = studentProfile.studentData.family.map(f => f._id.toString()).filter(id => id !== request.query[role]);
       studentProfile.studentData.family = newSupportersArray;
       break;
     default:
   }
 
-  if (!found) return new HttpErrors(404, `${role} ${request.query[role]} not found on student ${request.query.student}`, { expose: false });
-
-  console.log('saving profiles');
   try {
     await roleProfile.save();
     await studentProfile.save();
