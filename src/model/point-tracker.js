@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import autopopulate from 'mongoose-autopopulate';
 // import mongooseToCsv from 'mongoose-to-csv';
 
-import Profile from './profile';
+import StudentData from './student-data';
 
 const pointTrackerSchema = mongoose.Schema({
   date: {
@@ -68,9 +68,11 @@ pointTrackerSchema.plugin(autopopulate);
 // pointTrackerSchema.plugin(mongooseToCsv, { headers: [] });
 
 pointTrackerSchema.post('save', async (tracker) => {
-  const student = await Profile.findById(tracker.student);
-  student.studentData.lastPointTracker = tracker._id;
-  return student.save();
+  const studentData = await StudentData.findOne({ student: tracker.student });
+  // studentData may be null, particularly in the case of mocking test
+  // data. If it is just ignore.
+  if (studentData) studentData.lastPointTracker = tracker._id;
+  return studentData ? studentData.save() : undefined;
 });
 
 const skipInit = process.env.NODE_ENV === 'development';

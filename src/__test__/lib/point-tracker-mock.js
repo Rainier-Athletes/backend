@@ -25,7 +25,6 @@ const createPointTrackerMockPromise = async () => {
   teachers.push(await getTeacher());
   teachers.push(await getTeacher());
  
- 
   const mockPointTracker = {
     date: new Date().toISOString(),
     student: mockData.profileData.studentProfile._id,
@@ -133,9 +132,15 @@ const createPointTrackerMockPromise = async () => {
     },
   };
 
-  const pointTracker = await new PointTracker(mockPointTracker).save();
+  let pointTracker;
+  try {
+    pointTracker = await new PointTracker(mockPointTracker).save();
+  } catch (err) {
+    console.log(`cptm error on save: ${err}`);
+  }
   mockData.mockProfiles = profileData;
   mockData.pointTracker = pointTracker;
+
   return mockData;
 };
 
