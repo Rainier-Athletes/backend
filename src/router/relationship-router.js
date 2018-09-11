@@ -2,7 +2,6 @@ import { Router } from 'express';
 import HttpErrors from 'http-errors';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import Profile from '../model/profile';
-import logger from '../lib/logger';
 
 const relationshipRouter = new Router();
 
@@ -28,7 +27,6 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
     return next(new HttpErrors(400, 'ATTACH ROUTER GET ERROR: missing valid role query parameter', { expose: false }));
   }
   // at this point query parameters and user's role are good.
-  logger.log(logger.INFO, `ATTACH ROUTER GET: attaching student ${request.query.student} to ${role}=${request.query[role]}`);
 
   // retrieve student and support role profiles
   let studentProfile;
@@ -47,9 +45,6 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
   // update student support role with student's id
   const dataArray = roleProfile.students;
   if (!dataArray.map(id => id.toString()).includes(studentProfile._id.toString())) dataArray.push(request.query.student);
-
-  // console.log('student PRE:', JSON.stringify(studentProfile, null, 4));
-  // console.log('roleProfile PRE:', JSON.stringify(roleProfile, null, 4));
 
   // update student to reference support role's profile _id
   switch (role) {
@@ -97,8 +92,6 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
   try {
     await roleProfile.save();
     await studentProfile.save();
-    // console.log('student POST:', JSON.stringify(studentProfile, null, 4));
-    // console.log('roleProfile POST:', JSON.stringify(roleProfile, null, 4));
     return response.sendStatus(200);
   } catch (err) {
     return new HttpErrors(500, 'ATTACH ROUTER GET: Unable to save updated profiles');
@@ -126,8 +119,6 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
   if (!['mentor', 'coach', 'teacher', 'family'].includes(role)) {
     return next(new HttpErrors(400, 'DETACH ROUTER GET ERROR: missing valid role query parameter', { expose: false }));
   }
-  
-  logger.log(logger.INFO, `DETACH ROUTER GET: detaching student ${request.query.student} from ${role}=${request.query[role]}`);
 
   let studentProfile;
   let roleProfile;
@@ -149,25 +140,44 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
 
   // now remove support role ID from student profile.
   let newSupportersArray;
+  let found = false;
   switch (role) {
     case 'mentor':
-      studentProfile.studentData.mentor = null;
+      studentProfile.studentData.mentors.forEach((m) => {
+        if (m.id._id.toString() === request.query[role]) {
+          m.currentMentor = false;
+          found = true;
+        }
+      });
       break;
     case 'coach':
-      newSupportersArray = studentProfile.studentData.coaches.map(c => c._id.toString()).filter(id => id !== request.query[role]);
-      studentProfile.studentData.coaches = newSupportersArray;
+      studentProfile.studentData.coaches.forEach((c) => {
+        if (c.id._id.toString() === request.query[role]) {
+          c.currentCoach = false;
+          found = true;
+        }
+      });
       break;
     case 'teacher':
-      newSupportersArray = studentProfile.studentData.teachers.map(t => t._id.toString()).filter(id => id !== request.query[role]);
-      studentProfile.studentData.teachers = newSupportersArray;
+      studentProfile.studentData.teachers.forEach((t) => {
+        if (t.id._id.toString() === request.query[role]) {
+          t.currentTeacher = false;
+          found = true;
+        }
+      });
       break;
     case 'family':
-      newSupportersArray = studentProfile.studentData.family.map(f => f._id.toString()).filter(id => id !== request.query[role]);
+      newSupportersArray = studentProfile.studentData.family.filter((f) => { 
+        return f.id._id.toString() !== request.query[role];
+      });
       studentProfile.studentData.family = newSupportersArray;
       break;
     default:
   }
 
+  if (!found) return new HttpErrors(404, `${role} ${request.query[role]} not found on student ${request.query.student}`, { expose: false });
+
+  console.log('saving profiles');
   try {
     await roleProfile.save();
     await studentProfile.save();
