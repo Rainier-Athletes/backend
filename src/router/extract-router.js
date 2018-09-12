@@ -122,7 +122,7 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
     try {
       res = await drive.files.list({ 
         mimeType: 'application/vnd.google-apps.folder',
-        q: `name='${setFolderName}'`,
+        q: `name='${setFolderName}' and trashed = false`,
       }); 
     } catch (err) {
       logger.log(logger.ERROR, `Error retrieving drive file list ${err}`);
@@ -134,7 +134,6 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
       return next(new HttpError(401, 'Error retrieving drive file list. Likely bad OAuth.'));
     }
     // if we didn't catch an error above then oauth is good. Subsequent errors will be status 500
-
     let folderId;
     if (res.data.files[0]) {
       // folder exists
@@ -290,6 +289,7 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
 
   // query the database and dump results to temp csv file
   PointTracker.where('createdAt').gte(new Date(fromDate)).lte(new Date(toDate))
+  // PointTracker.where('createdAt').gte(fromDate).lte(toDate)
     .then((data) => {
       if (data.length === 0) return next(HttpError(404, 'No data found in specified range', { expose: false }));
 

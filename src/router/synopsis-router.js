@@ -120,7 +120,7 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
     try {
       res = await drive.files.list({ 
         mimeType: 'application/vnd.google-apps.folder',
-        q: `name='${setFolderName}'`,
+        q: `name='${setFolderName}' and trashed = false`,
       }); 
     } catch (err) {
       logger(logger.ERROR, `Error retrieving drive file list ${err}`);
