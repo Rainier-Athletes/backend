@@ -81,7 +81,7 @@ describe('TESTING ROUTER PROFILE', () => {
   });
 
   describe('GET PROFILES ROUTE TESTING', () => {
-    test('GET 200 on successfull profile retrieval by student', async () => {
+    test('GET 200 on successfull profile retrieval by student (get own profile)', async () => {
       let response;
       try {
         response = await superagent.get(`${apiUrl}/profiles`)
@@ -159,33 +159,12 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body).toHaveLength(5);
     });
 
-    test('GET 200 on successful admin search by gender', async () => {
+    test('GET 200 on successful admin search by email', async () => {
       let response;
       try {
-        response = await superagent.get(`${apiUrl}/profiles?studentData.gender=male`)
-          .authBearer(mockData.adminToken);
-      } catch (err) {
-        expect(err).toEqual('Failure of profile GET unexpected');
-      }
-      expect(response.body).toHaveLength(1);
-    });
-
-    test('GET 200 on successful admin search for male students', async () => {
-      let response;
-      try {
-        response = await superagent.get(`${apiUrl}/profiles?studentData.gender=male&role=student`)
-          .authBearer(mockData.adminToken);
-      } catch (err) {
-        expect(err).toEqual('Failure of profile GET unexpected');
-      }
-      expect(response.body).toHaveLength(1);
-    });
-
-    test('GET 200 on successful admin search for all active male students', async () => {
-      let response;
-      try {
-        response = await superagent.get(`${apiUrl}/profiles?active=true&studentData.gender=male`)
-          .authBearer(mockData.adminToken);
+        response = await superagent.get(`${apiUrl}/profiles`)
+          .authBearer(mockData.adminToken)
+          .query({ email: mockData.studentProfile.email });
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
