@@ -1,6 +1,6 @@
 import superagent from 'superagent';
 import bearerAuth from 'superagent-auth-bearer';
-import { createPointTrackerMockPromise, removeAllResources } from './lib/point-tracker-mock';
+import { createStudentDataMockPromise, removeAllResources } from './lib/student-data-mock';
 import { startServer, stopServer } from '../lib/server';
 
 bearerAuth(superagent);
@@ -15,7 +15,7 @@ describe('MODEL AUTO POPULATE TESTS', () => {
   beforeEach(async () => {
     await startServer();
     await removeAllResources();
-    mock = await createPointTrackerMockPromise();
+    mock = await createStudentDataMockPromise();
   });
 
   afterEach(async () => {
@@ -26,7 +26,7 @@ describe('MODEL AUTO POPULATE TESTS', () => {
     let response;
     try {
       response = await superagent.get(`${apiUrl}/pointstracker`)
-        .authBearer(mock.profileData.adminToken)
+        .authBearer(mock.profiles.adminToken)
         .query({ id: mock.pointTracker._id.toString() });
     } catch (err) {
       console.error(err);
@@ -37,21 +37,12 @@ describe('MODEL AUTO POPULATE TESTS', () => {
   });
 
   test('Get student profile mock from database', async () => {
-    const student = mock.profileData.studentProfile;
-    student.studentData.mentor = mock.profileData.mentorProfile._id.toString();
-    student.studentData.coaches.push(mock.profileData.coachProfile._id.toString());
-    student.studentData.coaches.push(mock.profileData.coachProfile._id.toString());
-    student.studentData.family.push(mock.profileData.teacherProfile._id.toString());
-    student.studentData.lastPointTracker = mock.pointTracker._id.toString();
-
-    await superagent.put(`${apiUrl}/profiles`)
-      .authBearer(mock.profileData.mentorToken)
-      .send(student);
+    const student = mock.profiles.studentProfile;
 
     let response;
     try {
       response = await superagent.get(`${apiUrl}/profiles`)
-        .authBearer(mock.profileData.mentorToken)
+        .authBearer(mock.profiles.mentorToken)
         .query({ id: student._id.toString() });
     } catch (err) {
       console.error(err);
@@ -62,14 +53,27 @@ describe('MODEL AUTO POPULATE TESTS', () => {
     console.log(JSON.stringify(response.body, null, 4));
   });
 
+  test('Get student data mock from database', async () => {
+    let response;
+    try {
+      response = await superagent.get(`${apiUrl}/studentdata`)
+        .authBearer(mock.profiles.adminToken)
+        .query({ id: mock.studentData._id.toString() });
+    } catch (err) {
+      console.error(err);
+    }
+    expect(response.body).toBeTruthy();
+    console.log('STUDENT DATA POPULATED');
+    console.log(JSON.stringify(response.body, null, 4));
+  });
+
   test('Get mentor profile mock from database', async () => {
-    const mentor = mock.profileData.mentorProfile;
-    mentor.students.push(mock.profileData.studentProfile._id.toString());
-    mentor.students.push(mock.profileData.studentProfile._id.toString()); 
+    const mentor = mock.profiles.mentorProfile;
+    mentor.students.push(mock.profiles.studentProfile._id.toString());
 
     try {
       await superagent.put(`${apiUrl}/profiles`)
-        .authBearer(mock.profileData.adminToken)
+        .authBearer(mock.profiles.adminToken)
         .send(mentor);
     } catch (err) {
       console.error(err);
@@ -78,7 +82,7 @@ describe('MODEL AUTO POPULATE TESTS', () => {
     let response;
     try {
       response = await superagent.get(`${apiUrl}/profiles`)
-        .authBearer(mock.profileData.adminToken)
+        .authBearer(mock.profiles.adminToken)
         .query({ id: mentor._id.toString() });
     } catch (err) {
       console.error(err);

@@ -38,69 +38,14 @@ const profileSchema = mongoose.Schema({
   cellPhone: String,
   picture: String,
   studentData: {
-    lastPointTracker: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'PointTracker',
-      autopopulate: true,
-    },
-    coaches: [{
-      id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Profile',
-        autopopulate: { maxDepth: 1 },
-      },
-      currentCoach: Boolean, // note: A student can have more than one current coach
-    }],
-    sports: [{ 
-      sportName: String,
-      team: String,
-      league: String,
-      currentlyPlaying: Boolean,
-    }],
-    mentors: [{
-      id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Profile',
-        autopopulate: { maxDepth: 1 },
-      },
-      currentMentor: Boolean, // note: A student can only have ONE current mentor
-    }],
-    teachers: [{
-      id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Profile',
-        autopopulate: { maxDepth: 1 },
-      },
-      currentTeacher: Boolean, // multiple current likely
-    }],
-    family: [{
-      id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Profile',
-        autopopulate: { maxDepth: 1 },
-      },
-      weekdayGaurdian: Boolean,
-      weekendGaurdian: Boolean,
-    }],
-    gender: String,
-    school: [{ 
-      schoolName: String, 
-      currentSchool: Boolean,
-    }],
-    dateOfBirth: Date,
-    grade: Number,
-    synopsisReportArchiveUrl: String,
-    googleCalendarUrl: String,
-    googleDocsUrl: String,
-    synergy: {
-      username: String,
-      password: String, // this should probably be at least base64 encoded
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'StudentData',
+    autopopulate: true,
   },
   students: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Profile',
-    autopopulate: { maxDepth: 1 },
+    autopopulate: { maxDepth: 2 },
   }],  
 });
 
