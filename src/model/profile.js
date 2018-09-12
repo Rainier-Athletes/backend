@@ -45,7 +45,7 @@ const profileSchema = mongoose.Schema({
   students: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Profile',
-    autopopulate: { maxDepth: 1 },
+    autopopulate: { maxDepth: 2 },
   }],  
 });
 
