@@ -152,4 +152,41 @@ describe('TESTING STUDENT DATA ROUTER', () => {
       }
     });
   });
+
+  describe('DELETE STUDENT DATA TESTING', () => {
+    test('DELETE 200 good request', async () => {
+      let response;
+      try {
+        response = await superagent.delete(`${apiUrl}/studentdata`)
+          .authBearer(mockProfiles.adminToken)
+          .query({ id: mockData.studentData._id.toString() });
+        expect(response.status).toEqual(200);
+      } catch (err) {
+        expect(err.status).toEqual('Delete should ahve worked');
+      }
+    });
+
+    test('DELETE 400 bad request', async () => {
+      let response;
+      try {
+        response = await superagent.delete(`${apiUrl}/studentdata`)
+          .authBearer(mockProfiles.adminToken);
+        expect(response.status).toEqual('Delete should have failed');
+      } catch (err) {
+        expect(err.status).toEqual(400);
+      }
+    });
+
+    test('DELETE 404 unrecognized id', async () => {
+      let response;
+      try {
+        response = await superagent.delete(`${apiUrl}/studentdata`)
+          .authBearer(mockProfiles.adminToken)
+          .query({ id: 'THISISNOTANIDSTRING' });
+        expect(response.status).toEqual('Delete should have failed');
+      } catch (err) {
+        expect(err.status).toEqual(404);
+      }
+    });
+  });
 });

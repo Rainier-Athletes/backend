@@ -123,6 +123,7 @@ profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, respons
     })
     .catch(() => {
       logger.log(logger.ERROR, 'DELETE PROFILE ROUTER: non-fatal errors deleting child resources');
+      return response.status(200);
     });
   return undefined;
 });

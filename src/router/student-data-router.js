@@ -34,7 +34,6 @@ studentDataRouter.get('/api/v1/studentdata', bearerAuthMiddleware, (request, res
   StudentData.init()
     .then(() => {
       const query = { [queryProp]: queryValue };
-      console.log(query);
       return StudentData.find(query);
     })
     .then((result) => {
@@ -60,6 +59,24 @@ studentDataRouter.put('/api/v1/studentdata', bearerAuthMiddleware, (request, res
       response.json(data).status(200);
     })
     .catch(next);
+  return undefined;
+});
+
+studentDataRouter.delete('/api/v1/studentdata', bearerAuthMiddleware, (request, response, next) => {
+  const id = request.query.id || false;
+
+  if (!id) return next(new HttpErrors(400, 'Missing DELETE query id', { expose: false }));
+
+  StudentData.init()
+    .then(() => {
+      return StudentData.findByIdAndRemove(request.query.id);
+    })
+    .then(() => {
+      return response.sendStatus(200);
+    })
+    .catch((err) => {
+      return next(new HttpErrors(404, `Error deleting student data: ${err}`));
+    });
   return undefined;
 });
 
