@@ -27,11 +27,6 @@
   "author": "CodeFellows JS 401d25",
   "license": "MIT",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.2.5",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-stage-2": "^6.24.1",
-    "babel-register": "^6.26.0",
     "dotenv": "^6.0.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.13.0",
@@ -40,10 +35,14 @@
     "jest": "^23.3.0",
     "nodemon": "^1.18.4",
     "superagent": "^3.8.3",
-    "superagent-auth-bearer": "0.0.1",
-    "winston": "^3.0.0"
+    "superagent-auth-bearer": "0.0.1"
   },
   "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.5",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "client-oauth2": "^4.2.1",
     "cors": "^2.8.4",
@@ -56,8 +55,8 @@
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.2.1",
     "mongoose-autopopulate": "^0.8.0",
-    "mongoose-to-csv": "^0.1.1",
-    "mongoose-to-csv-quotes": "^1.0.5"
+    "mongoose-to-csv-quotes": "^1.0.5",
+    "winston": "^3.0.0"
   },
   "bugs": {
     "url": "https://github.com/Rainier-Athletes/backend/issues"
