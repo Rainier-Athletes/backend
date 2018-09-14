@@ -1,4 +1,5 @@
 # Rainier Athletes Backend API
+[![Build Status](https://travis-ci.org/Rainier-Athletes/backend.svg?branch=master)](https://travis-ci.org/Rainier-Athletes/backend)
 
 The RA Backend will be a MongoDB-based API server designed for future enhancement. The initial MVP implementation will feature two models (Profile and PointTracker) along with associated routes.  We will implement an admin function with the ability to initialize profiles with email addresses and roles so that Google Oauth can be used while maintaining access control.
 
