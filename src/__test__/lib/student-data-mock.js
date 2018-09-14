@@ -16,7 +16,7 @@ const createStudentDataMockPromise = async () => {
       currentCoach: true,
     }],
     sports: [{
-      sportName: 'baseball',
+      sport: 'baseball',
       team: 'Mariners',
       league: 'Bellevue Parks',
       currentlyPlaying: true,

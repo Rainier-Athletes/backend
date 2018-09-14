@@ -1,4 +1,5 @@
 # Rainier Athletes Backend API
+[![Build Status](https://travis-ci.org/Rainier-Athletes/backend.svg?branch=master)](https://travis-ci.org/Rainier-Athletes/backend)
 
 The RA Backend will be a MongoDB-based API server designed for future enhancement. The initial MVP implementation will feature two models (Profile and PointTracker) along with associated routes.  We will implement an admin function with the ability to initialize profiles with email addresses and roles so that Google Oauth can be used while maintaining access control.
 
@@ -106,64 +107,35 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
             "synopsisCompletedByRaStaff": false
         },
         "synopsisComments": {
-            "extraPlayingTime": "ut nemo reprehenderit",
+            "extraPlayingTime": "eius dolorum occaecati",
             "mentorGrantedPlayingTime": "one quarter",
-            "studentActionItems": "velit est ab",
-            "sportsUpdate": "nam repudiandae odit",
-            "additionalComments": "cum odio corrupti"
+            "studentActionItems": "ex blanditiis quaerat",
+            "sportsUpdate": "voluptas incidunt aut",
+            "additionalComments": "distinctio fugiat veniam"
         },
-        "_id": "5b96f6ab4be48399f6a56d66",
-        "date": "2018-09-10T22:56:43.361Z",
+        "_id": "5b9c35b201c772a4e2c4c008",
+        "date": "2018-09-14T22:26:58.349Z",
         "student": {
-            "studentData": {
-                "gender": "male",
-                "mentors": [
-                    {
-                        "_id": "5b96f6aa4be48399f6a56d30",
-                        "id": "5b96f6aa4be48399f6a56d2e",
-                        "currentMentor": true
-                    }
-                ],
-                "school": [
-                    {
-                        "_id": "5b96f6aa4be48399f6a56d31",
-                        "schoolName": "skyline high school",
-                        "currentSchool": true
-                    }
-                ],
-                "coaches": [],
-                "sports": [],
-                "teachers": [],
-                "family": [],
-                "lastPointTracker": "5b96f6ab4be48399f6a56d66"
-            },
             "active": true,
             "role": "student",
             "students": [],
-            "_id": "5b96f6aa4be48399f6a56d2f",
-            "firstName": "Daniella",
-            "lastName": "Effertz",
-            "email": "Giovanni41@hotmail.com",
-            "phone": "397.230.9032",
+            "_id": "5b9c35b201c772a4e2c4bfe1",
+            "firstName": "Lottie",
+            "lastName": "Donnelly",
+            "email": "Brando.Ankunding@yahoo.com",
+            "phone": "876.163.0441",
+            "studentData": "5b9c35b201c772a4e2c4c010",
             "__v": 0
         },
         "mentor": {
-            "studentData": {
-                "coaches": [],
-                "sports": [],
-                "mentors": [],
-                "teachers": [],
-                "family": [],
-                "school": []
-            },
             "active": true,
             "role": "mentor",
             "students": [],
-            "_id": "5b96f6aa4be48399f6a56d2e",
-            "firstName": "Darien",
-            "lastName": "Doyle",
-            "email": "Rosalinda_Gerhold30@hotmail.com",
-            "phone": "400.385.7439",
+            "_id": "5b9c35b201c772a4e2c4bfe0",
+            "firstName": "Francesca",
+            "lastName": "Torphy",
+            "email": "Sunny67@gmail.com",
+            "phone": "876.612.4098",
             "__v": 0
         },
         "mentorIsSubstitute": false,
@@ -175,24 +147,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 3,
                     "tutorials": 2
                 },
-                "_id": "5b96f6ab4be48399f6a56d6d",
-                "subjectName": "Gloria",
+                "_id": "5b9c35b201c772a4e2c4c00f",
+                "subjectName": "Hanna",
                 "teacher": {
-                    "studentData": {
-                        "coaches": [],
-                        "sports": [],
-                        "mentors": [],
-                        "teachers": [],
-                        "family": [],
-                        "school": []
-                    },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d3b",
-                    "firstName": "Iliana",
-                    "lastName": "Collier",
-                    "email": "Stuart_Boyle@gmail.com",
+                    "_id": "5b9c35b201c772a4e2c4bfe9",
+                    "firstName": "Carli",
+                    "lastName": "Bechtelar",
+                    "email": "Seth.Swift61@gmail.com",
                     "__v": 0
                 },
                 "grade": 70
@@ -204,24 +168,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 1,
                     "tutorials": 1
                 },
-                "_id": "5b96f6ab4be48399f6a56d6c",
-                "subjectName": "Ubaldo",
+                "_id": "5b9c35b201c772a4e2c4c00e",
+                "subjectName": "Adalberto",
                 "teacher": {
-                    "studentData": {
-                        "coaches": [],
-                        "sports": [],
-                        "mentors": [],
-                        "teachers": [],
-                        "family": [],
-                        "school": []
-                    },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d42",
-                    "firstName": "Madie",
-                    "lastName": "Dare",
-                    "email": "Dayna56@hotmail.com",
+                    "_id": "5b9c35b201c772a4e2c4bfee",
+                    "firstName": "Jabari",
+                    "lastName": "Pacocha",
+                    "email": "Brendan83@gmail.com",
                     "__v": 0
                 },
                 "grade": 90
@@ -233,24 +189,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 3,
                     "tutorials": 2
                 },
-                "_id": "5b96f6ab4be48399f6a56d6b",
-                "subjectName": "Orland",
+                "_id": "5b9c35b201c772a4e2c4c00d",
+                "subjectName": "Janae",
                 "teacher": {
-                    "studentData": {
-                        "coaches": [],
-                        "sports": [],
-                        "mentors": [],
-                        "teachers": [],
-                        "family": [],
-                        "school": []
-                    },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d49",
-                    "firstName": "Edmond",
-                    "lastName": "Hartmann",
-                    "email": "Chris_Rolfson@hotmail.com",
+                    "_id": "5b9c35b201c772a4e2c4bff3",
+                    "firstName": "Dolly",
+                    "lastName": "Beatty",
+                    "email": "Marie87@hotmail.com",
                     "__v": 0
                 },
                 "grade": 70
@@ -262,24 +210,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 1,
                     "tutorials": 1
                 },
-                "_id": "5b96f6ab4be48399f6a56d6a",
-                "subjectName": "Bo",
+                "_id": "5b9c35b201c772a4e2c4c00c",
+                "subjectName": "Carol",
                 "teacher": {
-                    "studentData": {
-                        "coaches": [],
-                        "sports": [],
-                        "mentors": [],
-                        "teachers": [],
-                        "family": [],
-                        "school": []
-                    },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d50",
-                    "firstName": "Turner",
-                    "lastName": "Jenkins",
-                    "email": "Holden_Strosin@yahoo.com",
+                    "_id": "5b9c35b201c772a4e2c4bff8",
+                    "firstName": "Tiffany",
+                    "lastName": "Hane",
+                    "email": "Rafaela36@hotmail.com",
                     "__v": 0
                 },
                 "grade": 90
@@ -291,24 +231,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 1,
                     "tutorials": 1
                 },
-                "_id": "5b96f6ab4be48399f6a56d69",
-                "subjectName": "Alana",
+                "_id": "5b9c35b201c772a4e2c4c00b",
+                "subjectName": "Agustin",
                 "teacher": {
-                    "studentData": {
-                        "coaches": [],
-                        "sports": [],
-                        "mentors": [],
-                        "teachers": [],
-                        "family": [],
-                        "school": []
-                    },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d57",
-                    "firstName": "Frank",
-                    "lastName": "Cole",
-                    "email": "Dejah.Renner14@hotmail.com",
+                    "_id": "5b9c35b201c772a4e2c4bffd",
+                    "firstName": "Jedidiah",
+                    "lastName": "Schuster",
+                    "email": "Myrl.Boehm62@hotmail.com",
                     "__v": 0
                 },
                 "grade": 90
@@ -320,24 +252,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 3,
                     "tutorials": 2
                 },
-                "_id": "5b96f6ab4be48399f6a56d68",
-                "subjectName": "Barton",
+                "_id": "5b9c35b201c772a4e2c4c00a",
+                "subjectName": "Russell",
                 "teacher": {
-                    "studentData": {
-                        "coaches": [],
-                        "sports": [],
-                        "mentors": [],
-                        "teachers": [],
-                        "family": [],
-                        "school": []
-                    },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d5e",
-                    "firstName": "Kelly",
-                    "lastName": "Klocko",
-                    "email": "Tressie_Tremblay@gmail.com",
+                    "_id": "5b9c35b201c772a4e2c4c002",
+                    "firstName": "Rene",
+                    "lastName": "King",
+                    "email": "Jakob.Marquardt@hotmail.com",
                     "__v": 0
                 },
                 "grade": 70
@@ -349,37 +273,31 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "halfStamp": 1,
                     "tutorials": 1
                 },
-                "_id": "5b96f6ab4be48399f6a56d67",
-                "subjectName": "Jordan",
+                "_id": "5b9c35b201c772a4e2c4c009",
+                "subjectName": "Jerrold",
                 "teacher": {
-                    "studentData": {
-                        "coaches": [],
-                        "sports": [],
-                        "mentors": [],
-                        "teachers": [],
-                        "family": [],
-                        "school": []
-                    },
                     "active": true,
                     "role": "teacher",
                     "students": [],
-                    "_id": "5b96f6ab4be48399f6a56d65",
-                    "firstName": "Macy",
-                    "lastName": "Hartmann",
-                    "email": "Burley_Carroll79@gmail.com",
+                    "_id": "5b9c35b201c772a4e2c4c007",
+                    "firstName": "Madisen",
+                    "lastName": "Bruen",
+                    "email": "Franco.Hudson@gmail.com",
                     "__v": 0
                 },
                 "grade": 90
             }
         ],
-        "createdAt": "2018-09-10T22:56:43.387Z",
-        "updatedAt": "2018-09-10T22:56:43.387Z",
+        "createdAt": "2018-09-14T22:26:58.379Z",
+        "updatedAt": "2018-09-14T22:26:58.379Z",
         "__v": 0
     }
 
 ```
 
 ### Student Data GET /api/v1/studentdata?id=5b99757623f82f62586e9369
+
+Note that this route returns an array of results. This is because it can be queried by more than just id.
 ```
     [
         {
@@ -387,17 +305,17 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                 "username": "SynergyUser",
                 "password": "cGFzc3dvcmQ="
             },
-            "_id": "5b99757623f82f62586e9369",
+            "_id": "5b9c35b301c772a4e2c4c08c",
             "student": {
                 "active": true,
                 "role": "student",
                 "students": [],
-                "_id": "5b99757523f82f62586e933a",
-                "firstName": "Edwin",
-                "lastName": "Wiegand",
-                "email": "Frederic.Kertzmann26@yahoo.com",
-                "phone": "151.072.4170",
-                "studentData": "5b99757623f82f62586e9369",
+                "_id": "5b9c35b301c772a4e2c4c05d",
+                "firstName": "Stan",
+                "lastName": "Lueilwitz",
+                "email": "Jon.Satterfield19@gmail.com",
+                "phone": "310.638.5934",
+                "studentData": "5b9c35b301c772a4e2c4c08c",
                 "__v": 0
             },
             "lastPointTracker": {
@@ -416,35 +334,35 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "synopsisCompletedByRaStaff": false
                 },
                 "synopsisComments": {
-                    "extraPlayingTime": "et et voluptatum",
+                    "extraPlayingTime": "quis officiis officiis",
                     "mentorGrantedPlayingTime": "one quarter",
-                    "studentActionItems": "a neque voluptatibus",
-                    "sportsUpdate": "sequi dicta assumenda",
-                    "additionalComments": "facilis laboriosam illum"
+                    "studentActionItems": "voluptatibus eaque temporibus",
+                    "sportsUpdate": "officia ipsum vitae",
+                    "additionalComments": "eaque velit ullam"
                 },
-                "_id": "5b99757623f82f62586e9361",
-                "date": "2018-09-12T20:22:14.047Z",
+                "_id": "5b9c35b301c772a4e2c4c084",
+                "date": "2018-09-14T22:26:59.230Z",
                 "student": {
                     "active": true,
                     "role": "student",
                     "students": [],
-                    "_id": "5b99757523f82f62586e933a",
-                    "firstName": "Edwin",
-                    "lastName": "Wiegand",
-                    "email": "Frederic.Kertzmann26@yahoo.com",
-                    "phone": "151.072.4170",
-                    "studentData": "5b99757623f82f62586e9369",
+                    "_id": "5b9c35b301c772a4e2c4c05d",
+                    "firstName": "Stan",
+                    "lastName": "Lueilwitz",
+                    "email": "Jon.Satterfield19@gmail.com",
+                    "phone": "310.638.5934",
+                    "studentData": "5b9c35b301c772a4e2c4c08c",
                     "__v": 0
                 },
                 "mentor": {
                     "active": true,
                     "role": "mentor",
                     "students": [],
-                    "_id": "5b99757523f82f62586e9339",
-                    "firstName": "Delphia",
-                    "lastName": "Welch",
-                    "email": "Porter.Schumm36@yahoo.com",
-                    "phone": "320.836.5713",
+                    "_id": "5b9c35b301c772a4e2c4c05c",
+                    "firstName": "Dangelo",
+                    "lastName": "Bartell",
+                    "email": "Destin.Harris16@yahoo.com",
+                    "phone": "483.261.8711",
                     "__v": 0
                 },
                 "mentorIsSubstitute": false,
@@ -456,16 +374,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                             "halfStamp": 3,
                             "tutorials": 2
                         },
-                        "_id": "5b99757623f82f62586e9368",
-                        "subjectName": "Joy",
+                        "_id": "5b9c35b301c772a4e2c4c08b",
+                        "subjectName": "Kristoffer",
                         "teacher": {
                             "active": true,
                             "role": "teacher",
                             "students": [],
-                            "_id": "5b99757523f82f62586e9342",
-                            "firstName": "Hayley",
-                            "lastName": "Ward",
-                            "email": "Titus33@yahoo.com",
+                            "_id": "5b9c35b301c772a4e2c4c065",
+                            "firstName": "Dawn",
+                            "lastName": "Goodwin",
+                            "email": "Demario_Sanford22@gmail.com",
                             "__v": 0
                         },
                         "grade": 70
@@ -477,16 +395,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                             "halfStamp": 1,
                             "tutorials": 1
                         },
-                        "_id": "5b99757623f82f62586e9367",
-                        "subjectName": "Kaden",
+                        "_id": "5b9c35b301c772a4e2c4c08a",
+                        "subjectName": "Jerrod",
                         "teacher": {
                             "active": true,
                             "role": "teacher",
                             "students": [],
-                            "_id": "5b99757523f82f62586e9347",
-                            "firstName": "Brayan",
-                            "lastName": "Donnelly",
-                            "email": "Maximus15@hotmail.com",
+                            "_id": "5b9c35b301c772a4e2c4c06a",
+                            "firstName": "Americo",
+                            "lastName": "Kunze",
+                            "email": "Gunnar_King@hotmail.com",
                             "__v": 0
                         },
                         "grade": 90
@@ -498,16 +416,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                             "halfStamp": 3,
                             "tutorials": 2
                         },
-                        "_id": "5b99757623f82f62586e9366",
-                        "subjectName": "Isobel",
+                        "_id": "5b9c35b301c772a4e2c4c089",
+                        "subjectName": "Alana",
                         "teacher": {
                             "active": true,
                             "role": "teacher",
                             "students": [],
-                            "_id": "5b99757523f82f62586e934c",
-                            "firstName": "August",
-                            "lastName": "Schaden",
-                            "email": "Lupe_Parisian@yahoo.com",
+                            "_id": "5b9c35b301c772a4e2c4c06f",
+                            "firstName": "Mona",
+                            "lastName": "Volkman",
+                            "email": "Trycia85@hotmail.com",
                             "__v": 0
                         },
                         "grade": 70
@@ -519,16 +437,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                             "halfStamp": 1,
                             "tutorials": 1
                         },
-                        "_id": "5b99757623f82f62586e9365",
-                        "subjectName": "Angelita",
+                        "_id": "5b9c35b301c772a4e2c4c088",
+                        "subjectName": "Alejandra",
                         "teacher": {
                             "active": true,
                             "role": "teacher",
                             "students": [],
-                            "_id": "5b99757523f82f62586e9351",
-                            "firstName": "Leif",
-                            "lastName": "Marvin",
-                            "email": "Hertha.Lynch4@yahoo.com",
+                            "_id": "5b9c35b301c772a4e2c4c074",
+                            "firstName": "Raymundo",
+                            "lastName": "Shields",
+                            "email": "Christop_Schmidt51@yahoo.com",
                             "__v": 0
                         },
                         "grade": 90
@@ -540,16 +458,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                             "halfStamp": 1,
                             "tutorials": 1
                         },
-                        "_id": "5b99757623f82f62586e9364",
-                        "subjectName": "Savannah",
+                        "_id": "5b9c35b301c772a4e2c4c087",
+                        "subjectName": "Matilde",
                         "teacher": {
                             "active": true,
                             "role": "teacher",
                             "students": [],
-                            "_id": "5b99757523f82f62586e9356",
-                            "firstName": "Myra",
-                            "lastName": "Kris",
-                            "email": "Myrna.McClure38@hotmail.com",
+                            "_id": "5b9c35b301c772a4e2c4c079",
+                            "firstName": "Jonathon",
+                            "lastName": "Orn",
+                            "email": "Eryn.Lind@hotmail.com",
                             "__v": 0
                         },
                         "grade": 90
@@ -561,16 +479,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                             "halfStamp": 3,
                             "tutorials": 2
                         },
-                        "_id": "5b99757623f82f62586e9363",
-                        "subjectName": "Samanta",
+                        "_id": "5b9c35b301c772a4e2c4c086",
+                        "subjectName": "Gino",
                         "teacher": {
                             "active": true,
                             "role": "teacher",
                             "students": [],
-                            "_id": "5b99757623f82f62586e935b",
-                            "firstName": "Adrianna",
-                            "lastName": "Toy",
-                            "email": "Barbara.Rutherford@gmail.com",
+                            "_id": "5b9c35b301c772a4e2c4c07e",
+                            "firstName": "Conrad",
+                            "lastName": "Franecki",
+                            "email": "Trenton_Goyette98@yahoo.com",
                             "__v": 0
                         },
                         "grade": 70
@@ -582,37 +500,37 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                             "halfStamp": 1,
                             "tutorials": 1
                         },
-                        "_id": "5b99757623f82f62586e9362",
-                        "subjectName": "Elisa",
+                        "_id": "5b9c35b301c772a4e2c4c085",
+                        "subjectName": "Zackery",
                         "teacher": {
                             "active": true,
                             "role": "teacher",
                             "students": [],
-                            "_id": "5b99757623f82f62586e9360",
-                            "firstName": "Lucious",
-                            "lastName": "Gusikowski",
-                            "email": "Julie_Doyle84@yahoo.com",
+                            "_id": "5b9c35b301c772a4e2c4c083",
+                            "firstName": "Jany",
+                            "lastName": "Breitenberg",
+                            "email": "Dangelo.Zemlak22@gmail.com",
                             "__v": 0
                         },
                         "grade": 90
                     }
                 ],
-                "createdAt": "2018-09-12T20:22:14.073Z",
-                "updatedAt": "2018-09-12T20:22:14.073Z",
+                "createdAt": "2018-09-14T22:26:59.250Z",
+                "updatedAt": "2018-09-14T22:26:59.250Z",
                 "__v": 0
             },
             "coaches": [
                 {
-                    "_id": "5b99757623f82f62586e936a",
+                    "_id": "5b9c35b301c772a4e2c4c08d",
                     "coach": {
                         "active": true,
                         "role": "coach",
                         "students": [],
-                        "_id": "5b99757523f82f62586e933b",
-                        "firstName": "Timmothy",
-                        "lastName": "Schuppe",
-                        "email": "Rosetta_Lehner@gmail.com",
-                        "phone": "354.679.9907",
+                        "_id": "5b9c35b301c772a4e2c4c05e",
+                        "firstName": "Alberto",
+                        "lastName": "Rosenbaum",
+                        "email": "Pasquale.Price@yahoo.com",
+                        "phone": "612.422.5661",
                         "__v": 0
                     },
                     "currentCoach": true
@@ -620,8 +538,8 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
             ],
             "sports": [
                 {
-                    "_id": "5b99757623f82f62586e936b",
-                    "sportName": "baseball",
+                    "_id": "5b9c35b301c772a4e2c4c08e",
+                    "sport": "baseball",
                     "team": "Mariners",
                     "league": "Bellevue Parks",
                     "currentlyPlaying": true
@@ -629,16 +547,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
             ],
             "mentors": [
                 {
-                    "_id": "5b99757623f82f62586e936c",
+                    "_id": "5b9c35b301c772a4e2c4c08f",
                     "mentor": {
                         "active": true,
                         "role": "mentor",
                         "students": [],
-                        "_id": "5b99757523f82f62586e9339",
-                        "firstName": "Delphia",
-                        "lastName": "Welch",
-                        "email": "Porter.Schumm36@yahoo.com",
-                        "phone": "320.836.5713",
+                        "_id": "5b9c35b301c772a4e2c4c05c",
+                        "firstName": "Dangelo",
+                        "lastName": "Bartell",
+                        "email": "Destin.Harris16@yahoo.com",
+                        "phone": "483.261.8711",
                         "__v": 0
                     },
                     "currentMentor": true
@@ -646,99 +564,99 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
             ],
             "teachers": [
                 {
-                    "_id": "5b99757623f82f62586e9373",
+                    "_id": "5b9c35b301c772a4e2c4c096",
                     "teacher": {
                         "active": true,
                         "role": "teacher",
                         "students": [],
-                        "_id": "5b99757523f82f62586e9342",
-                        "firstName": "Hayley",
-                        "lastName": "Ward",
-                        "email": "Titus33@yahoo.com",
+                        "_id": "5b9c35b301c772a4e2c4c065",
+                        "firstName": "Dawn",
+                        "lastName": "Goodwin",
+                        "email": "Demario_Sanford22@gmail.com",
                         "__v": 0
                     },
                     "currentTeacher": true
                 },
                 {
-                    "_id": "5b99757623f82f62586e9372",
+                    "_id": "5b9c35b301c772a4e2c4c095",
                     "teacher": {
                         "active": true,
                         "role": "teacher",
                         "students": [],
-                        "_id": "5b99757523f82f62586e9347",
-                        "firstName": "Brayan",
-                        "lastName": "Donnelly",
-                        "email": "Maximus15@hotmail.com",
+                        "_id": "5b9c35b301c772a4e2c4c06a",
+                        "firstName": "Americo",
+                        "lastName": "Kunze",
+                        "email": "Gunnar_King@hotmail.com",
                         "__v": 0
                     },
                     "currentTeacher": true
                 },
                 {
-                    "_id": "5b99757623f82f62586e9371",
+                    "_id": "5b9c35b301c772a4e2c4c094",
                     "teacher": {
                         "active": true,
                         "role": "teacher",
                         "students": [],
-                        "_id": "5b99757523f82f62586e934c",
-                        "firstName": "August",
-                        "lastName": "Schaden",
-                        "email": "Lupe_Parisian@yahoo.com",
+                        "_id": "5b9c35b301c772a4e2c4c06f",
+                        "firstName": "Mona",
+                        "lastName": "Volkman",
+                        "email": "Trycia85@hotmail.com",
                         "__v": 0
                     },
                     "currentTeacher": true
                 },
                 {
-                    "_id": "5b99757623f82f62586e9370",
+                    "_id": "5b9c35b301c772a4e2c4c093",
                     "teacher": {
                         "active": true,
                         "role": "teacher",
                         "students": [],
-                        "_id": "5b99757523f82f62586e9351",
-                        "firstName": "Leif",
-                        "lastName": "Marvin",
-                        "email": "Hertha.Lynch4@yahoo.com",
+                        "_id": "5b9c35b301c772a4e2c4c074",
+                        "firstName": "Raymundo",
+                        "lastName": "Shields",
+                        "email": "Christop_Schmidt51@yahoo.com",
                         "__v": 0
                     },
                     "currentTeacher": true
                 },
                 {
-                    "_id": "5b99757623f82f62586e936f",
+                    "_id": "5b9c35b301c772a4e2c4c092",
                     "teacher": {
                         "active": true,
                         "role": "teacher",
                         "students": [],
-                        "_id": "5b99757523f82f62586e9356",
-                        "firstName": "Myra",
-                        "lastName": "Kris",
-                        "email": "Myrna.McClure38@hotmail.com",
+                        "_id": "5b9c35b301c772a4e2c4c079",
+                        "firstName": "Jonathon",
+                        "lastName": "Orn",
+                        "email": "Eryn.Lind@hotmail.com",
                         "__v": 0
                     },
                     "currentTeacher": true
                 },
                 {
-                    "_id": "5b99757623f82f62586e936e",
+                    "_id": "5b9c35b301c772a4e2c4c091",
                     "teacher": {
                         "active": true,
                         "role": "teacher",
                         "students": [],
-                        "_id": "5b99757623f82f62586e935b",
-                        "firstName": "Adrianna",
-                        "lastName": "Toy",
-                        "email": "Barbara.Rutherford@gmail.com",
+                        "_id": "5b9c35b301c772a4e2c4c07e",
+                        "firstName": "Conrad",
+                        "lastName": "Franecki",
+                        "email": "Trenton_Goyette98@yahoo.com",
                         "__v": 0
                     },
                     "currentTeacher": true
                 },
                 {
-                    "_id": "5b99757623f82f62586e936d",
+                    "_id": "5b9c35b301c772a4e2c4c090",
                     "teacher": {
                         "active": true,
                         "role": "teacher",
                         "students": [],
-                        "_id": "5b99757623f82f62586e9360",
-                        "firstName": "Lucious",
-                        "lastName": "Gusikowski",
-                        "email": "Julie_Doyle84@yahoo.com",
+                        "_id": "5b9c35b301c772a4e2c4c083",
+                        "firstName": "Jany",
+                        "lastName": "Breitenberg",
+                        "email": "Dangelo.Zemlak22@gmail.com",
                         "__v": 0
                     },
                     "currentTeacher": true
@@ -746,32 +664,32 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
             ],
             "family": [
                 {
-                    "_id": "5b99757623f82f62586e9375",
+                    "_id": "5b9c35b301c772a4e2c4c098",
                     "member": {
                         "active": true,
                         "role": "admin",
                         "students": [],
-                        "_id": "5b99757523f82f62586e933c",
-                        "firstName": "Bernita",
-                        "lastName": "Heller",
-                        "email": "Adell_Considine61@gmail.com",
-                        "phone": "327.097.8900",
+                        "_id": "5b9c35b301c772a4e2c4c05f",
+                        "firstName": "Hannah",
+                        "lastName": "Beer",
+                        "email": "Tyree.Treutel62@yahoo.com",
+                        "phone": "835.595.8185",
                         "__v": 0
                     },
                     "weekdayGuardian": true,
                     "weekendGuardian": false
                 },
                 {
-                    "_id": "5b99757623f82f62586e9374",
+                    "_id": "5b9c35b301c772a4e2c4c097",
                     "member": {
                         "active": true,
                         "role": "mentor",
                         "students": [],
-                        "_id": "5b99757523f82f62586e9339",
-                        "firstName": "Delphia",
-                        "lastName": "Welch",
-                        "email": "Porter.Schumm36@yahoo.com",
-                        "phone": "320.836.5713",
+                        "_id": "5b9c35b301c772a4e2c4c05c",
+                        "firstName": "Dangelo",
+                        "lastName": "Bartell",
+                        "email": "Destin.Harris16@yahoo.com",
+                        "phone": "483.261.8711",
                         "__v": 0
                     },
                     "weekdayGuardian": false,
@@ -781,7 +699,7 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
             "gender": "male",
             "school": [
                 {
-                    "_id": "5b99757623f82f62586e9376",
+                    "_id": "5b9c35b301c772a4e2c4c099",
                     "schoolName": "Odle Middle School",
                     "currentSchool": true
                 }
@@ -791,9 +709,12 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
             "synopsisReportArchiveUrl": "http://www.google.com",
             "googleCalendarUrl": "http://www.google.com",
             "googleDocsUrl": "http://www.google.com",
+            "createdAt": "2018-09-14T22:26:59.283Z",
+            "updatedAt": "2018-09-14T22:26:59.283Z",
             "__v": 0
         }
     ]
+
 ```
 
 ### Student Profile: GET /api/v1/profiles?id=5b75bbdd2d60007306e782c7
@@ -1232,27 +1153,27 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                 "active": true,
                 "role": "student",
                 "students": [],
-                "_id": "5b99740c849c285fdc8aa2e8",
-                "firstName": "Melvina",
-                "lastName": "McCullough",
-                "email": "Hallie41@yahoo.com",
-                "phone": "311.772.1257",
+                "_id": "5b9c35b301c772a4e2c4c09b",
+                "firstName": "Clarabelle",
+                "lastName": "Lindgren",
+                "email": "Kenneth.Abernathy6@yahoo.com",
+                "phone": "973.743.8934",
                 "studentData": {
                     "synergy": {
                         "username": "SynergyUser",
                         "password": "cGFzc3dvcmQ="
                     },
-                    "_id": "5b99740c849c285fdc8aa317",
+                    "_id": "5b9c35b301c772a4e2c4c0ca",
                     "student": {
                         "active": true,
                         "role": "student",
                         "students": [],
-                        "_id": "5b99740c849c285fdc8aa2e8",
-                        "firstName": "Melvina",
-                        "lastName": "McCullough",
-                        "email": "Hallie41@yahoo.com",
-                        "phone": "311.772.1257",
-                        "studentData": "5b99740c849c285fdc8aa317",
+                        "_id": "5b9c35b301c772a4e2c4c09b",
+                        "firstName": "Clarabelle",
+                        "lastName": "Lindgren",
+                        "email": "Kenneth.Abernathy6@yahoo.com",
+                        "phone": "973.743.8934",
+                        "studentData": "5b9c35b301c772a4e2c4c0ca",
                         "__v": 0
                     },
                     "lastPointTracker": {
@@ -1271,37 +1192,37 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                             "synopsisCompletedByRaStaff": false
                         },
                         "synopsisComments": {
-                            "extraPlayingTime": "iusto praesentium rerum",
+                            "extraPlayingTime": "adipisci itaque odit",
                             "mentorGrantedPlayingTime": "one quarter",
-                            "studentActionItems": "consequuntur recusandae esse",
-                            "sportsUpdate": "soluta neque sit",
-                            "additionalComments": "occaecati autem nobis"
+                            "studentActionItems": "sunt aut aliquam",
+                            "sportsUpdate": "voluptatum sed delectus",
+                            "additionalComments": "recusandae eaque necessitatibus"
                         },
-                        "_id": "5b99740c849c285fdc8aa30f",
-                        "date": "2018-09-12T20:16:12.446Z",
+                        "_id": "5b9c35b301c772a4e2c4c0c2",
+                        "date": "2018-09-14T22:26:59.613Z",
                         "student": {
                             "active": true,
                             "role": "student",
                             "students": [],
-                            "_id": "5b99740c849c285fdc8aa2e8",
-                            "firstName": "Melvina",
-                            "lastName": "McCullough",
-                            "email": "Hallie41@yahoo.com",
-                            "phone": "311.772.1257",
-                            "studentData": "5b99740c849c285fdc8aa317",
+                            "_id": "5b9c35b301c772a4e2c4c09b",
+                            "firstName": "Clarabelle",
+                            "lastName": "Lindgren",
+                            "email": "Kenneth.Abernathy6@yahoo.com",
+                            "phone": "973.743.8934",
+                            "studentData": "5b9c35b301c772a4e2c4c0ca",
                             "__v": 0
                         },
                         "mentor": {
                             "active": true,
                             "role": "mentor",
                             "students": [
-                                "5b99740c849c285fdc8aa2e8"
+                                "5b9c35b301c772a4e2c4c09b"
                             ],
-                            "_id": "5b99740c849c285fdc8aa2e7",
-                            "firstName": "Vicky",
-                            "lastName": "Greenholt",
-                            "email": "Tevin81@hotmail.com",
-                            "phone": "882.113.1008",
+                            "_id": "5b9c35b301c772a4e2c4c09a",
+                            "firstName": "Stefan",
+                            "lastName": "O'Reilly",
+                            "email": "Nicole_Bode6@yahoo.com",
+                            "phone": "276.396.3948",
                             "__v": 0
                         },
                         "mentorIsSubstitute": false,
@@ -1313,16 +1234,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                                     "halfStamp": 3,
                                     "tutorials": 2
                                 },
-                                "_id": "5b99740c849c285fdc8aa316",
-                                "subjectName": "Gianni",
+                                "_id": "5b9c35b301c772a4e2c4c0c9",
+                                "subjectName": "Ruthie",
                                 "teacher": {
                                     "active": true,
                                     "role": "teacher",
                                     "students": [],
-                                    "_id": "5b99740c849c285fdc8aa2f0",
-                                    "firstName": "Lilliana",
-                                    "lastName": "Runolfsdottir",
-                                    "email": "Landen34@yahoo.com",
+                                    "_id": "5b9c35b301c772a4e2c4c0a3",
+                                    "firstName": "Kiera",
+                                    "lastName": "Mohr",
+                                    "email": "Lora33@hotmail.com",
                                     "__v": 0
                                 },
                                 "grade": 70
@@ -1334,16 +1255,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                                     "halfStamp": 1,
                                     "tutorials": 1
                                 },
-                                "_id": "5b99740c849c285fdc8aa315",
-                                "subjectName": "Adolph",
+                                "_id": "5b9c35b301c772a4e2c4c0c8",
+                                "subjectName": "Ardith",
                                 "teacher": {
                                     "active": true,
                                     "role": "teacher",
                                     "students": [],
-                                    "_id": "5b99740c849c285fdc8aa2f5",
-                                    "firstName": "General",
-                                    "lastName": "Pagac",
-                                    "email": "Addison_Altenwerth71@gmail.com",
+                                    "_id": "5b9c35b301c772a4e2c4c0a8",
+                                    "firstName": "Augustine",
+                                    "lastName": "Mann",
+                                    "email": "Catalina77@gmail.com",
                                     "__v": 0
                                 },
                                 "grade": 90
@@ -1355,16 +1276,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                                     "halfStamp": 3,
                                     "tutorials": 2
                                 },
-                                "_id": "5b99740c849c285fdc8aa314",
-                                "subjectName": "Camden",
+                                "_id": "5b9c35b301c772a4e2c4c0c7",
+                                "subjectName": "Kara",
                                 "teacher": {
                                     "active": true,
                                     "role": "teacher",
                                     "students": [],
-                                    "_id": "5b99740c849c285fdc8aa2fa",
-                                    "firstName": "Mercedes",
-                                    "lastName": "Brown",
-                                    "email": "Wilton_Mohr@yahoo.com",
+                                    "_id": "5b9c35b301c772a4e2c4c0ad",
+                                    "firstName": "Gladyce",
+                                    "lastName": "Heidenreich",
+                                    "email": "Toy_Upton63@yahoo.com",
                                     "__v": 0
                                 },
                                 "grade": 70
@@ -1376,16 +1297,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                                     "halfStamp": 1,
                                     "tutorials": 1
                                 },
-                                "_id": "5b99740c849c285fdc8aa313",
-                                "subjectName": "Maximo",
+                                "_id": "5b9c35b301c772a4e2c4c0c6",
+                                "subjectName": "Ozella",
                                 "teacher": {
                                     "active": true,
                                     "role": "teacher",
                                     "students": [],
-                                    "_id": "5b99740c849c285fdc8aa2ff",
-                                    "firstName": "Orin",
-                                    "lastName": "Dicki",
-                                    "email": "Olga.Russel@gmail.com",
+                                    "_id": "5b9c35b301c772a4e2c4c0b2",
+                                    "firstName": "Paxton",
+                                    "lastName": "Wolff",
+                                    "email": "Keyshawn.Breitenberg@gmail.com",
                                     "__v": 0
                                 },
                                 "grade": 90
@@ -1397,16 +1318,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                                     "halfStamp": 1,
                                     "tutorials": 1
                                 },
-                                "_id": "5b99740c849c285fdc8aa312",
-                                "subjectName": "Melody",
+                                "_id": "5b9c35b301c772a4e2c4c0c5",
+                                "subjectName": "Douglas",
                                 "teacher": {
                                     "active": true,
                                     "role": "teacher",
                                     "students": [],
-                                    "_id": "5b99740c849c285fdc8aa304",
-                                    "firstName": "Earline",
-                                    "lastName": "Ratke",
-                                    "email": "Arlie.Dibbert39@hotmail.com",
+                                    "_id": "5b9c35b301c772a4e2c4c0b7",
+                                    "firstName": "Nat",
+                                    "lastName": "Jaskolski",
+                                    "email": "Alta.Feil86@hotmail.com",
                                     "__v": 0
                                 },
                                 "grade": 90
@@ -1418,16 +1339,16 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                                     "halfStamp": 3,
                                     "tutorials": 2
                                 },
-                                "_id": "5b99740c849c285fdc8aa311",
-                                "subjectName": "Crystel",
+                                "_id": "5b9c35b301c772a4e2c4c0c4",
+                                "subjectName": "Matilda",
                                 "teacher": {
                                     "active": true,
                                     "role": "teacher",
                                     "students": [],
-                                    "_id": "5b99740c849c285fdc8aa309",
-                                    "firstName": "Pietro",
-                                    "lastName": "Wintheiser",
-                                    "email": "Blake46@gmail.com",
+                                    "_id": "5b9c35b301c772a4e2c4c0bc",
+                                    "firstName": "Malika",
+                                    "lastName": "O'Kon",
+                                    "email": "Damion48@hotmail.com",
                                     "__v": 0
                                 },
                                 "grade": 70
@@ -1439,37 +1360,37 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                                     "halfStamp": 1,
                                     "tutorials": 1
                                 },
-                                "_id": "5b99740c849c285fdc8aa310",
-                                "subjectName": "Malvina",
+                                "_id": "5b9c35b301c772a4e2c4c0c3",
+                                "subjectName": "Antonetta",
                                 "teacher": {
                                     "active": true,
                                     "role": "teacher",
                                     "students": [],
-                                    "_id": "5b99740c849c285fdc8aa30e",
-                                    "firstName": "Zander",
-                                    "lastName": "Bernier",
-                                    "email": "Esteban.Nitzsche@hotmail.com",
+                                    "_id": "5b9c35b301c772a4e2c4c0c1",
+                                    "firstName": "Calista",
+                                    "lastName": "Wolff",
+                                    "email": "Rudy.Romaguera@hotmail.com",
                                     "__v": 0
                                 },
                                 "grade": 90
                             }
                         ],
-                        "createdAt": "2018-09-12T20:16:12.475Z",
-                        "updatedAt": "2018-09-12T20:16:12.475Z",
+                        "createdAt": "2018-09-14T22:26:59.633Z",
+                        "updatedAt": "2018-09-14T22:26:59.633Z",
                         "__v": 0
                     },
                     "coaches": [
                         {
-                            "_id": "5b99740c849c285fdc8aa318",
+                            "_id": "5b9c35b301c772a4e2c4c0cb",
                             "coach": {
                                 "active": true,
                                 "role": "coach",
                                 "students": [],
-                                "_id": "5b99740c849c285fdc8aa2e9",
-                                "firstName": "Jaqueline",
-                                "lastName": "Wisoky",
-                                "email": "Hope_Cruickshank@hotmail.com",
-                                "phone": "411.964.2714",
+                                "_id": "5b9c35b301c772a4e2c4c09c",
+                                "firstName": "Kenny",
+                                "lastName": "Schuster",
+                                "email": "Jaylon.Runolfsson@yahoo.com",
+                                "phone": "543.468.6602",
                                 "__v": 0
                             },
                             "currentCoach": true
@@ -1477,8 +1398,8 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     ],
                     "sports": [
                         {
-                            "_id": "5b99740c849c285fdc8aa319",
-                            "sportName": "baseball",
+                            "_id": "5b9c35b301c772a4e2c4c0cc",
+                            "sport": "baseball",
                             "team": "Mariners",
                             "league": "Bellevue Parks",
                             "currentlyPlaying": true
@@ -1486,18 +1407,18 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     ],
                     "mentors": [
                         {
-                            "_id": "5b99740c849c285fdc8aa31a",
+                            "_id": "5b9c35b301c772a4e2c4c0cd",
                             "mentor": {
                                 "active": true,
                                 "role": "mentor",
                                 "students": [
-                                    "5b99740c849c285fdc8aa2e8"
+                                    "5b9c35b301c772a4e2c4c09b"
                                 ],
-                                "_id": "5b99740c849c285fdc8aa2e7",
-                                "firstName": "Vicky",
-                                "lastName": "Greenholt",
-                                "email": "Tevin81@hotmail.com",
-                                "phone": "882.113.1008",
+                                "_id": "5b9c35b301c772a4e2c4c09a",
+                                "firstName": "Stefan",
+                                "lastName": "O'Reilly",
+                                "email": "Nicole_Bode6@yahoo.com",
+                                "phone": "276.396.3948",
                                 "__v": 0
                             },
                             "currentMentor": true
@@ -1505,99 +1426,99 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     ],
                     "teachers": [
                         {
-                            "_id": "5b99740c849c285fdc8aa321",
+                            "_id": "5b9c35b301c772a4e2c4c0d4",
                             "teacher": {
                                 "active": true,
                                 "role": "teacher",
                                 "students": [],
-                                "_id": "5b99740c849c285fdc8aa2f0",
-                                "firstName": "Lilliana",
-                                "lastName": "Runolfsdottir",
-                                "email": "Landen34@yahoo.com",
+                                "_id": "5b9c35b301c772a4e2c4c0a3",
+                                "firstName": "Kiera",
+                                "lastName": "Mohr",
+                                "email": "Lora33@hotmail.com",
                                 "__v": 0
                             },
                             "currentTeacher": true
                         },
                         {
-                            "_id": "5b99740c849c285fdc8aa320",
+                            "_id": "5b9c35b301c772a4e2c4c0d3",
                             "teacher": {
                                 "active": true,
                                 "role": "teacher",
                                 "students": [],
-                                "_id": "5b99740c849c285fdc8aa2f5",
-                                "firstName": "General",
-                                "lastName": "Pagac",
-                                "email": "Addison_Altenwerth71@gmail.com",
+                                "_id": "5b9c35b301c772a4e2c4c0a8",
+                                "firstName": "Augustine",
+                                "lastName": "Mann",
+                                "email": "Catalina77@gmail.com",
                                 "__v": 0
                             },
                             "currentTeacher": true
                         },
                         {
-                            "_id": "5b99740c849c285fdc8aa31f",
+                            "_id": "5b9c35b301c772a4e2c4c0d2",
                             "teacher": {
                                 "active": true,
                                 "role": "teacher",
                                 "students": [],
-                                "_id": "5b99740c849c285fdc8aa2fa",
-                                "firstName": "Mercedes",
-                                "lastName": "Brown",
-                                "email": "Wilton_Mohr@yahoo.com",
+                                "_id": "5b9c35b301c772a4e2c4c0ad",
+                                "firstName": "Gladyce",
+                                "lastName": "Heidenreich",
+                                "email": "Toy_Upton63@yahoo.com",
                                 "__v": 0
                             },
                             "currentTeacher": true
                         },
                         {
-                            "_id": "5b99740c849c285fdc8aa31e",
+                            "_id": "5b9c35b301c772a4e2c4c0d1",
                             "teacher": {
                                 "active": true,
                                 "role": "teacher",
                                 "students": [],
-                                "_id": "5b99740c849c285fdc8aa2ff",
-                                "firstName": "Orin",
-                                "lastName": "Dicki",
-                                "email": "Olga.Russel@gmail.com",
+                                "_id": "5b9c35b301c772a4e2c4c0b2",
+                                "firstName": "Paxton",
+                                "lastName": "Wolff",
+                                "email": "Keyshawn.Breitenberg@gmail.com",
                                 "__v": 0
                             },
                             "currentTeacher": true
                         },
                         {
-                            "_id": "5b99740c849c285fdc8aa31d",
+                            "_id": "5b9c35b301c772a4e2c4c0d0",
                             "teacher": {
                                 "active": true,
                                 "role": "teacher",
                                 "students": [],
-                                "_id": "5b99740c849c285fdc8aa304",
-                                "firstName": "Earline",
-                                "lastName": "Ratke",
-                                "email": "Arlie.Dibbert39@hotmail.com",
+                                "_id": "5b9c35b301c772a4e2c4c0b7",
+                                "firstName": "Nat",
+                                "lastName": "Jaskolski",
+                                "email": "Alta.Feil86@hotmail.com",
                                 "__v": 0
                             },
                             "currentTeacher": true
                         },
                         {
-                            "_id": "5b99740c849c285fdc8aa31c",
+                            "_id": "5b9c35b301c772a4e2c4c0cf",
                             "teacher": {
                                 "active": true,
                                 "role": "teacher",
                                 "students": [],
-                                "_id": "5b99740c849c285fdc8aa309",
-                                "firstName": "Pietro",
-                                "lastName": "Wintheiser",
-                                "email": "Blake46@gmail.com",
+                                "_id": "5b9c35b301c772a4e2c4c0bc",
+                                "firstName": "Malika",
+                                "lastName": "O'Kon",
+                                "email": "Damion48@hotmail.com",
                                 "__v": 0
                             },
                             "currentTeacher": true
                         },
                         {
-                            "_id": "5b99740c849c285fdc8aa31b",
+                            "_id": "5b9c35b301c772a4e2c4c0ce",
                             "teacher": {
                                 "active": true,
                                 "role": "teacher",
                                 "students": [],
-                                "_id": "5b99740c849c285fdc8aa30e",
-                                "firstName": "Zander",
-                                "lastName": "Bernier",
-                                "email": "Esteban.Nitzsche@hotmail.com",
+                                "_id": "5b9c35b301c772a4e2c4c0c1",
+                                "firstName": "Calista",
+                                "lastName": "Wolff",
+                                "email": "Rudy.Romaguera@hotmail.com",
                                 "__v": 0
                             },
                             "currentTeacher": true
@@ -1605,34 +1526,34 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     ],
                     "family": [
                         {
-                            "_id": "5b99740c849c285fdc8aa323",
+                            "_id": "5b9c35b301c772a4e2c4c0d6",
                             "member": {
                                 "active": true,
                                 "role": "admin",
                                 "students": [],
-                                "_id": "5b99740c849c285fdc8aa2ea",
-                                "firstName": "Karli",
-                                "lastName": "Boyle",
-                                "email": "Izaiah_Ziemann@gmail.com",
-                                "phone": "795.621.5219",
+                                "_id": "5b9c35b301c772a4e2c4c09d",
+                                "firstName": "Louisa",
+                                "lastName": "Hettinger",
+                                "email": "Ashton.Kuphal90@hotmail.com",
+                                "phone": "794.700.8670",
                                 "__v": 0
                             },
                             "weekdayGuardian": true,
                             "weekendGuardian": false
                         },
                         {
-                            "_id": "5b99740c849c285fdc8aa322",
+                            "_id": "5b9c35b301c772a4e2c4c0d5",
                             "member": {
                                 "active": true,
                                 "role": "mentor",
                                 "students": [
-                                    "5b99740c849c285fdc8aa2e8"
+                                    "5b9c35b301c772a4e2c4c09b"
                                 ],
-                                "_id": "5b99740c849c285fdc8aa2e7",
-                                "firstName": "Vicky",
-                                "lastName": "Greenholt",
-                                "email": "Tevin81@hotmail.com",
-                                "phone": "882.113.1008",
+                                "_id": "5b9c35b301c772a4e2c4c09a",
+                                "firstName": "Stefan",
+                                "lastName": "O'Reilly",
+                                "email": "Nicole_Bode6@yahoo.com",
+                                "phone": "276.396.3948",
                                 "__v": 0
                             },
                             "weekdayGuardian": false,
@@ -1642,7 +1563,7 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "gender": "male",
                     "school": [
                         {
-                            "_id": "5b99740c849c285fdc8aa324",
+                            "_id": "5b9c35b301c772a4e2c4c0d7",
                             "schoolName": "Odle Middle School",
                             "currentSchool": true
                         }
@@ -1652,16 +1573,18 @@ NOTE: an admin can GET with no query string to retrieve all points trackers, in 
                     "synopsisReportArchiveUrl": "http://www.google.com",
                     "googleCalendarUrl": "http://www.google.com",
                     "googleDocsUrl": "http://www.google.com",
+                    "createdAt": "2018-09-14T22:26:59.661Z",
+                    "updatedAt": "2018-09-14T22:26:59.661Z",
                     "__v": 0
                 },
                 "__v": 0
             }
         ],
-        "_id": "5b99740c849c285fdc8aa2e7",
-        "firstName": "Vicky",
-        "lastName": "Greenholt",
-        "email": "Tevin81@hotmail.com",
-        "phone": "882.113.1008",
+        "_id": "5b9c35b301c772a4e2c4c09a",
+        "firstName": "Stefan",
+        "lastName": "O'Reilly",
+        "email": "Nicole_Bode6@yahoo.com",
+        "phone": "276.396.3948",
         "__v": 0
     }
 

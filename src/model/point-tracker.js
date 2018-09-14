@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import autopopulate from 'mongoose-autopopulate';
-// import mongooseToCsv from 'mongoose-to-csv';
 import mongooseToCsvQuotes from 'mongoose-to-csv-quotes';
 
 import StudentData from './student-data';
