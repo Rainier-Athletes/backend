@@ -37,7 +37,7 @@ describe('TESTING STUDENT DATA ROUTER', () => {
         student: mockProfiles.studentProfile._id.toString(),
         lastPointTracker: mockData.pointTracker._id.toString(),
         sports: {
-          sportName: 'quidich',
+          sport: 'quidich',
         },
       };
 
@@ -84,7 +84,7 @@ describe('TESTING STUDENT DATA ROUTER', () => {
         expect(err).toEqual('Get of mock data should have worked');
       }
       expect(response.status).toEqual(200);
-      expect(response.body[0].sports[0].sportName).toEqual(mockData.studentData.sports[0].sportName);
+      expect(response.body[0].sports[0].sport).toEqual(mockData.studentData.sports[0].sport);
     });
 
     test('GET 200 to successfully retrieve student data by studentData student id', async () => {
@@ -97,7 +97,7 @@ describe('TESTING STUDENT DATA ROUTER', () => {
         expect(err).toEqual('Get of mock data should have worked');
       }
       expect(response.status).toEqual(200);
-      expect(response.body[0].sports[0].sportName).toEqual(mockData.studentData.sports[0].sportName);
+      expect(response.body[0].sports[0].sport).toEqual(mockData.studentData.sports[0].sport);
     });
 
     test('GET 400 missing query string', async () => {

@@ -12,18 +12,26 @@ import fs from 'fs';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import createGoogleDriveFunction from '../lib/googleDriveLib';
 import PointTracker from '../model/point-tracker';
+import StudentData from '../model/student-data';
 
 const TEMP = `${__dirname}/temp`;
 
 const extractRouter = new Router();
 
-extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, response, next) => {
+extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (request, response, next) => {
   const fromDate = request.query.from ? request.query.from : false;
   const toDate = request.query.to ? request.query.to : false;
+  const model = request.params.model ? request.params.model : false;
 
-  if (!(fromDate && toDate)) return new HttpError(400, 'Bad extract request. Missing to or from dates', { expose: false });
+  if (!(fromDate && toDate)) return next(new HttpError(400, 'Bad extract request. Missing to or from dates', { expose: false }));
+  if (!model || !['pointstracker', 'studentdata'].includes(model)) return next(new HttpError(400, 'Missing or bad extract model'));
 
-  const extractName = `point-tracker-extract-${fromDate}-${toDate}.csv`;
+  const extractModel = {
+    pointstracker: PointTracker,
+    studentdata: StudentData,
+  };
+
+  const extractName = `${model}-extract-${fromDate}-${toDate}.csv`;
 
   const { googleTokenResponse } = request;
   const folderName = 'Rainier Athletes Data Extracts';
@@ -44,13 +52,13 @@ extractRouter.get('/api/v1/extract', bearerAuthMiddleware, async (request, respo
 
   // query the database and dump results to temp csv file
   let queryError = false;
-  PointTracker.where('createdAt').gte(new Date(fromDate)).lte(new Date(toDate)).exec()
+  extractModel[model].where('createdAt').gte(new Date(fromDate)).lte(new Date(toDate)).exec()
     .then((data) => {
       if (data.length === 0) {
         queryError = true;
         return next(new HttpError(404, `No data found in date range ${fromDate} to ${toDate}`, { expose: false }));
       }
-      return PointTracker.csvReadStream(data)
+      return extractModel[model].csvReadStream(data)
         .pipe(fs.createWriteStream(`${TEMP}/${extractName}`));
     })
     .then(() => {

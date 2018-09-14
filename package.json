@@ -57,6 +57,7 @@
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.2.1",
     "mongoose-autopopulate": "^0.8.0",
+    "mongoose-to-csv": "^0.1.1",
     "mongoose-to-csv-quotes": "^1.0.5"
   },
   "bugs": {
