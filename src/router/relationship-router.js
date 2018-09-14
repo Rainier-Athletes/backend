@@ -4,6 +4,24 @@ import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import Profile from '../model/profile';
 import StudentData from '../model/student-data';
 
+const emptyStudentData = {
+  student: null,
+  lastPointTracker: null,
+  coaches: [],
+  sports: [],
+  mentors: [],
+  teachers: [],
+  family: [],
+  gender: '',
+  school: [],
+  dateOfBirth: '',
+  grade: 0,
+  synopsisReportArchiveUrl: 'http://www.google.com',
+  googleCalendarUrl: 'http://www.google.com',
+  googleDocsUrl: 'http://www.google.com',
+  synergy: {},
+};
+
 const relationshipRouter = new Router();
 
 // attach student to support role profile and support role profile to student
@@ -37,6 +55,12 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
   } catch (err) {
     return next(new HttpErrors(404, 'ATTACH ROUTER GET: unable to find student data', { expose: false }));
   }
+
+  if (!studentData) {
+    studentData = await new StudentData(emptyStudentData);
+    studentData.student = request.query.student;
+  }
+  
   try {
     roleProfile = await Profile.findById(request.query[role]);
   } catch (err) {
