@@ -14,7 +14,7 @@ const cleanDate = () => {
   return newDate;
 };
 
-const TEMP_DIR = `${__dirname}/temp`;
+const TEMP_DIR = `${__dirname}`;
 
 const synopsisRouter = new Router();
 
