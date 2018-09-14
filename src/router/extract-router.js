@@ -14,7 +14,7 @@ import createGoogleDriveFunction from '../lib/googleDriveLib';
 import PointTracker from '../model/point-tracker';
 import StudentData from '../model/student-data';
 
-const TEMP = `${__dirname}/temp`;
+const TEMP = `${__dirname}`;  // deleted "/temp" to see if heroku likes it better.
 
 const extractRouter = new Router();
 
