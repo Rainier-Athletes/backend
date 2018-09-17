@@ -34,6 +34,7 @@ studentDataRouter.get('/api/v1/studentdata', bearerAuthMiddleware, (request, res
   StudentData.init()
     .then(() => {
       const query = { [queryProp]: queryValue };
+      
       return StudentData.find(query);
     })
     .then((result) => {
