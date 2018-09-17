@@ -14,6 +14,8 @@ const createPointTrackerMockPromise = async () => {
 
   const getTeacher = async () => {
     const mock = await createProfileMockPromise();
+    mock.teacherProfile.students.push(mockData.profileData.studentProfile._id.toString());
+    await mock.teacherProfile.save();
     return mock.teacherProfile._id.toString();
   };
   const teachers = [];

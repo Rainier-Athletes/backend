@@ -25,6 +25,7 @@ describe('TESTING ROUTER PROFILE', () => {
     }
     return undefined;
   });
+  
   afterEach(async () => {
     await stopServer();
   });
@@ -112,7 +113,7 @@ describe('TESTING ROUTER PROFILE', () => {
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
-      expect(response.body).toHaveLength(5);
+      expect(response.body).toHaveLength(7);
     });
 
     test('GET 200 on successful admin search of mentor role', async () => {
@@ -156,7 +157,7 @@ describe('TESTING ROUTER PROFILE', () => {
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
-      expect(response.body).toHaveLength(5);
+      expect(response.body).toHaveLength(7);
     });
 
     test('GET 200 on successful admin search by email', async () => {
