@@ -22,7 +22,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
   afterEach(async () => { stopServer(); });
 
   describe('Testing point-tracker POST route', () => {
-    test.only('POST 200 good request, mentor submitting', async () => {
+    test('POST 200 good request, mentor submitting', async () => {
       const newPT = {};
       newPT.date = '2018-09-12';
       newPT.mentorIsSubstitute = false;
