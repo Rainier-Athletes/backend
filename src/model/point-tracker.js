@@ -35,7 +35,7 @@ const pointTrackerSchema = mongoose.Schema({
     scoring: {
       excusedDays: Number,
       stamps: Number,
-      halfStamp: Number,
+      halfStamps: Number,
       tutorials: Number,
     },
     grade: Number,
