@@ -25,6 +25,7 @@ describe('TESTING ROUTER PROFILE', () => {
     }
     return undefined;
   });
+  
   afterEach(async () => {
     await stopServer();
   });

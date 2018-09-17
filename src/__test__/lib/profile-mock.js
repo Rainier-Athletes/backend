@@ -4,12 +4,11 @@ import Profile from '../../model/profile';
 const createProfileMockPromise = async () => {
   const mockData = {};
 
-  const mockProfile = {
+  const mockStudentProfile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'student',
-    address: faker.address.streetAddress(),
     phone: faker.phone.phoneNumberFormat(3),
     studentData: null,
   };
@@ -19,7 +18,6 @@ const createProfileMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'mentor',
-    address: faker.address.streetAddress(),
     phone: faker.phone.phoneNumberFormat(3),
   };
 
@@ -28,7 +26,6 @@ const createProfileMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'coach',
-    address: faker.address.streetAddress(),
     phone: faker.phone.phoneNumberFormat(3),
   };
 
@@ -37,7 +34,6 @@ const createProfileMockPromise = async () => {
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     role: 'admin',
-    address: faker.address.streetAddress(),
     phone: faker.phone.phoneNumberFormat(3),
   };
 
@@ -48,18 +44,32 @@ const createProfileMockPromise = async () => {
     role: 'teacher',
   };
 
+  const mockFamily1Profile = {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    role: 'family',
+    phone: faker.phone.phoneNumberFormat(3),
+  };
 
-  const newMentor = new Profile(mockMentorProfile);
-  const mentor = await newMentor.save();
-  const newProfile = new Profile(mockProfile);
-  const profile = await newProfile.save();
+  const mockFamily2Profile = {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    role: 'family',
+    phone: faker.phone.phoneNumberFormat(3),
+  };
+
+  const student = await new Profile(mockStudentProfile).save();
+  const mentor = await new Profile(mockMentorProfile).save();
   const coach = await new Profile(mockCoachProfile).save();
   const admin = await new Profile(mockAdminProfile).save();
   const teacher = await new Profile(mockTeacherProfile).save();
+  const family1 = await new Profile(mockFamily1Profile).save();
+  const family2 = await new Profile(mockFamily2Profile).save();
   
   mockData.teacherProfile = teacher;
   mockData.teacherToken = await teacher.createTokenPromise();
-
 
   mockData.mentorProfile = mentor;
   mockData.mentorToken = await mentor.createTokenPromise();
@@ -70,10 +80,13 @@ const createProfileMockPromise = async () => {
   mockData.coachProfile = coach;
   mockData.coachToken = await coach.createTokenPromise();
 
-  mockData.studentProfile = profile;
-  mockData.studentToken = await profile.createTokenPromise();
+  mockData.studentProfile = student;
+  mockData.studentToken = await student.createTokenPromise();
 
-  mockData.profile = profile;
+  mockData.family1Profile = family1;
+  mockData.family2Profile = family2;
+
+  mockData.profile = student;
   mockData.token = mockData.studentToken;
 
   return mockData;
