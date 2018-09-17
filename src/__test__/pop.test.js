@@ -26,7 +26,7 @@ describe('MODEL AUTO POPULATE TESTS', () => {
     let response;
     try {
       response = await superagent.get(`${apiUrl}/pointstracker`)
-        .authBearer(mock.profiles.adminToken)
+        .authBearer(mock.profileData.adminToken)
         .query({ id: mock.pointTracker._id.toString() });
     } catch (err) {
       console.error(err);
@@ -37,12 +37,12 @@ describe('MODEL AUTO POPULATE TESTS', () => {
   });
 
   test('Get student profile mock from database', async () => {
-    const student = mock.profiles.studentProfile;
+    const student = mock.profileData.studentProfile;
 
     let response;
     try {
       response = await superagent.get(`${apiUrl}/profiles`)
-        .authBearer(mock.profiles.mentorToken)
+        .authBearer(mock.profileData.mentorToken)
         .query({ id: student._id.toString() });
     } catch (err) {
       console.error(err);
@@ -57,7 +57,7 @@ describe('MODEL AUTO POPULATE TESTS', () => {
     let response;
     try {
       response = await superagent.get(`${apiUrl}/studentdata`)
-        .authBearer(mock.profiles.adminToken)
+        .authBearer(mock.profileData.adminToken)
         .query({ id: mock.studentData._id.toString() });
     } catch (err) {
       console.error(err);
@@ -68,12 +68,12 @@ describe('MODEL AUTO POPULATE TESTS', () => {
   });
 
   test('Get mentor profile mock from database', async () => {
-    const mentor = mock.profiles.mentorProfile;
-    mentor.students.push(mock.profiles.studentProfile._id.toString());
+    const mentor = mock.profileData.mentorProfile;
+    mentor.students.push(mock.profileData.studentProfile._id.toString());
 
     try {
       await superagent.put(`${apiUrl}/profiles`)
-        .authBearer(mock.profiles.adminToken)
+        .authBearer(mock.profileData.adminToken)
         .send(mentor);
     } catch (err) {
       console.error(err);
@@ -82,7 +82,7 @@ describe('MODEL AUTO POPULATE TESTS', () => {
     let response;
     try {
       response = await superagent.get(`${apiUrl}/profiles`)
-        .authBearer(mock.profiles.adminToken)
+        .authBearer(mock.profileData.adminToken)
         .query({ id: mentor._id.toString() });
     } catch (err) {
       console.error(err);
