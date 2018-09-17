@@ -5,8 +5,8 @@ import mongooseToCsvQuotes from 'mongoose-to-csv-quotes';
 import StudentData from './student-data';
 
 const pointTrackerSchema = mongoose.Schema({
-  date: {
-    type: Date,
+  title: {
+    type: String,
     required: true,
   },
   student: { 
@@ -66,7 +66,7 @@ const pointTrackerSchema = mongoose.Schema({
 }, { timestamps: true });
 pointTrackerSchema.plugin(autopopulate);
 
-const headers = ['date',
+const headers = ['title',
   'student.active',
   'student.firstName',
   'student.lastName',

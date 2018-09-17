@@ -11,9 +11,11 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 describe('TESTING POINT-TRACKER ROUTER', () => {
   let mockData;
   beforeEach(async () => {
+    jest.setTimeout(10000);
     await startServer();
     await removeAllResources();
     mockData = await createStudentDataMockPromise();
+    jest.setTimeout(5000);
   });
   afterEach(async () => {
     await stopServer();
@@ -24,7 +26,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
   describe('Testing point-tracker POST route', () => {
     test('POST 200 good request, mentor submitting', async () => {
       const newPT = {};
-      newPT.date = '2018-09-12';
+      newPT.title = 'PT ending 2018-09-12';
       newPT.mentorIsSubstitute = false;
       // newPT.mentor = mockData.profileData.mentorProfile._id.toString();
       newPT.student = mockData.profileData.studentProfile._id.toString();
@@ -160,14 +162,14 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
       const modelMap = {
         id: 123456,
         studentId: 'helloBob',
-        date: Date.now(),
+        title: 'Bobs Point Tracker',
       };
       try {
         const response = await superagent.get(`${apiUrl}/pointstracker`)
           .authBearer(mockData.profileData.adminToken)
           .query(`id=${modelMap.id}`)
           .query(`studentId=${modelMap.studentId}`)
-          .query(`date=${modelMap.date}`);
+          .query(`title=${modelMap.title}`);
         expect(response.status).toEqual('nothing to pass, should FAIL');
       } catch (err) {
         expect(err.status).toEqual(404);

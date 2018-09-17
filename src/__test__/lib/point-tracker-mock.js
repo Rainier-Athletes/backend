@@ -28,7 +28,7 @@ const createPointTrackerMockPromise = async () => {
   teachers.push(await getTeacher());
  
   const mockPointTracker = {
-    date: new Date().toISOString(),
+    title: 'Mock Point Tracker Title',
     student: mockData.profileData.studentProfile._id,
     mentor: mockData.profileData.mentorProfile._id,
     mentorIsSubstitute: false,
@@ -149,7 +149,7 @@ const createPointTrackerMockPromise = async () => {
 const removeAllResources = () => {
   return Promise.all([
     removeProfileResources(),
-    PointTracker.remove({}),
+    PointTracker.deleteMany({}),
   ]);
 };
 
