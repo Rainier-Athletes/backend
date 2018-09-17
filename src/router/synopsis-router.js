@@ -42,11 +42,13 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   
   const sendFileToGoogleDrive = createGoogleDriveFunction(drive, TEMP_DIR, title, setFolderName, response, next);
 
-  pdf.create(html).toFile(`${TEMP_DIR}/${title}`,
+  pdf.create(html).toFile(
+    `${TEMP_DIR}/${title}`,
     (err) => {
       if (err) return next(new HttpError(500, 'Error creating pdf from html', { expose: false }));
       return sendFileToGoogleDrive();
-    });
+    },
+  );
 
   return undefined; // to satisfy linter...
 });
