@@ -67,7 +67,7 @@ const createProfileMockPromise = async () => {
   const teacher = await new Profile(mockTeacherProfile).save();
   const family1 = await new Profile(mockFamily1Profile).save();
   const family2 = await new Profile(mockFamily2Profile).save();
-  
+
   mockData.teacherProfile = teacher;
   mockData.teacherToken = await teacher.createTokenPromise();
 
@@ -93,7 +93,7 @@ const createProfileMockPromise = async () => {
 };
 
 const removeAllResources = () => {
-  return Profile.remove({});
+  return Profile.deleteMany({});
 };
 
 export { createProfileMockPromise, removeAllResources };

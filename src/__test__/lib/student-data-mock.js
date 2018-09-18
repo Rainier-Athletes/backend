@@ -13,7 +13,11 @@ const createStudentDataMockPromise = async () => {
     return adult.save();
   };
 
-  await connectStudent(profileData.studentProfile, profileData.coachProfile);
+  try {
+    await connectStudent(profileData.studentProfile, profileData.coachProfile);
+  } catch (err) {
+    console.log('connectStudent error on save:', err);
+  }
   await connectStudent(profileData.studentProfile, profileData.mentorProfile);
   await connectStudent(profileData.studentProfile, profileData.family1Profile);
   await connectStudent(profileData.studentProfile, profileData.family2Profile);
@@ -71,7 +75,12 @@ const createStudentDataMockPromise = async () => {
   };
   
   const newStudentData = new StudentData(mockStudentData);
-  const studentData = await newStudentData.save();
+  let studentData;
+  try {
+    studentData = await newStudentData.save();
+  } catch (err) {
+    console.log(' save error:', err);
+  }
 
   mockData.profileData = profileData;
   mockData.pointTracker = pointTracker;
@@ -82,8 +91,8 @@ const createStudentDataMockPromise = async () => {
 
 const removeAllResources = () => {
   return Promise.all([
-    StudentData.remove({}),
     removePtResources(),
+    StudentData.deleteMany({}),
   ]);
 };
 
