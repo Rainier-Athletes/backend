@@ -35,14 +35,14 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
   // query string is of the form ?student=12345&[mentor|coach|teacher|family]=123456
   const queryKeys = Object.keys(request.query);
   if (queryKeys.length === 0) {
-    return next(new HttpErrors(400, 'ATTACH ROUTER GET ERROR: missing query parameters', { expose: false }));  
+    return next(new HttpErrors(400, 'ATTACH ROUTER GET ERROR: missing query parameters', { expose: false }));
   }
   if (!request.query.student) {
-    return next(new HttpErrors(400, 'ATTACH ROUTER GET ERROR: missing student id query parameter', { expose: false }));    
+    return next(new HttpErrors(400, 'ATTACH ROUTER GET ERROR: missing student id query parameter', { expose: false }));
   }
 
   const role = queryKeys.filter(k => k !== 'student')[0];
-  if (!['mentor', 'coach', 'teacher', 'family'].includes(role)) {
+  if (!['mentor', 'coach', 'teacher', 'family', 'admin'].includes(role)) {
     return next(new HttpErrors(400, 'ATTACH ROUTER GET ERROR: missing valid role query parameter', { expose: false }));
   }
   // at this point query parameters and user's role are good.
@@ -60,7 +60,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
     studentData = await new StudentData(emptyStudentData);
     studentData.student = request.query.student;
   }
-  
+
   try {
     roleProfile = await Profile.findById(request.query[role]);
   } catch (err) {
@@ -83,7 +83,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
         studentData.mentors.unshift({ mentor: request.query[role], currentMentor: true });
       } else {
         // mentor is already in the student's array. Set them to currentMentor
-        studentData.mentors.forEach((m) => { 
+        studentData.mentors.forEach((m) => {
           if (m.mentor._id.toString() === request.query[role]) m.currentMentor = true;
         });
       }
@@ -92,7 +92,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
       if (!(studentData.coaches.map(v => v.coach.toString()).includes(request.query[role]))) {
         studentData.coaches.push({ coach: request.query[role], currentCoach: true });
       } else {
-        studentData.coaches.forEach((c) => { 
+        studentData.coaches.forEach((c) => {
           if (c.coach._id.toString() === request.query[role]) c.currentCoach = true;
         });
       }
@@ -101,7 +101,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
       if (!(studentData.teachers.map(v => v.teacher.toString()).includes(request.query[role]))) {
         studentData.teachers.push({ teacher: request.query[role], currentTeacher: true });
       } else {
-        studentData.teachers.forEach((c) => { 
+        studentData.teachers.forEach((c) => {
           if (c.teacher._id.toString() === request.query[role]) c.currentTeacher = true;
         });
       }
@@ -109,7 +109,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
     case 'family':
       if (!(studentData.family.map(v => v.member.toString()).includes(request.query[role]))) {
         studentData.family.push({ member: request.query[role] });
-      } 
+      }
       break;
     default:
   }
@@ -135,14 +135,14 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
   // query string is of the form ?student=12345&[mentor|coach|teacher|family]=123456
   const queryKeys = Object.keys(request.query);
   if (queryKeys.length === 0) {
-    return next(new HttpErrors(400, 'DETACH ROUTER GET ERROR: missing query parameters', { expose: false }));  
+    return next(new HttpErrors(400, 'DETACH ROUTER GET ERROR: missing query parameters', { expose: false }));
   }
   if (!request.query.student) {
-    return next(new HttpErrors(400, 'DETACH ROUTER GET ERROR: missing student id query parameter', { expose: false }));    
+    return next(new HttpErrors(400, 'DETACH ROUTER GET ERROR: missing student id query parameter', { expose: false }));
   }
 
   const role = queryKeys.filter(k => k !== 'student')[0];
-  if (!['mentor', 'coach', 'teacher', 'family'].includes(role)) {
+  if (!['mentor', 'coach', 'teacher', 'family', 'admin'].includes(role)) {
     return next(new HttpErrors(400, 'DETACH ROUTER GET ERROR: missing valid role query parameter', { expose: false }));
   }
 
@@ -193,7 +193,7 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
       });
       break;
     case 'family':
-      newSupportersArray = studentProfile.studentData.family.filter((f) => { 
+      newSupportersArray = studentProfile.studentData.family.filter((f) => {
         return f.member._id.toString() !== request.query[role];
       });
       studentProfile.studentData.family = newSupportersArray;
