@@ -14,6 +14,8 @@ const createPointTrackerMockPromise = async () => {
 
   const getTeacher = async () => {
     const mock = await createProfileMockPromise();
+    mock.teacherProfile.students.push(mockData.profileData.studentProfile._id.toString());
+    await mock.teacherProfile.save();
     return mock.teacherProfile._id.toString();
   };
   const teachers = [];
@@ -26,7 +28,7 @@ const createPointTrackerMockPromise = async () => {
   teachers.push(await getTeacher());
  
   const mockPointTracker = {
-    date: new Date().toISOString(),
+    title: 'Mock Point Tracker Title',
     student: mockData.profileData.studentProfile._id,
     mentor: mockData.profileData.mentorProfile._id,
     mentorIsSubstitute: false,
@@ -37,7 +39,7 @@ const createPointTrackerMockPromise = async () => {
         scoring: {
           excusedDays: 1,
           stamps: 2,
-          halfStamp: 3,
+          halfStamps: 3,
           tutorials: 2,
         },
         grade: 70.0,
@@ -48,7 +50,7 @@ const createPointTrackerMockPromise = async () => {
         scoring: {
           excusedDays: 3,
           stamps: 4,
-          halfStamp: 1,
+          halfStamps: 1,
           tutorials: 1,
         },
         grade: 90.0,
@@ -59,7 +61,7 @@ const createPointTrackerMockPromise = async () => {
         scoring: {
           excusedDays: 1,
           stamps: 2,
-          halfStamp: 3,
+          halfStamps: 3,
           tutorials: 2,
         },
         grade: 70.0,
@@ -70,7 +72,7 @@ const createPointTrackerMockPromise = async () => {
         scoring: {
           excusedDays: 3,
           stamps: 4,
-          halfStamp: 1,
+          halfStamps: 1,
           tutorials: 1,
         },
         grade: 90.0,
@@ -81,7 +83,7 @@ const createPointTrackerMockPromise = async () => {
         scoring: {
           excusedDays: 3,
           stamps: 4,
-          halfStamp: 1,
+          halfStamps: 1,
           tutorials: 1,
         },
         grade: 90.0,
@@ -92,7 +94,7 @@ const createPointTrackerMockPromise = async () => {
         scoring: {
           excusedDays: 1,
           stamps: 2,
-          halfStamp: 3,
+          halfStamps: 3,
           tutorials: 2,
         },
         grade: 70.0,
@@ -103,7 +105,7 @@ const createPointTrackerMockPromise = async () => {
         scoring: {
           excusedDays: 3,
           stamps: 4,
-          halfStamp: 1,
+          halfStamps: 1,
           tutorials: 1,
         },
         grade: 90.0,
@@ -147,7 +149,7 @@ const createPointTrackerMockPromise = async () => {
 const removeAllResources = () => {
   return Promise.all([
     removeProfileResources(),
-    PointTracker.remove({}),
+    PointTracker.deleteMany({}),
   ]);
 };
 

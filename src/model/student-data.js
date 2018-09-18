@@ -58,6 +58,10 @@ const studentDataSchema = mongoose.Schema({
   school: [{ 
     schoolName: String, 
     currentSchool: Boolean,
+    isElementarySchool: {
+      type: Boolean,
+      default: false,
+    },
   }],
   dateOfBirth: Date,
   grade: Number,

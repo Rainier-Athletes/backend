@@ -4,15 +4,29 @@ import { createPointTrackerMockPromise, removeAllResources as removePtResources 
 
 const createStudentDataMockPromise = async () => {
   const mock = await createPointTrackerMockPromise();
-  const mockPt = mock.pointTracker;
-  const mockProfiles = mock.profileData;
+  const { pointTracker, profileData } = mock;
+  
   const mockData = {};
 
+  const connectStudent = async (student, adult) => {
+    adult.students.push(student._id.toString());
+    return adult.save();
+  };
+
+  try {
+    await connectStudent(profileData.studentProfile, profileData.coachProfile);
+  } catch (err) {
+    console.log('connectStudent error on save:', err);
+  }
+  await connectStudent(profileData.studentProfile, profileData.mentorProfile);
+  await connectStudent(profileData.studentProfile, profileData.family1Profile);
+  await connectStudent(profileData.studentProfile, profileData.family2Profile);
+  
   const mockStudentData = {
-    student: mockProfiles.studentProfile._id,
-    lastPointTracker: mockPt._id,
+    student: profileData.studentProfile._id,
+    lastPointTracker: pointTracker._id,
     coaches: [{ 
-      coach: mockProfiles.coachProfile._id, 
+      coach: profileData.coachProfile._id, 
       currentCoach: true,
     }],
     sports: [{
@@ -22,10 +36,10 @@ const createStudentDataMockPromise = async () => {
       currentlyPlaying: true,
     }],
     mentors: [{
-      mentor: mockProfiles.mentorProfile._id,
+      mentor: profileData.mentorProfile._id,
       currentMentor: true,
     }],
-    teachers: mockPt.subjects.map((s) => {
+    teachers: pointTracker.subjects.map((s) => {
       return {
         teacher: s.teacher,  
         currentTeacher: true,
@@ -33,19 +47,20 @@ const createStudentDataMockPromise = async () => {
     }),
     family: [
       {
-        member: mockProfiles.adminProfile._id,
+        member: profileData.family1Profile._id,
         weekdayGuardian: true,
         weekendGuardian: false,
       },
       {
-        member: mockProfiles.mentorProfile._id,
+        member: profileData.family2Profile._id,
         weekdayGuardian: false,
         weekendGuardian: true,
       },
     ],
     gender: 'male',
     school: [{ 
-      schoolName: 'Odle Middle School', 
+      schoolName: 'Odle Middle School',
+      isElementarySchool: false,
       currentSchool: true, 
     }],
     dateOfBirth: '2007-09-11',
@@ -60,10 +75,15 @@ const createStudentDataMockPromise = async () => {
   };
   
   const newStudentData = new StudentData(mockStudentData);
-  const studentData = await newStudentData.save();
+  let studentData;
+  try {
+    studentData = await newStudentData.save();
+  } catch (err) {
+    console.log(' save error:', err);
+  }
 
-  mockData.profiles = mockProfiles;
-  mockData.pointTracker = mockPt;
+  mockData.profileData = profileData;
+  mockData.pointTracker = pointTracker;
   mockData.studentData = studentData;
 
   return mockData;
@@ -71,8 +91,8 @@ const createStudentDataMockPromise = async () => {
 
 const removeAllResources = () => {
   return Promise.all([
-    StudentData.remove({}),
     removePtResources(),
+    StudentData.deleteMany({}),
   ]);
 };
 

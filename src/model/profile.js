@@ -47,7 +47,7 @@ const profileSchema = mongoose.Schema({
     ref: 'Profile',
     autopopulate: { maxDepth: 2 },
   }],  
-});
+}, { timestamps: true });
 
 profileSchema.plugin(autopopulate);
 

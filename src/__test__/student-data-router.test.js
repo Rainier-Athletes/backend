@@ -17,14 +17,16 @@ describe('TESTING STUDENT DATA ROUTER', () => {
   afterEach(async () => { await stopServer(); });
 
   beforeEach(async () => {
+    jest.setTimeout(10000);
     await startServer();
     await removeAllResources();
     try {
       mockData = await createStudentDataMockPromise();
-      mockProfiles = mockData.profiles;
+      mockProfiles = mockData.profileData;
     } catch (err) {
       logger.log(logger.ERROR, `Unexpected error in student-data-router.test beforeEach: ${err}`);
     }
+    jest.setTimeout(5000);
     return undefined;
   });
   afterEach(async () => {
