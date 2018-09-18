@@ -203,10 +203,9 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
 
   if (!found) return new HttpErrors(404, `${role} ${request.query[role]} not found on student ${request.query.student}`, { expose: false });
 
-  console.log('saving profiles');
   try {
     await roleProfile.save();
-    await studentProfile.save();
+    await studentProfile.studentData.save();
     return response.sendStatus(200);
   } catch (err) {
     return new HttpErrors(500, 'ATTACH ROUTER GET: Unable to save updated profiles', { expose: false });
