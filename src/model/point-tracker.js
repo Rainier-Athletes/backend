@@ -5,6 +5,7 @@ import mongooseToCsvQuotes from 'mongoose-to-csv-quotes';
 import StudentData from './student-data';
 
 const pointTrackerSchema = mongoose.Schema({
+  date: Date,
   title: {
     type: String,
     required: true,

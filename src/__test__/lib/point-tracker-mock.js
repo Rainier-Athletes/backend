@@ -25,6 +25,7 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
     await mock.teacherProfile.save();
     return mock.teacherProfile._id.toString();
   };
+
   const teachers = [];
   teachers.push(await getTeacher());
   if (!elementaryStudent) {
@@ -35,6 +36,7 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
     teachers.push(await getTeacher());
     teachers.push(await getTeacher());
   }
+
   const mockPointTracker = {
     title: 'Mock Point Tracker Title',
     student: mockData.profileData.studentProfile._id,
