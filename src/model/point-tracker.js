@@ -38,7 +38,10 @@ const pointTrackerSchema = mongoose.Schema({
       halfStamps: Number,
       tutorials: Number,
     },
-    grade: Number,
+    grade: {
+      type: String,
+      enum: ['', 'A', 'B', 'C', 'D', 'F'],
+    },
   }],
   surveyQuestions: {
     mentorAttendedCheckin: Boolean,

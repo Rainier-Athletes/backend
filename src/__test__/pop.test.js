@@ -12,17 +12,19 @@ const apiUrl = `http://localhost:${process.env.PORT}/api/v1`;
 
 describe('MODEL AUTO POPULATE TESTS', () => {
   let mock;
+  let mockElementary;
   beforeEach(async () => {
     await startServer();
     await removeAllResources();
     mock = await createStudentDataMockPromise();
+    mockElementary = await createStudentDataMockPromise(true);
   });
 
   afterEach(async () => {
     await stopServer();
   });
   
-  test('Get point tracker mock from database', async () => {
+  test('Get MS point tracker mock from database', async () => {
     let response;
     try {
       response = await superagent.get(`${apiUrl}/pointstracker`)
@@ -32,7 +34,21 @@ describe('MODEL AUTO POPULATE TESTS', () => {
       console.error(err);
     }
     expect(response.body).toBeTruthy();
-    console.log('POINT TRACKER POPULATED');
+    console.log('MIDDLE SCHOOL POINT TRACKER POPULATED');
+    console.log(JSON.stringify(response.body, null, 4));
+  });
+
+  test('Get ES point tracker mock from database', async () => {
+    let response;
+    try {
+      response = await superagent.get(`${apiUrl}/pointstracker`)
+        .authBearer(mockElementary.profileData.adminToken)
+        .query({ id: mockElementary.pointTracker._id.toString() });
+    } catch (err) {
+      console.error(err);
+    }
+    expect(response.body).toBeTruthy();
+    console.log('ELEMENTARY SCHOOL POINT TRACKER POPULATED');
     console.log(JSON.stringify(response.body, null, 4));
   });
 
