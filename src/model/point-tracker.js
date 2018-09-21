@@ -59,9 +59,10 @@ const pointTrackerSchema = mongoose.Schema({
     synopsisCompletedByRaStaff: Boolean,
     // playing time earned and explanation handled via synopsisComments
   },
+  earnedPlayingTime: String,
+  mentorGrantedPlayingTime: String,
   synopsisComments: {
-    extraPlayingTime: String,
-    mentorGrantedPlayingTime: String,
+    mentorGrantedPlayingTimeComments: String, // required only if mentor overrides calculated playing time
     studentActionItems: String,
     sportsUpdate: String,
     additionalComments: String,

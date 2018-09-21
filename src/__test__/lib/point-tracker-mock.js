@@ -27,13 +27,14 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
   };
   const teachers = [];
   teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
- 
+  if (!elementaryStudent) {
+    teachers.push(await getTeacher());
+    teachers.push(await getTeacher());
+    teachers.push(await getTeacher());
+    teachers.push(await getTeacher());
+    teachers.push(await getTeacher());
+    teachers.push(await getTeacher());
+  }
   const mockPointTracker = {
     title: 'Mock Point Tracker Title',
     student: mockData.profileData.studentProfile._id,
@@ -54,9 +55,9 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
       synopsisInformationIncomplete: false,
       synopsisCompletedByRaStaff: false,
     },
+    mentorGrantedPlayingTime: 'One quarter',
     synopsisComments: {
-      extraPlayingTime: faker.lorem.words(3),
-      mentorGrantedPlayingTime: 'one quarter',
+      mentorGrantedPlayingTimeComments: faker.lorem.words(3),
       studentActionItems: faker.lorem.words(3),
       sportsUpdate: faker.lorem.words(3),
       additionalComments: faker.lorem.words(3),
@@ -68,7 +69,7 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
   for (let i = 0; i < numSubjects; i++) {
     const newSubject = {
       subjectName: faker.name.firstName(),
-      teacher: teachers[i],
+      teacher: elementaryStudent ? teachers[0] : teachers[i],
       scoring: {
         excusedDays: randomVal(0, 4),
         stamps: randomVal(0, 8),

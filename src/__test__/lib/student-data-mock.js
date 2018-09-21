@@ -40,12 +40,17 @@ const createStudentDataMockPromise = async (elementaryStudent = false) => {
       mentor: profileData.mentorProfile._id,
       currentMentor: true,
     }],
-    teachers: pointTracker.subjects.map((s) => {
-      return {
-        teacher: s.teacher,  
+    teachers: elementaryStudent 
+      ? {
+        teacher: pointTracker.subjects[0].teacher,
         currentTeacher: true,
-      };
-    }),
+      }
+      : pointTracker.subjects.map((s) => {
+        return {
+          teacher: s.teacher,  
+          currentTeacher: true,
+        };
+      }),
     family: [
       {
         member: profileData.family1Profile._id,

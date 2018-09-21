@@ -203,7 +203,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
 
   describe('Testing point-tracker PUT route', () => {
     test('PUT 200 good request', async () => {
-      mockData.pointTracker.synopsisComments.extraPlayingTime = 'This is a change to Extra Play Time comment';
+      mockData.pointTracker.synopsisComments.mentorGrantedPlayingTimeComments = 'This is a change to Extra Play Time comment';
       let response;
       try {
         response = await superagent.put(`${apiUrl}/pointstracker`)
@@ -213,7 +213,7 @@ describe('TESTING POINT-TRACKER ROUTER', () => {
         expect(err.status).toEqual('Unexpected error on good put from point-tracker');
       }
       expect(response.status).toEqual(200);
-      expect(response.body.synopsisComments.extraPlayingTime).toEqual('This is a change to Extra Play Time comment');
+      expect(response.body.synopsisComments.mentorGrantedPlayingTimeComments).toEqual('This is a change to Extra Play Time comment');
     });
 
     test('Get populated then Put test', async () => {
