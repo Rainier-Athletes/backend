@@ -44,6 +44,20 @@ studentDataRouter.get('/api/v1/studentdata', bearerAuthMiddleware, (request, res
   return undefined;
 });
 
+studentDataRouter.get('/api/v1/studentdata/all', bearerAuthMiddleware, (request, response, next) => {
+  if (request.profile.role !== 'admin') return next(new HttpErrors(401, 'Not authorized', { expose: false }));
+
+  StudentData.init()
+    .then(() => {     
+      return StudentData.find({});
+    })
+    .then((result) => {
+      return response.json(result).status(result ? 200 : 404);
+    })
+    .catch(next);
+  return undefined;
+});
+
 studentDataRouter.put('/api/v1/studentdata', bearerAuthMiddleware, (request, response, next) => {
   const body = request.body && typeof request.body === 'object' && request.body !== null && Object.keys(request.body).length > 0 ? request.body : false;
 
