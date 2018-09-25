@@ -1,9 +1,10 @@
 
 import StudentData from '../../model/student-data';
+
 import { createPointTrackerMockPromise, removeAllResources as removePtResources } from './point-tracker-mock';
 
-const createStudentDataMockPromise = async () => {
-  const mock = await createPointTrackerMockPromise();
+const createStudentDataMockPromise = async (elementaryStudent = false) => {
+  const mock = await createPointTrackerMockPromise(elementaryStudent);
   const { pointTracker, profileData } = mock;
   
   const mockData = {};
@@ -39,12 +40,17 @@ const createStudentDataMockPromise = async () => {
       mentor: profileData.mentorProfile._id,
       currentMentor: true,
     }],
-    teachers: pointTracker.subjects.map((s) => {
-      return {
-        teacher: s.teacher,  
+    teachers: elementaryStudent 
+      ? {
+        teacher: pointTracker.subjects[0].teacher,
         currentTeacher: true,
-      };
-    }),
+      }
+      : pointTracker.subjects.map((s) => {
+        return {
+          teacher: s.teacher,  
+          currentTeacher: true,
+        };
+      }),
     family: [
       {
         member: profileData.family1Profile._id,
@@ -57,14 +63,19 @@ const createStudentDataMockPromise = async () => {
         weekendGuardian: true,
       },
     ],
-    gender: 'male',
-    school: [{ 
+    gender: elementaryStudent ? 'male' : 'female',
+    school: [{
+      schoolName: 'Stevens Elemetary School',
+      isElementarySchool: true,
+      currentSchool: elementaryStudent,
+    },
+    { 
       schoolName: 'Odle Middle School',
       isElementarySchool: false,
-      currentSchool: true, 
+      currentSchool: !elementaryStudent, 
     }],
-    dateOfBirth: '2007-09-11',
-    grade: 7,
+    dateOfBirth: elementaryStudent ? '2010-09-20' : '2007-09-11',
+    grade: elementaryStudent ? 5 : 7,
     synopsisReportArchiveUrl: 'http://www.google.com',
     googleCalendarUrl: 'http://www.google.com',
     googleDocsUrl: 'http://www.google.com',
