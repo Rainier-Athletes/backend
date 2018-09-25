@@ -1,10 +1,17 @@
 import faker from 'faker';
 import PointTracker from '../../model/point-tracker';
-
-
 import { createProfileMockPromise, removeAllResources as removeProfileResources } from './profile-mock';
 
-const createPointTrackerMockPromise = async () => {
+const randomVal = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+const randomGrade = () => {
+  const grades = ['A', 'B', 'C', 'D', 'F'];
+  return grades[randomVal(0, grades.length - 1)];
+};
+
+const createPointTrackerMockPromise = async (elementaryStudent = false) => {
   const mockData = {};
 
   const profileData = await createProfileMockPromise();
@@ -18,99 +25,24 @@ const createPointTrackerMockPromise = async () => {
     await mock.teacherProfile.save();
     return mock.teacherProfile._id.toString();
   };
+
   const teachers = [];
   teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
-  teachers.push(await getTeacher());
- 
+  if (!elementaryStudent) {
+    teachers.push(await getTeacher());
+    teachers.push(await getTeacher());
+    teachers.push(await getTeacher());
+    teachers.push(await getTeacher());
+    teachers.push(await getTeacher());
+    teachers.push(await getTeacher());
+  }
+
   const mockPointTracker = {
     title: 'Mock Point Tracker Title',
     student: mockData.profileData.studentProfile._id,
     mentor: mockData.profileData.mentorProfile._id,
     mentorIsSubstitute: false,
-    subjects: [
-      {
-        subjectName: faker.name.firstName(),
-        teacher: teachers[0],
-        scoring: {
-          excusedDays: 1,
-          stamps: 2,
-          halfStamps: 3,
-          tutorials: 2,
-        },
-        grade: 70.0,
-      },
-      {
-        subjectName: faker.name.firstName(),
-        teacher: teachers[1],
-        scoring: {
-          excusedDays: 3,
-          stamps: 4,
-          halfStamps: 1,
-          tutorials: 1,
-        },
-        grade: 90.0,
-      },
-      {
-        subjectName: faker.name.firstName(),
-        teacher: teachers[2],
-        scoring: {
-          excusedDays: 1,
-          stamps: 2,
-          halfStamps: 3,
-          tutorials: 2,
-        },
-        grade: 70.0,
-      },
-      {
-        subjectName: faker.name.firstName(),
-        teacher: teachers[3],
-        scoring: {
-          excusedDays: 3,
-          stamps: 4,
-          halfStamps: 1,
-          tutorials: 1,
-        },
-        grade: 90.0,
-      },
-      {
-        subjectName: faker.name.firstName(),
-        teacher: teachers[4],
-        scoring: {
-          excusedDays: 3,
-          stamps: 4,
-          halfStamps: 1,
-          tutorials: 1,
-        },
-        grade: 90.0,
-      },
-      {
-        subjectName: faker.name.firstName(),
-        teacher: teachers[5],
-        scoring: {
-          excusedDays: 1,
-          stamps: 2,
-          halfStamps: 3,
-          tutorials: 2,
-        },
-        grade: 70.0,
-      },
-      {
-        subjectName: faker.name.firstName(),
-        teacher: teachers[6],
-        scoring: {
-          excusedDays: 3,
-          stamps: 4,
-          halfStamps: 1,
-          tutorials: 1,
-        },
-        grade: 90.0,
-      },
-    ],
+    subjects: [],
     surveyQuestions: {
       mentorAttendedCheckin: true,
       metFaceToFace: true,
@@ -125,14 +57,32 @@ const createPointTrackerMockPromise = async () => {
       synopsisInformationIncomplete: false,
       synopsisCompletedByRaStaff: false,
     },
+    mentorGrantedPlayingTime: 'One quarter',
     synopsisComments: {
-      extraPlayingTime: faker.lorem.words(3),
-      mentorGrantedPlayingTime: 'one quarter',
+      mentorGrantedPlayingTimeComments: faker.lorem.words(3),
       studentActionItems: faker.lorem.words(3),
       sportsUpdate: faker.lorem.words(3),
       additionalComments: faker.lorem.words(3),
     },
   };
+
+  // populate subjects
+  const numSubjects = elementaryStudent ? 4 : 7;
+  for (let i = 0; i < numSubjects; i++) {
+    const newSubject = {
+      subjectName: faker.name.firstName(),
+      teacher: elementaryStudent ? teachers[0] : teachers[i],
+      scoring: {
+        excusedDays: randomVal(0, 4),
+        stamps: randomVal(0, 8),
+        halfStamps: 0,
+        tutorials: elementaryStudent ? 0 : randomVal(0, 5),
+      },
+      grade: elementaryStudent ? '' : randomGrade(),
+    };
+    newSubject.halfStamps = randomVal(0, 8) - newSubject.stamps;
+    mockPointTracker.subjects.push(newSubject);
+  }
 
   let pointTracker;
   try {

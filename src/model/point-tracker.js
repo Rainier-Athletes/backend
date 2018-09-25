@@ -5,6 +5,7 @@ import mongooseToCsvQuotes from 'mongoose-to-csv-quotes';
 import StudentData from './student-data';
 
 const pointTrackerSchema = mongoose.Schema({
+  date: Date,
   title: {
     type: String,
     required: true,
@@ -38,7 +39,10 @@ const pointTrackerSchema = mongoose.Schema({
       halfStamps: Number,
       tutorials: Number,
     },
-    grade: Number,
+    grade: {
+      type: String,
+      enum: ['', 'A', 'B', 'C', 'D', 'F'],
+    },
   }],
   surveyQuestions: {
     mentorAttendedCheckin: Boolean,
@@ -56,9 +60,10 @@ const pointTrackerSchema = mongoose.Schema({
     synopsisCompletedByRaStaff: Boolean,
     // playing time earned and explanation handled via synopsisComments
   },
+  earnedPlayingTime: String,
+  mentorGrantedPlayingTime: String,
   synopsisComments: {
-    extraPlayingTime: String,
-    mentorGrantedPlayingTime: String,
+    mentorGrantedPlayingTimeComments: String, // required only if mentor overrides calculated playing time
     studentActionItems: String,
     sportsUpdate: String,
     additionalComments: String,

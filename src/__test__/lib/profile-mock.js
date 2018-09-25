@@ -7,7 +7,7 @@ const createProfileMockPromise = async () => {
   const mockStudentProfile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    email: faker.internet.email(),
+    primaryEmail: faker.internet.email(),
     role: 'student',
     phone: faker.phone.phoneNumberFormat(3),
     studentData: null,
@@ -16,7 +16,7 @@ const createProfileMockPromise = async () => {
   const mockMentorProfile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    email: faker.internet.email(),
+    primaryEmail: faker.internet.email(),
     role: 'mentor',
     phone: faker.phone.phoneNumberFormat(3),
   };
@@ -24,7 +24,7 @@ const createProfileMockPromise = async () => {
   const mockCoachProfile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    email: faker.internet.email(),
+    primaryEmail: faker.internet.email(),
     role: 'coach',
     phone: faker.phone.phoneNumberFormat(3),
   };
@@ -32,7 +32,7 @@ const createProfileMockPromise = async () => {
   const mockAdminProfile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    email: faker.internet.email(),
+    primaryEmail: faker.internet.email(),
     role: 'admin',
     phone: faker.phone.phoneNumberFormat(3),
   };
@@ -40,14 +40,14 @@ const createProfileMockPromise = async () => {
   const mockTeacherProfile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    email: faker.internet.email(),
+    primaryEmail: faker.internet.email(),
     role: 'teacher',
   };
 
   const mockFamily1Profile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    email: faker.internet.email(),
+    primaryEmail: faker.internet.email(),
     role: 'family',
     phone: faker.phone.phoneNumberFormat(3),
   };
@@ -55,7 +55,7 @@ const createProfileMockPromise = async () => {
   const mockFamily2Profile = {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    email: faker.internet.email(),
+    primaryEmail: faker.internet.email(),
     role: 'family',
     phone: faker.phone.phoneNumberFormat(3),
   };

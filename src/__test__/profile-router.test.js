@@ -34,7 +34,7 @@ describe('TESTING ROUTER PROFILE', () => {
     test('POST 200 to successfully save mentor', async () => {
       const mockProfile = {
         role: 'mentor',
-        email: faker.internet.email(),
+        primaryEmail: faker.internet.email(),
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
       };
@@ -49,7 +49,7 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.status).toEqual(200);
       expect(response.body.firstName).toEqual(mockProfile.firstName);
       expect(response.body.lastName).toEqual(mockProfile.lastName);
-      expect(response.body.email).toEqual(mockProfile.email);
+      expect(response.body.primaryEmail).toEqual(mockProfile.primaryEmail);
       expect(response.body.role).toEqual(mockProfile.role);
     });
 
@@ -66,7 +66,7 @@ describe('TESTING ROUTER PROFILE', () => {
     test('POST 400 to /api/v1/profiles for missing required firstName', async () => {
       const mockProfile = {
         role: 'mentor',
-        email: faker.internet.email(),
+        primaryEmail: faker.internet.email(),
         // firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
       };
@@ -160,12 +160,12 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body).toHaveLength(7);
     });
 
-    test('GET 200 on successful admin search by email', async () => {
+    test('GET 200 on successful admin search by primaryEmail', async () => {
       let response;
       try {
         response = await superagent.get(`${apiUrl}/profiles`)
           .authBearer(mockData.adminToken)
-          .query({ email: mockData.studentProfile.email });
+          .query({ primaryEmail: mockData.studentProfile.primaryEmail });
       } catch (err) {
         expect(err).toEqual('Failure of profile GET unexpected');
       }
@@ -210,7 +210,7 @@ describe('TESTING ROUTER PROFILE', () => {
     test('PUT 200 successful update of existing profile', async () => {
       let response;
       // now change one property of the profile and update it.
-      mockData.profile.raEmail = 'thisis@updated.email';
+      mockData.profile.primaryEmail = 'thisis@updated.email';
       try {
         response = await superagent.put(`${apiUrl}/profiles`)
           .authBearer(mockData.adminToken)
@@ -219,7 +219,7 @@ describe('TESTING ROUTER PROFILE', () => {
         expect(err).toEqual('POST 200 test that should pass');
       }
       expect(response.status).toEqual(200);
-      expect(response.body.raEmail).toEqual('thisis@updated.email');
+      expect(response.body.primaryEmail).toEqual('thisis@updated.email');
     });
 
     test('PUT 400  update of existing profile without body', async () => {

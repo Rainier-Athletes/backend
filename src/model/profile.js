@@ -16,11 +16,11 @@ const profileSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  email: {
+  primaryEmail: {
     type: String,
     unique: true,
   },
-  raEmail: String,
+  secondaryEmail: String,
   role: {
     type: String,
     required: true,

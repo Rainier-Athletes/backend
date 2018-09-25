@@ -22,6 +22,7 @@ describe('TESTING STUDENT DATA ROUTER', () => {
     await removeAllResources();
     try {
       mockData = await createStudentDataMockPromise();
+      await createStudentDataMockPromise(true); // create an elementary student for use by FE
       mockProfiles = mockData.profileData;
     } catch (err) {
       logger.log(logger.ERROR, `Unexpected error in student-data-router.test beforeEach: ${err}`);
