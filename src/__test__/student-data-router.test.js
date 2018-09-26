@@ -103,6 +103,18 @@ describe('TESTING STUDENT DATA ROUTER', () => {
       expect(response.body[0].sports[0].sport).toEqual(mockData.studentData.sports[0].sport);
     });
 
+    test('GET 200 to successfully retrieve all studentData by admin', async () => {
+      let response;
+      try {
+        response = await superagent.get(`${apiUrl}/studentdata/all`)
+          .authBearer(mockProfiles.adminToken);
+      } catch (err) {
+        expect(err).toEqual('Get of all mock studentData should have worked');
+      }
+      expect(response.status).toEqual(200);
+      expect(response.body).toHaveLength(2);
+    });
+
     test('GET 400 missing query string', async () => {
       let response;
       try {
