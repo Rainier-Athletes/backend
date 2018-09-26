@@ -57,7 +57,7 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
   // at this point Oauth is complete. Now we need to see they are
   // in the profile collection
 
-  let profile = await Profile.findOne({ email });
+  let profile = await Profile.findOne({ primaryEmail: email });
 
   if (!profile) {
     // user not in profile collection, check process.env.ROOT_ADMIN
@@ -68,7 +68,7 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
     // they're authorized. Create a profile for them
     logger.log(logger.INFO, 'Creating ROOT_ADMIN profile');
     const newProfile = new Profile({
-      email,
+      primaryEmail: email,
       firstName,
       lastName,
       picture,
