@@ -14,10 +14,8 @@ describe('TESTING STUDENT DATA ROUTER', () => {
   let mockData;
   let mockProfiles;
 
-  afterEach(async () => { await stopServer(); });
-
   beforeEach(async () => {
-    jest.setTimeout(10000);
+    jest.setTimeout(20000);
     await startServer();
     await removeAllResources();
     try {
@@ -30,11 +28,16 @@ describe('TESTING STUDENT DATA ROUTER', () => {
     jest.setTimeout(5000);
     return undefined;
   });
+
   afterEach(async () => {
     await stopServer();
   });
 
   describe('POST STUDENT DATA TESTING', () => {
+    // test.only('dummy test', () => {
+    //   expect(true).toBeTruthy();
+    // });
+
     test('POST 200 to successfully save student data', async () => {
       const newData = {
         student: mockProfiles.studentProfile._id.toString(),
