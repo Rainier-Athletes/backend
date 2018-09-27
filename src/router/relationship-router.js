@@ -68,7 +68,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
   }
 
   // update student support role with student's id
-  if (!roleProfile.students.map(id => id.toString()).includes(request.query.student)) {
+  if (!roleProfile.students.map(s => s._id.toString()).includes(request.query.student)) {
     roleProfile.students.push(request.query.student);
   }
 
@@ -89,7 +89,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
       }
       break;
     case 'coach':
-      if (!(studentData.coaches.map(v => v.coach.toString()).includes(request.query[role]))) {
+      if (!(studentData.coaches.map(v => v.coach._id.toString()).includes(request.query[role]))) {
         studentData.coaches.push({ coach: request.query[role], currentCoach: true });
       } else {
         studentData.coaches.forEach((c) => {
@@ -98,7 +98,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
       }
       break;
     case 'teacher':
-      if (!(studentData.teachers.map(v => v.teacher.toString()).includes(request.query[role]))) {
+      if (!(studentData.teachers.map(v => v.teacher._id.toString()).includes(request.query[role]))) {
         studentData.teachers.push({ teacher: request.query[role], currentTeacher: true });
       } else {
         studentData.teachers.forEach((c) => {
@@ -107,7 +107,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
       }
       break;
     case 'family':
-      if (!(studentData.family.map(v => v.member.toString()).includes(request.query[role]))) {
+      if (!(studentData.family.map(v => v.member._id.toString()).includes(request.query[role]))) {
         studentData.family.push({ member: request.query[role] });
       }
       break;
