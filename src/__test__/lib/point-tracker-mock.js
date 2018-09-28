@@ -3,7 +3,7 @@ import PointTracker from '../../model/point-tracker';
 import { createProfileMockPromise, removeAllResources as removeProfileResources } from './profile-mock';
 
 const randomVal = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * ((max - min) + 1)) + min;
 };
 
 const randomGrade = () => {
