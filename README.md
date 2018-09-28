@@ -55,8 +55,8 @@ ROOT_ADMIN={"email": "selpilot@gmail.com", "role": "admin"} // use this id to bo
     - We'll need to experiment with the date query to be sure date is formatted correctly. And that it's a valid report date (a Friday).
 	-/api/v1/attach?student=mongoose._id&[mentor|coach|teacher|family]=mongoose._id
 	-/api/v1/detach?student=mongoose._id&[mentor|coach|teacher|family]=mongoose._id
-  - /api/v1/extract?from=date&to=date
-    - Extracts pointstracker data to csv and posts to user's google drive.
+  - /api/v1/extract/[pointstracker | studentdata]?from=date&to=date
+    - Extracts pointstracker data to csv and posts to user's google drive. Dates should be in the yyyy-mm-dd format.
     - Returns webViewLink, a shareable URL, for the CSV file in the user's google drive:
     ```
     {
