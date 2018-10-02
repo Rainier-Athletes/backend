@@ -44,6 +44,50 @@ const pointTrackerSchema = mongoose.Schema({
       enum: ['', 'A', 'B', 'C', 'D', 'F'],
     },
   }],
+  /*
+  Face-to-face- Check In 
+I met the parent at a mentor mentee check-in
+Face-to-face: RA community event
+Face-to-Face: Sports Game or Practice
+Practice or game
+Basecamp/Email (i)
+I had communication via basecamp or email
+Phone or text (i)
+I had at least one interaction with my student’s family on the phone or text message
+Mentor Meal
+RA Scheduled Family Meeting (IEP, 504, etc) 
+*/
+  communications: [
+    {
+      with: {
+        type: String,
+        enum: ['student', 'family', 'coach', 'teacher'],
+        default: 'student',
+      },
+      f2fCheckIn: Boolean,
+      f2fRaEvent: Boolean,
+      f2fGameOrPractice: Boolean,
+      basecampOrEmail: Boolean,
+      phoneOrText: Boolean,
+      familyMeeting: Boolean,
+      notes: String,
+    },
+  ],
+  /* Point Sheet Status:
+Student turned in a physical point sheet 
+Student lost point sheet
+Student did not complete a point sheet (At a glance, looks like less than 25% is completed with X’s or Stamps) 
+Student Absent (RA Staff to retroactively confirm PS status) 
+Notes- optional (i.e student lost point sheet on tuesday and completed the rest of their point sheet from Wed-Friday)
+*/
+  pointSheetStatus: {
+    turnedIn: Boolean,
+    lost: Boolean,
+    incomplete: Boolean,
+    absent: Boolean,
+    notes: String,
+  },
+  /*
   surveyQuestions: {
     mentorAttendedCheckin: Boolean,
     metFaceToFace: Boolean,
@@ -60,6 +104,7 @@ const pointTrackerSchema = mongoose.Schema({
     synopsisCompletedByRaStaff: Boolean,
     // playing time earned and explanation handled via synopsisComments
   },
+  */
   earnedPlayingTime: String,
   mentorGrantedPlayingTime: String,
   synopsisComments: {
