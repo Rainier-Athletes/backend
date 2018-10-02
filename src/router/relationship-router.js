@@ -75,6 +75,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
   // update student's data to reference support role's profile _id
   switch (role) {
     case 'mentor':
+    case 'admin':
       // set currentMentor to false on all current mentors
       studentData.mentors.forEach((m) => { m.currentMentor = false; });
 
@@ -169,6 +170,7 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
   let found = false;
   switch (role) {
     case 'mentor':
+    case 'admin':
       studentProfile.studentData.mentors.forEach((m) => {
         if (m.mentor._id.toString() === request.query[role]) {
           m.currentMentor = false;
