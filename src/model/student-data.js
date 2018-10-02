@@ -69,8 +69,14 @@ const studentDataSchema = mongoose.Schema({
   googleCalendarUrl: String,
   googleDocsUrl: String,
   synergy: {
-    username: String,
-    password: String, // this should probably be at least base64 encoded
+    username: {
+      type: String,
+      default: '',
+    },
+    password: {
+      type: String, // this should probably be at least base64 encoded
+      default: '',
+    },
   },
 }, { timestamps: true });
 
