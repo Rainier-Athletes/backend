@@ -27,6 +27,7 @@ const studentDataSchema = mongoose.Schema({
     sport: String,
     team: String,
     league: String,
+    teamCalendarUrl: String,
     currentlyPlaying: Boolean,
   }],
   mentors: [{
