@@ -7,7 +7,7 @@ const randomVal = (min, max) => {
 };
 
 const randomGrade = () => {
-  const grades = ['A', 'B', 'C', 'D', 'F'];
+  const grades = ['A', 'B', 'C', 'D'];
   return grades[randomVal(0, grades.length - 1)];
 };
 
@@ -43,20 +43,13 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
     mentor: mockData.profileData.mentorProfile._id,
     mentorIsSubstitute: false,
     subjects: [],
-    surveyQuestions: {
-      mentorAttendedCheckin: true,
-      metFaceToFace: true,
-      hadOtherCommunication: false,
-      hadNoCommunication: false,
-      scoreSheetTurnedIn: true,
-      scoreSheetLostOrIncomplete: false,
-      scoreSheetWillBeLate: false,
-      scoreSheetOther: false,
-      scoreSheetOtherReason: 'no reason needed in this case',
-      synopsisInformationComplete: true,
-      synopsisInformationIncomplete: false,
-      synopsisCompletedByRaStaff: false,
-    },
+    communications: [
+      { with: 'Student', role: 'student' }, 
+      { with: 'Family', role: 'family' }, 
+      { with: 'Teacher', role: 'teacher' }, 
+      { with: 'Coach', role: 'coach' },
+    ],
+    pointSheetStatus: {},
     mentorGrantedPlayingTime: 'One quarter',
     synopsisComments: {
       mentorGrantedPlayingTimeComments: faker.lorem.words(3),
