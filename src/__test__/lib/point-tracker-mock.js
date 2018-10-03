@@ -44,12 +44,16 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
     mentorIsSubstitute: false,
     subjects: [],
     communications: [
-      { with: 'Student', role: 'student' }, 
+      { with: 'Student - Weekly RA', role: 'student' }, 
+      { with: 'Student - Wednesday Community', role: 'student' },
       { with: 'Family', role: 'family' }, 
       { with: 'Teacher', role: 'teacher' }, 
       { with: 'Coach', role: 'coach' },
     ],
+    oneTeam: {},
+    oneTeamNotes: '',
     pointSheetStatus: {},
+    pointSheetStatusNotes: '',
     mentorGrantedPlayingTime: 'One quarter',
     synopsisComments: {
       mentorGrantedPlayingTimeComments: faker.lorem.words(3),
