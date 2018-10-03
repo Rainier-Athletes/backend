@@ -34,6 +34,7 @@ const createStudentDataMockPromise = async (elementaryStudent = false) => {
       sport: 'baseball',
       team: 'Mariners',
       league: 'Bellevue Parks',
+      teamCalendarUrl: 'google.calendar.bp.mariners.blah.blah',
       currentlyPlaying: true,
     }],
     mentors: [{
