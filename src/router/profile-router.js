@@ -3,7 +3,6 @@ import HttpErrors from 'http-errors';
 import Profile from '../model/profile';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import logger from '../lib/logger';
-import PointTracker from '../model/point-tracker';
 
 const profileRouter = new Router();
 
