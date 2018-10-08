@@ -266,6 +266,15 @@ describe('TESTING ROUTER PROFILE', () => {
         expect(err).toEqual('Unexpected error on valid delete test');
       }
       expect(response.status).toEqual(200);
+      try {
+        response = await superagent.get(`${apiUrl}/profiles`)
+          .query({ id: mockData.studentProfile._id.toString() })
+          .authBearer(mockData.adminToken);
+      } catch (err) {
+        expect(err).toEqual('Unexpected error on valid delete test');
+      }
+      expect(response.status).toEqual(200);
+      expect(response.body.active).toEqual(false);
     });
 
     test('DELETE 404 not found', async () => {

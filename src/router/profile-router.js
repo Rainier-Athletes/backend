@@ -3,7 +3,6 @@ import HttpErrors from 'http-errors';
 import Profile from '../model/profile';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import logger from '../lib/logger';
-import PointTracker from '../model/point-tracker';
 
 const profileRouter = new Router();
 
@@ -130,20 +129,26 @@ profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, respons
   if (!request.query.id) return next(new HttpErrors(400, 'Bad delete request. Missing id query.', { expose: false }));
   Profile.init()
     .then(() => {
-      return Profile.findByIdAndRemove(request.query.id);
+      return Profile.findById(request.query.id);
     })
-    .catch(() => {
-      return next(new HttpErrors(404, 'Error deleting profile.', { expose: false }));
+    .then((profile) => {
+      if (!profile) return next(new HttpErrors(404, 'Error locating profile for inactivation', { expose: false }));
+      profile.active = false;
+      return profile.save();
     })
+    // .catch((err) => {
+      
+    // })
+    // .then(() => {
+    //   return PointTracker.remove({ studentId: request.profile._id });
+    // })
     .then(() => {
-      return PointTracker.remove({ studentId: request.profile._id });
+      return response.json(request.query.id).status(200);
     })
-    .then(() => {
-      return response.json(request.query.id);
-    })
-    .catch(() => {
-      logger.log(logger.ERROR, 'DELETE PROFILE ROUTER: non-fatal errors deleting child resources');
-      return response.status(200);
+    .catch((err) => {
+      logger.log(logger.ERROR, 'DELETE PROFILE ROUTER: non-fatal errors deactivating profile');
+      return next(new HttpErrors(404, `Error deactivating profile: ${err}`, { expose: false }));
+      // return response.status(200);
     });
   return undefined;
 });
