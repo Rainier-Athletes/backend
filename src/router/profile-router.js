@@ -14,9 +14,26 @@ profileRouter.post('/api/v1/profiles', bearerAuthMiddleware, (request, response,
     })
     .then((profile) => {
       logger.log(logger.INFO, `POST PROFILE ROUTER: new profile created with 200 code, ${JSON.stringify(profile)}`);
-      return response.json(profile);
+      return response.json(profile).status(200);
+    })
+    .catch((err) => {
+      // err.code === 11000 is conflict on duplicate primaryEmail. If found, reactivate profile.
+      if (err.code === 11000) return Profile.findOne({ primaryEmail: request.body.primaryEmail });
+      return next(err);
+    })
+    .then((result) => {
+      const keys = Object.keys(request.body);
+      for (let i = 0; i < keys.length; i++) {
+        result[keys[i]] = request.body[keys[i]];
+      }
+      result.active = true;
+      return result.save();
+    })
+    .then((result) => {
+      return response.json(result).status(200);
     })
     .catch(next);
+
   return undefined;
 });
 
@@ -136,14 +153,8 @@ profileRouter.delete('/api/v1/profiles', bearerAuthMiddleware, (request, respons
       profile.active = false;
       return profile.save();
     })
-    // .catch((err) => {
-      
-    // })
-    // .then(() => {
-    //   return PointTracker.remove({ studentId: request.profile._id });
-    // })
-    .then(() => {
-      return response.json(request.query.id).status(200);
+    .then((result) => {
+      return response.json(result).status(200);
     })
     .catch((err) => {
       logger.log(logger.ERROR, 'DELETE PROFILE ROUTER: non-fatal errors deactivating profile');
