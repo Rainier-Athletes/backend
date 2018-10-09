@@ -46,16 +46,7 @@ const pointTrackerSchema = mongoose.Schema({
   }],
   communications: [
     {
-      with: { type: String, default: 'Student - Weekly RA' },
-      role: { type: String, default: 'student' },
-      faceToFace: { type: Boolean, default: false },
-      digital: { type: Boolean, default: false },
-      phone: { type: Boolean, default: false },
-      other: { type: Boolean, default: false },
-      notes: { type: String, default: '' },
-    },
-    {
-      with: { type: String, default: 'Student - Wednesday Community' },
+      with: { type: String, default: 'Student' },
       role: { type: String, default: 'student' },
       faceToFace: { type: Boolean, default: false },
       digital: { type: Boolean, default: false },
@@ -92,6 +83,7 @@ const pointTrackerSchema = mongoose.Schema({
     },
   ],
   oneTeam: {
+    wednesdayCheckin: { type: Boolean, default: false },
     mentorMeal: { type: Boolean, default: false },
     sportsGame: { type: Boolean, default: false },
     communityEvent: { type: Boolean, default: false },
