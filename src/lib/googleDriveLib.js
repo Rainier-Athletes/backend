@@ -6,8 +6,8 @@ import logger from './logger';
 
 // common code used by extract-router and synopsys-router to send file to google drive
 // const sendFileToGoogleDrive = async () => {
-const createGoogleDriveFunction = (drive, TEMP_DIR, extractName, folderName, response, next) => async () => {
-  const filePath = `${TEMP_DIR}/${extractName}`;
+const createGoogleDriveFunction = (drive, TEMP_FILE, extractName, folderName, response, next) => async () => {
+  const filePath = TEMP_FILE;
 
   let readStream;
   try {
@@ -16,7 +16,6 @@ const createGoogleDriveFunction = (drive, TEMP_DIR, extractName, folderName, res
     logger.log(logger.ERROR, `Error creating readStream ${err}`);
     return next(new HttpError(500, `Error creating readStream ${err}`));
   }
-
   const uploadFileToFolder = async (folderId) => {
     // once folder is created, upload file to it 
     const fileMetadata = {
@@ -34,7 +33,6 @@ const createGoogleDriveFunction = (drive, TEMP_DIR, extractName, folderName, res
       resource: fileMetadata,
       media,
     };
-
     let result;
     try {
       result = await drive.files.create(params);
@@ -64,14 +62,14 @@ const createGoogleDriveFunction = (drive, TEMP_DIR, extractName, folderName, res
     } catch (gerr) {
       return next(new HttpError(500, `Unable to get file info from google drive: ${gerr}`));
     }
-
     // delete the temp file and return our http response
-    fs.unlink(`${TEMP_DIR}/${extractName}`, (derr) => {
+    fs.unlink(TEMP_FILE, (derr) => {
       if (derr) return next(new HttpError(502, `File uploaded to google but unable to delete temp file: ${derr}`));
 
       // this is our success response:
       return response.json(metaData.data).status(200);
     });
+    // return response.json(metaData.data).status(200);
     return undefined; // to satisfy linter
   }; // end uploadFileToFolder
 
@@ -91,7 +89,7 @@ const createGoogleDriveFunction = (drive, TEMP_DIR, extractName, folderName, res
   } catch (err) {
     logger.log(logger.ERROR, `Error retrieving drive file list ${err}`);
     // delete temp file then return error response
-    fs.unlink(`${TEMP_DIR}/${extractName}`, (derr) => {
+    fs.unlink(TEMP_FILE, (derr) => {
       if (derr) return logger.log(`OAuth error as well as fs.unlink error: ${derr}`);
       return undefined;
     });      

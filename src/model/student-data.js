@@ -79,6 +79,8 @@ const studentDataSchema = mongoose.Schema({
       default: '',
     },
   },
+  createdAt: Date,
+  updatedAt: Date,
 }, { timestamps: true });
 
 studentDataSchema.plugin(autopopulate);
