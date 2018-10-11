@@ -7,6 +7,7 @@
 import { Router } from 'express';
 import { google } from 'googleapis';
 import HttpError from 'http-errors';
+import uuid from 'uuid/v4';
 import fs from 'fs';
 
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
@@ -14,7 +15,7 @@ import createGoogleDriveFunction from '../lib/googleDriveLib';
 import PointTracker from '../model/point-tracker';
 import StudentData from '../model/student-data';
 
-const TEMP = `${__dirname}`; // deleted "/temp" to see if heroku likes it better.
+const TEMP = `${__dirname}/${uuid()}`; // deleted "/temp" to see if heroku likes it better.
 
 const extractRouter = new Router();
 
@@ -59,7 +60,7 @@ extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (reques
         return next(new HttpError(404, `No data found in date range ${fromDate} to ${toDate}`, { expose: false }));
       }
       return extractModel[model].csvReadStream(data)
-        .pipe(fs.createWriteStream(`${TEMP}/${extractName}`));
+        .pipe(fs.createWriteStream(TEMP));
     })
     .then(() => {
       if (!queryError) return sendFileToGoogleDrive();

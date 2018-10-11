@@ -53,6 +53,9 @@ pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request,
         const [mentors] = studentData.mentors.filter(m => m.currentMentor);
         request.body.mentor = mentors.mentor._id.toString(); // findById autopopulates so id is the mentor, not just id.
       }
+      // set timestamps
+      request.body.createdAt = new Date();
+      request.body.updatedAt = request.body.createdAt;
       return new PointTracker(request.body).save();
     })
     .then((pointstracker) => {
@@ -72,6 +75,10 @@ pointTrackerRouter.put('/api/v1/pointstracker', bearerAuthMiddleware, (request, 
     .then((result) => {
       if (!result) return next(new HttpErrors(404, 'Unable to update point tracker'));
       return PointTracker.findById(request.body._id.toString());
+    })
+    .then((tracker) => {
+      tracker.updatedAt = new Date();
+      return tracker.save();
     })
     .then((updated) => {
       if (!updated) return next(new HttpErrors(500, 'Unable to retrieve updated point tracker'));

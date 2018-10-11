@@ -13,6 +13,8 @@ studentDataRouter.post('/api/v1/studentdata', bearerAuthMiddleware, (request, re
 
   StudentData.init()
     .then(() => {
+      body.createdAt = new Date();
+      body.updatedAt = body.createdAt;
       return new StudentData(body).save();
     })
     .then((data) => {
@@ -69,6 +71,10 @@ studentDataRouter.put('/api/v1/studentdata', bearerAuthMiddleware, (request, res
     })
     .then((data) => {
       return StudentData.findOne(data._id);
+    })
+    .then((student) => {
+      student.updatedAt = new Date();
+      return student.save();
     })
     .then((data) => {
       response.json(data).status(200);
