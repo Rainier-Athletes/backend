@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { google } from 'googleapis';
 import HttpError from 'http-errors';
 import pdf from 'html-pdf';
+import uuid from 'uuid/v4';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import createGoogleDriveFunction from '../lib/googleDriveLib';
 
@@ -14,8 +15,6 @@ const cleanDate = () => {
   return newDate;
 };
 
-const TEMP_DIR = `${__dirname}`;
-
 const synopsisRouter = new Router();
 
 synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, response, next) => {
@@ -27,6 +26,7 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   const title = `${name} ${date}.pdf`;
   const { googleTokenResponse } = request;
   const setFolderName = `RA Reports for ${name}`;
+  const TEMP_FILE = `${__dirname}/${uuid()}.pdf`;
 
   const oAuth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_OAUTH_ID,
@@ -40,15 +40,13 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
 
   const drive = google.drive({ version: 'v3', auth: oAuth2Client }); 
   
-  const sendFileToGoogleDrive = createGoogleDriveFunction(drive, TEMP_DIR, title, setFolderName, response, next);
+  const sendFileToGoogleDrive = createGoogleDriveFunction(drive, TEMP_FILE, title, setFolderName, response, next);
 
-  pdf.create(html).toFile(
-    `${TEMP_DIR}/${title}`,
+  pdf.create(html).toFile(TEMP_FILE,
     (err) => {
       if (err) return next(new HttpError(500, 'Error creating pdf from html', { expose: false }));
       return sendFileToGoogleDrive();
-    },
-  );
+    });
 
   return undefined; // to satisfy linter...
 });

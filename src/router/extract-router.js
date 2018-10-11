@@ -15,18 +15,18 @@ import createGoogleDriveFunction from '../lib/googleDriveLib';
 import PointTracker from '../model/point-tracker';
 import StudentData from '../model/student-data';
 
-const TEMP = `${__dirname}/${uuid()}`; // deleted "/temp" to see if heroku likes it better.
-
 const extractRouter = new Router();
 
 extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (request, response, next) => {
   const fromDate = request.query.from ? request.query.from : false;
   const toDate = request.query.to ? request.query.to : false;
   const model = request.params.model ? request.params.model : false;
-
+  
   if (!(fromDate && toDate)) return next(new HttpError(400, 'Bad extract request. Missing to or from dates', { expose: false }));
   if (!model || !['pointstracker', 'studentdata'].includes(model)) return next(new HttpError(400, 'Missing or bad extract model'));
-
+  
+  const TEMP_FILE = `${__dirname}/${uuid()}.csv`; // deleted "/temp" to see if heroku likes it better.
+  
   const extractModel = {
     pointstracker: PointTracker,
     studentdata: StudentData,
@@ -49,7 +49,7 @@ extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (reques
 
   const drive = google.drive({ version: 'v3', auth: oAuth2Client }); 
   
-  const sendFileToGoogleDrive = createGoogleDriveFunction(drive, TEMP, extractName, folderName, response, next);
+  const sendFileToGoogleDrive = createGoogleDriveFunction(drive, TEMP_FILE, extractName, folderName, response, next);
 
   // query the database and dump results to temp csv file
   let queryError = false;
@@ -60,7 +60,7 @@ extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (reques
         return next(new HttpError(404, `No data found in date range ${fromDate} to ${toDate}`, { expose: false }));
       }
       return extractModel[model].csvReadStream(data)
-        .pipe(fs.createWriteStream(TEMP));
+        .pipe(fs.createWriteStream(TEMP_FILE));
     })
     .then(() => {
       if (!queryError) return sendFileToGoogleDrive();
