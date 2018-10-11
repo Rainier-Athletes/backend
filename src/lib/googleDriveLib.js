@@ -69,7 +69,7 @@ const createGoogleDriveFunction = (drive, TEMP_FILE, extractName, folderName, re
       // this is our success response:
       return response.json(metaData.data).status(200);
     });
-    // return response.json(metaData.data).status(200);
+ 
     return undefined; // to satisfy linter
   }; // end uploadFileToFolder
 
