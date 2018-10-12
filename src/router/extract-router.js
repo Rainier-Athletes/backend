@@ -59,8 +59,14 @@ extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (reques
         queryError = true;
         return next(new HttpError(404, `No data found in date range ${fromDate} to ${toDate}`, { expose: false }));
       }
-      return extractModel[model].csvReadStream(data)
-        .pipe(fs.createWriteStream(TEMP_FILE));
+      try {
+        extractModel[model].csvReadStream(data)
+          .pipe(fs.createWriteStream(TEMP_FILE));
+      } catch (err) {
+        queryError = true;
+        return next(new HttpError(500, `Server error creating ${TEMP_FILE}: ${err}`));
+      }
+      return undefined;
     })
     .then(() => {
       if (!queryError) return sendFileToGoogleDrive();
