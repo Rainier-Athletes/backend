@@ -9,10 +9,9 @@
 var CsvBuilder = require('csv-builder');
 
 function new_normalizeArray_(data_row) {
-  console.log('new_normalizeArray_ data_row', data_row);
   var csved_row = data_row.map(column_data => {
     column_data = column_data || ''; // <<<<< TW added this line. was blowing up on null values
-    text_data = column_data.toString();
+    var text_data = column_data.toString();
     if (this.format.delimiter==='\t'){
       text_data = text_data.replace(/\t/g, '');
     } else if (this.format.delimiter===','){
