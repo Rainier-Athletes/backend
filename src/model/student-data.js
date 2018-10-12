@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import autopopulate from 'mongoose-autopopulate';
-import mongooseToCsvQuotes from 'mongoose-to-csv-quotes';
+import mongooseToCsvQuotes from '../lib/mongoose-csv-quotes-fix';
 
 import Profile from './profile';
 
@@ -65,7 +65,7 @@ const studentDataSchema = mongoose.Schema({
     },
   }],
   dateOfBirth: Date,
-  grade: Number,
+  grade: { type: Number, default: 0 },
   synopsisReportArchiveUrl: String,
   googleCalendarUrl: String,
   googleDocsUrl: String,
