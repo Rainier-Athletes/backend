@@ -184,13 +184,13 @@ describe('TESTING ROUTER PROFILE', () => {
       expect(response.body.firstName).toEqual(mockData.coachProfile.firstName);
     });
 
-    test('GET 404 on profile not found', async () => {
+    test('GET 403 on profile not found', async () => {
       await removeAllResources();
       try {
         const response = await superagent.get(`${apiUrl}/profiles`)/*eslint-disable-line*/
           .authBearer(mockData.mentorToken);
       } catch (err) {
-        expect(err.status).toEqual(404);
+        expect(err.status).toEqual(403);
       }
     });
 
@@ -232,15 +232,15 @@ describe('TESTING ROUTER PROFILE', () => {
       }
     });
 
-    test('PUT 404 profile not found', async () => {
+    test('PUT 403 profile not found', async () => {
       await mockData.profile.remove();
       try {
         const response = await superagent.put(`${apiUrl}/profiles`)
           .authBearer(mockData.token)
           .send(mockData.profile);
-        expect(response).toEqual('PUT should have returned 404...');
+        expect(response).toEqual('PUT should have returned 403...');
       } catch (err) {
-        expect(err.status).toEqual(404);
+        expect(err.status).toEqual(403);
       }
     });
 
