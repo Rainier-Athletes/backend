@@ -54,7 +54,6 @@ extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (reques
   const sendFileToGoogleDrive = createGoogleDriveFunction(drive, TEMP_FILE, extractName, folderName, response, next);
 
   if (model === 'coachesreport') {
-    let queryError = false;
     extractModel[model]
       .find({ role: 'coach' })
       .where('active').equals(true)
@@ -64,21 +63,36 @@ extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (reques
         const extractData = {};
         for (let coach = 0; coach < coaches.length; coach++) {
           const coachName = `${coaches[coach].firstName} ${coaches[coach].lastName}`;
-          extractData[coachName] = {};
+          extractData[coachName] = [];
           const { students } = coaches[coach];
           for (let student = 0; student < students.length; student++) {
             const pointTracker = students[student].studentData.lastPointTracker || {};
             const ptComments = pointTracker.synopsisComments || {};
-            extractData[coachName].student = `${students[student].firstName} ${students[student].lastName}`;
-            extractData[coachName].earnedPlayingTime = pointTracker.earnedPlayingTime || '';
-            extractData[coachName].mentorGrantedPlayingTime = pointTracker.mentorGrantedPlayingTime || '';
-            extractData[coachName].mentorComments = ptComments.mentorGrantedPlayingTimeComments || '';
-            extractData[coachName].sportsUpdate = ptComments.sportsUpdate || '';
-            extractData[coachName].additionalComments = ptComments.additionalComments || '';
+            extractData[coachName][student] = {};
+            extractData[coachName][student].student = `${students[student].firstName} ${students[student].lastName}`;
+            extractData[coachName][student].earnedPlayingTime = pointTracker.earnedPlayingTime || '';
+            extractData[coachName][student].mentorGrantedPlayingTime = pointTracker.mentorGrantedPlayingTime || '';
+            extractData[coachName][student].mentorComments = ptComments.mentorGrantedPlayingTimeComments || '';
+            extractData[coachName][student].sportsUpdate = ptComments.sportsUpdate || '';
+            extractData[coachName][student].additionalComments = ptComments.additionalComments || '';
           }
         }
-        console.log(JSON.stringify(extractData, null, 4));
-        return response.json(extractData).status(200);
+        
+        let csv = '"coach"';
+        const coachNames = Object.keys(extractData);
+        const otherHeadings = Object.keys(extractData[coachNames[0]][0]);
+        csv = otherHeadings.reduce((acc, curr) => `${acc}, "${curr}"`, csv);
+        csv += '<br />';
+        for (let coach = 0; coach < coachNames.length; coach++) {
+          for (let player = 0; player < extractData[coachNames[coach]].length; player++) {
+            csv += `"${coachNames[coach]}"`;
+            for (let key = 0; key < otherHeadings.length; key++) {
+              csv += `, "${extractData[coachNames[coach]][player][otherHeadings[key]]}"`;
+            }
+            csv += '<br />';
+          }
+        }
+        return response.json({ csv }).status(200);
       })
       .catch(next);
   } else {
