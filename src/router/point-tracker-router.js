@@ -56,6 +56,7 @@ pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request,
         // submitter isn't a sub. Get mentor ID from student's profile
         const [mentors] = studentData.mentors.filter(m => m.currentMentor);
         request.body.mentor = mentors.mentor._id.toString(); // findById autopopulates so id is the mentor, not just id.
+        request.body.mentorIsSubstitute = false;
       }
       // set timestamps
       request.body.createdAt = new Date();
