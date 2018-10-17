@@ -67,6 +67,26 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
     return next(new HttpErrors(404, 'ATTACH ROUTER GET: unable to find support role profile', { expose: false }));
   }
 
+  // if we're assigning a new mentor (or admin as mentor) remove student from previous mentor's
+  // students array. We do this for mentors/admins because there is a one-to-one relationship between
+  // students and current mentors.
+  if ((role === 'admin' || role === 'mentor') && studentData.mentors.length) {
+    let prevMentor;
+    const currentMentor = studentData.mentors.find(m => m.currentMentor);
+    try {
+      prevMentor = await Profile.findById(currentMentor.mentor._id);
+    } catch (err) {
+      return next(new HttpErrors(500, 'ATTACH ROUTER GET: unable to retrieve current mentor profile', { expose: false }));
+    }
+    const newStudents = prevMentor.students.filter(s => s._id.toString() !== studentData.student._id.toString());
+    prevMentor.students = newStudents;
+    try {
+      await prevMentor.save();
+    } catch (err) {
+      return next(new HttpErrors(500, 'ATTACH ROUTER GET: unable to save update previous mentor profile', { expose: false }));
+    }
+  }
+
   // update student support role with student's id
   if (!roleProfile.students.map(s => s._id.toString()).includes(request.query.student)) {
     roleProfile.students.push(request.query.student);
