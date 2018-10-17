@@ -38,20 +38,27 @@ pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request,
 
   PointTracker.init()
     .then(() => {
+      // find and remove any existing PT with the same title as on the request
+      return PointTracker.findOneAndRemove({ title: request.body.title });
+    })
+    .then(() => {
       // get student's data from mongo
       return StudentData.findOne({ student: request.body.student });
     })
     .then((studentData) => {
       if (!studentData) return next(new HttpErrors(400, 'POINT-TRACKER ROUTER POST: Missing student id in req body', { expose: false }));
       
-      // if this point tracker is being submitted by a substitute, take the submitter's
-      // id off the request.profile (via bearer auth) and add it to the point tracker
-      if (request.body.mentorIsSubstitute) {
+      // get student's current mentor _id
+      const currentMentorId = studentData.mentors.find(m => m.currentMentor).mentor._id;
+ 
+      if (currentMentorId && currentMentorId.toString() !== request.profile._id.toString()) {
+        request.body.mentorIsSubstitute = true;
         request.body.mentor = request.profile._id.toString();
       } else {
         // submitter isn't a sub. Get mentor ID from student's profile
         const [mentors] = studentData.mentors.filter(m => m.currentMentor);
         request.body.mentor = mentors.mentor._id.toString(); // findById autopopulates so id is the mentor, not just id.
+        request.body.mentorIsSubstitute = false;
       }
       // set timestamps
       request.body.createdAt = new Date();
