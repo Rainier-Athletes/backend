@@ -76,7 +76,10 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
       grade: elementaryStudent ? '' : randomGrade(),
     };
     newSubject.halfStamps = randomVal(0, 10) - newSubject.stamps;
-    if (!elementaryStudent && i === 0) newSubject.subjectName = 'Tutorial';
+    if (!elementaryStudent && i === 0) {
+      newSubject.subjectName = 'Tutorial';
+      newSubject.grade = '';
+    }
     mockPointTracker.subjects.push(newSubject);
   }
 
