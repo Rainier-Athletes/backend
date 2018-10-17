@@ -69,14 +69,14 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
       subjectName: faker.name.firstName(),
       teacher: elementaryStudent ? teachers[0] : teachers[i],
       scoring: {
-        excusedDays: randomVal(0, 4),
-        stamps: randomVal(0, 8),
+        excusedDays: randomVal(0, 2),
+        stamps: randomVal(0, 10),
         halfStamps: 0,
-        tutorials: elementaryStudent ? 0 : randomVal(0, 5),
       },
       grade: elementaryStudent ? '' : randomGrade(),
     };
-    newSubject.halfStamps = randomVal(0, 8) - newSubject.stamps;
+    newSubject.halfStamps = randomVal(0, 10) - newSubject.stamps;
+    if (!elementaryStudent && i === 0) newSubject.subjectName = 'Tutorial';
     mockPointTracker.subjects.push(newSubject);
   }
 
