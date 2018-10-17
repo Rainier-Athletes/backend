@@ -98,7 +98,8 @@ extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (reques
   } else {
     // query the database and dump results to temp csv file
     let queryError = false;
-    extractModel[model].where('createdAt').gte(fromDate).lte(toDate).exec()
+    console.log(' extract from ', model, 'dates', fromDate, toDate);
+    extractModel[model].where('createdAt').gte(new Date(fromDate)).lte(new Date(toDate)).exec()
       .then((data) => {
         if (data.length === 0) {
           queryError = true;
