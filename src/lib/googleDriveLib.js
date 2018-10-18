@@ -73,9 +73,33 @@ const createGoogleDriveFunction = (drive, TEMP_FILE, extractName, folderName, re
     return undefined; // to satisfy linter
   }; // end uploadFileToFolder
 
-  let res;
+  // see if extract file exists. delete it if it does.
+  let fileResult;
+  try {
+    fileResult = await drive.files.list({ 
+      mimeType: 'application/vnd.google-apps.file',
+      q: `name='${extractName}' and trashed = false`,
+    }); 
+  } catch (err) {
+    logger.log(logger.ERROR, `Error retrieving drive file list ${err}`);
+    // delete temp file then return error response
+    fs.unlink(TEMP_FILE, (derr) => {
+      if (derr) return logger.log(`OAuth error as well as fs.unlink error: ${derr}`);
+      return undefined;
+    });      
+    return next(new HttpError(401, 'Error retrieving drive file list. Likely bad OAuth.'));
+  }
+  
+  if (fileResult.data.files[0]) {
+    try {
+      drive.files.delete({ fileId: fileResult.data.files[0].id, supportsTeamDrives: false });
+    } catch (err) {
+      console.log('error deleting pre-exisitng file:', err); // not going to have a fit over this particular error
+    }
+  }
 
-  // see if extract folder exists
+  // see if extract folder exists. if not, create it.
+  let res;
   const folderMetadata = {
     name: folderName,
     mimeType: 'application/vnd.google-apps.folder',
@@ -95,6 +119,7 @@ const createGoogleDriveFunction = (drive, TEMP_FILE, extractName, folderName, re
     });      
     return next(new HttpError(401, 'Error retrieving drive file list. Likely bad OAuth.'));
   }
+
   // if we didn't catch an error above then oauth is good. Subsequent errors will be status 500
   let folderId;
   if (res.data.files[0]) {
