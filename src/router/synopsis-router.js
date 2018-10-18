@@ -33,7 +33,16 @@ synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, re
   
   const sendFileToGoogleDrive = createGoogleDriveFunction(drive, TEMP_FILE, title, setFolderName, response, next);
 
-  pdf.create(html).toFile(TEMP_FILE,
+  const options = {
+    border: {
+      top: '0.5in',
+      right: '0.5in',
+      bottom: '0.5in',
+      left: '0.5in',
+    },
+  };
+  
+  pdf.create(html, options).toFile(TEMP_FILE,
     (err) => {
       if (err) return next(new HttpError(500, 'Error creating pdf from html', { expose: false }));
       return sendFileToGoogleDrive();
