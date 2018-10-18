@@ -9,14 +9,15 @@ import logger from './logger';
 const createGoogleDriveFunction = (drive, TEMP_FILE, extractName, folderName, response, next) => async () => {
   const filePath = TEMP_FILE;
 
-  let readStream;
-  try {
-    readStream = fs.createReadStream(filePath);
-  } catch (err) {
-    logger.log(logger.ERROR, `Error creating readStream ${err}`);
-    return next(new HttpError(500, `Error creating readStream ${err}`));
-  }
   const uploadFileToFolder = async (folderId) => {
+    let readStream;
+    try {
+      readStream = await fs.createReadStream(filePath);
+    } catch (err) {
+      logger.log(logger.ERROR, `Error creating readStream ${err}`);
+      return next(new HttpError(500, `Error creating readStream ${err}`));
+    }
+
     // once folder is created, upload file to it 
     const fileMetadata = {
       name: `${extractName}`,
@@ -63,13 +64,16 @@ const createGoogleDriveFunction = (drive, TEMP_FILE, extractName, folderName, re
       return next(new HttpError(500, `Unable to get file info from google drive: ${gerr}`));
     }
     // delete the temp file and return our http response
-    fs.unlink(TEMP_FILE, (derr) => {
+    await fs.unlink(TEMP_FILE, (derr) => {
       if (derr) return next(new HttpError(502, `File uploaded to google but unable to delete temp file: ${derr}`));
 
       // this is our success response:
       return response.json(metaData.data).status(200);
     });
- 
+    // or, when testing
+    // console.log('should be unlinking temp file', TEMP_FILE);
+    // return response.json(metaData.data).status(200);
+
     return undefined; // to satisfy linter
   }; // end uploadFileToFolder
 
@@ -92,9 +96,9 @@ const createGoogleDriveFunction = (drive, TEMP_FILE, extractName, folderName, re
   
   if (fileResult.data.files[0]) {
     try {
-      drive.files.delete({ fileId: fileResult.data.files[0].id, supportsTeamDrives: false });
+      await drive.files.delete({ fileId: fileResult.data.files[0].id, supportsTeamDrives: false });
     } catch (err) {
-      console.log('error deleting pre-exisitng file:', err); // not going to have a fit over this particular error
+      logger.log(logger.ERROR, 'error deleting pre-exisitng file:', err); // not going to have a fit over this particular error
     }
   }
 
@@ -113,7 +117,7 @@ const createGoogleDriveFunction = (drive, TEMP_FILE, extractName, folderName, re
   } catch (err) {
     logger.log(logger.ERROR, `Error retrieving drive file list ${err}`);
     // delete temp file then return error response
-    fs.unlink(TEMP_FILE, (derr) => {
+    await fs.unlink(TEMP_FILE, (derr) => {
       if (derr) return logger.log(`OAuth error as well as fs.unlink error: ${derr}`);
       return undefined;
     });      
