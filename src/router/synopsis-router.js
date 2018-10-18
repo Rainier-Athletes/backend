@@ -6,24 +6,15 @@ import uuid from 'uuid/v4';
 import bearerAuthMiddleware from '../lib/middleware/bearer-auth-middleware';
 import createGoogleDriveFunction from '../lib/googleDriveLib';
 
-const cleanDate = () => {
-  const dateObj = new Date();
-  const month = dateObj.getUTCMonth() + 1;
-  const day = dateObj.getUTCDate();
-  const year = dateObj.getUTCFullYear();
-  const newDate = `${year}-${month}-${day}`;
-  return newDate;
-};
-
 const synopsisRouter = new Router();
 
 synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, response, next) => {
   const name = typeof request.body.name === 'string' && request.body.name !== '' ? request.body.name : false;
+  let title = typeof request.body.title === 'string' && request.body.title !== '' ? request.body.title : false;
   const html = typeof request.body.html === 'string' && request.body.html !== '' ? request.body.html : false;
-  if (!(name && html)) return next(new HttpError(400, 'Missing or invalid name or html parameters on request body', { expose: false }));
-
-  const date = cleanDate(); 
-  const title = `${name} ${date}.pdf`;
+  if (!(name && html && title)) return next(new HttpError(400, 'Missing or invalid name, title or html parameters on request body', { expose: false }));
+ 
+  title += '.pdf';
   const { googleTokenResponse } = request;
   const setFolderName = `RA Reports for ${name}`;
   const TEMP_FILE = `${__dirname}/${uuid()}.pdf`;
