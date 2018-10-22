@@ -9,7 +9,6 @@ import createGoogleDriveFunction from '../lib/googleDriveLib';
 const synopsisRouter = new Router();
 
 synopsisRouter.post('/api/v1/synopsis', bearerAuthMiddleware, async (request, response, next) => {
-  console.log(request.body);
   const name = typeof request.body.name === 'string' && request.body.name !== '' ? request.body.name : false;
   let title = typeof request.body.title === 'string' && request.body.title !== '' ? request.body.title : false;
   const html = typeof request.body.html === 'string' && request.body.html !== '' ? request.body.html : false;
