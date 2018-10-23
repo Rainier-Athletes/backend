@@ -71,7 +71,7 @@ extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (reques
           for (let student = 0; student < students.length; student++) {
             const pointTracker = students[student].studentData.lastPointTracker || {};
             const ptComments = pointTracker.synopsisComments || {};
-            const ptDateRange = pointTracker.title.slice(pointTracker.title.indexOf(':') + 2) || '';
+            const ptDateRange = pointTracker.title.split(':')[1].trim() || '';
             extractData[coachName][student] = {};
             extractData[coachName][student].student = `${students[student].firstName} ${students[student].lastName}`;
             extractData[coachName][student].ptDateRange = ptDateRange;
