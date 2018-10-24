@@ -179,7 +179,7 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
   } catch (err) {
     return next(new HttpErrors(404, 'DETACH ROUTER GET: unable to find support role profile', { expose: false }));
   }
-
+  
   // remove student's id from support role profile
   const dataArray = roleProfile.students;
   const newDataArray = dataArray.map(s => s._id.toString()).filter(id => id !== request.query.student);
@@ -219,19 +219,23 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
         return f.member._id.toString() !== request.query[role];
       });
       studentProfile.studentData.family = newSupportersArray;
+      found = true;
       break;
     default:
   }
 
   if (!found) return new HttpErrors(404, `${role} ${request.query[role]} not found on student ${request.query.student}`, { expose: false });
 
-  try {
-    await roleProfile.save();
-    await studentProfile.studentData.save();
-    return response.sendStatus(200);
-  } catch (err) {
-    return new HttpErrors(500, 'ATTACH ROUTER GET: Unable to save updated profiles', { expose: false });
-  }
+  roleProfile.save()
+    .then(() => {
+      return studentProfile.studentData.save();
+    })
+    .then(() => {
+      return response.sendStatus(200);
+    })
+    .catch((err) => {
+      return new HttpErrors(500, `ATTACH ROUTER GET: Unable to save updated profiles: ${err}`, { expose: false });
+    });
 });
 
 export default relationshipRouter;
