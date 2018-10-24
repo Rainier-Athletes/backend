@@ -236,6 +236,7 @@ relationshipRouter.get('/api/v1/detach', bearerAuthMiddleware, async (request, r
     .catch((err) => {
       return new HttpErrors(500, `ATTACH ROUTER GET: Unable to save updated profiles: ${err}`, { expose: false });
     });
+  return undefined;
 });
 
 export default relationshipRouter;
