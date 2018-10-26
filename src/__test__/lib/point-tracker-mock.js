@@ -38,7 +38,7 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
   }
 
   const mockPointTracker = {
-    title: 'Mock Point Tracker Title',
+    title: 'Mock PT: from-date to to-date',
     student: mockData.profileData.studentProfile._id,
     mentor: mockData.profileData.mentorProfile._id,
     mentorIsSubstitute: false,

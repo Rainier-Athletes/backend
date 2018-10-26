@@ -55,6 +55,8 @@ extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (reques
   const drive = google.drive({ version: 'v3', auth: oAuth2Client }); 
   
   const sendFileToGoogleDrive = createGoogleDriveFunction(drive, TEMP_FILE, extractName, folderName, response, next);
+  const otherHeadings = ['student', 'ptDateRange', 'earnedPlayingTime', 'mentorGrantedPlayingTime', 'mentorComments', 'sportsUpdate', 'additionalComments'];
+  let csv = '"coach","student","ptDateRange","earnedPlayingTime","mentorGrantedPlayingTime","mentorComments","sportsUpdate","additionalComments"\n';
 
   if (model === 'coachesreport') {
     extractModel[model]
@@ -62,43 +64,49 @@ extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (reques
       .where('active').equals(true)
       .exec()
       .then((data) => {
-        const coaches = data.filter(coach => coach.students.length);
-        const extractData = {};
-        for (let coach = 0; coach < coaches.length; coach++) {
-          const coachName = `${coaches[coach].firstName} ${coaches[coach].lastName}`;
-          extractData[coachName] = [];
-          const { students } = coaches[coach];
-          for (let student = 0; student < students.length; student++) {
-            const pointTracker = students[student].studentData.lastPointTracker || {};
-            const ptComments = pointTracker.synopsisComments || {};
-            const ptDateRange = pointTracker.title.split(':')[1].trim() || '';
-            extractData[coachName][student] = {};
-            extractData[coachName][student].student = `${students[student].firstName} ${students[student].lastName}`;
-            extractData[coachName][student].ptDateRange = ptDateRange;
-            extractData[coachName][student].earnedPlayingTime = pointTracker.earnedPlayingTime || '';
-            extractData[coachName][student].mentorGrantedPlayingTime = pointTracker.mentorGrantedPlayingTime || '';
-            extractData[coachName][student].mentorComments = ptComments.mentorGrantedPlayingTimeComments || '';
-            extractData[coachName][student].sportsUpdate = ptComments.sportsUpdate || '';
-            extractData[coachName][student].additionalComments = ptComments.additionalComments || '';
-          }
-        }
-        
-        // create csv data from extractData object
-        const br = '\n'; // or <br /> if html output
-        let csv = '"coach"';
-        const coachNames = Object.keys(extractData);
-        const otherHeadings = Object.keys(extractData[coachNames[0]][0]);
-        csv = otherHeadings.reduce((acc, curr) => `${acc}, "${curr}"`, csv);
-        csv += br;
-        for (let coach = 0; coach < coachNames.length; coach++) {
-          for (let player = 0; player < extractData[coachNames[coach]].length; player++) {
-            csv += `"${coachNames[coach]}"`;
-            for (let key = 0; key < otherHeadings.length; key++) {
-              csv += `, "${extractData[coachNames[coach]][player][otherHeadings[key]]}"`;
+        if (data.length) {
+          const coaches = data.filter(coach => coach.students.length);
+          const extractData = {};
+          for (let coach = 0; coach < coaches.length; coach++) {
+            const coachName = `${coaches[coach].firstName} ${coaches[coach].lastName}`;
+            extractData[coachName] = [];
+            const { students } = coaches[coach];
+            for (let student = 0; student < students.length; student++) {
+              extractData[coachName][student] = {};
+              extractData[coachName][student].student = `${students[student].firstName} ${students[student].lastName}`;
+              const pointTracker = students[student].studentData.lastPointTracker || {};
+              const ptComments = pointTracker.synopsisComments || '';
+              const ptDateRange = pointTracker.title
+                ? pointTracker.title.split(':')[1].trim() 
+                : 'No Point Tracker';
+              extractData[coachName][student].ptDateRange = ptDateRange;
+              extractData[coachName][student].earnedPlayingTime = pointTracker.earnedPlayingTime || '';
+              extractData[coachName][student].mentorGrantedPlayingTime = pointTracker.mentorGrantedPlayingTime || '';
+              extractData[coachName][student].mentorComments = ptComments.mentorGrantedPlayingTimeComments || '';
+              extractData[coachName][student].sportsUpdate = ptComments.sportsUpdate || '';
+              extractData[coachName][student].additionalComments = ptComments.additionalComments || '';
             }
-            csv += br;
           }
-        }
+          if (Object.keys(extractData).length) {
+            // create csv data from extractData object
+            const coachNames = Object.keys(extractData);
+            for (let coach = 0; coach < coachNames.length; coach++) {
+              if (extractData[coachNames[coach]].length) {
+                for (let player = 0; player < extractData[coachNames[coach]].length; player++) {
+                  csv += `"${coachNames[coach]}"`;
+                  for (let key = 0; key < otherHeadings.length; key++) {
+                    csv += `, "${extractData[coachNames[coach]][player][otherHeadings[key]]}"`;
+                  }
+                  csv += '\n';
+                }
+              }
+            }
+          } else {
+            csv += 'Empty coachesreport result.\nNo coaches or coach-student connections present.\nOr no point trackers created for connected students.\n';
+          }
+        } 
+
+        // csv = csv || 'Empty coachesreport result.\nNo coaches or coach-student connections present.\nOr no point trackers created for connected students.\n';
 
         // write csv data to file
         fs.open(TEMP_FILE, 'wx', (oerr, fd) => {
@@ -120,7 +128,6 @@ extractRouter.get('/api/v1/extract/:model?', bearerAuthMiddleware, async (reques
       .catch(next);
   } else {
     // query the database and dump results to temp csv file
-    console.log(' extract from ', model, 'dates', fromDate, toDate);
     let queryError = false;
     extractModel[model].where('createdAt').gte(new Date(fromDate)).lte(new Date(toDate)).exec()
       .then((data) => {
