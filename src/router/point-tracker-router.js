@@ -49,12 +49,14 @@ pointTrackerRouter.post('/api/v1/pointstracker', bearerAuthMiddleware, (request,
       if (!studentData) return next(new HttpErrors(400, 'POINT-TRACKER ROUTER POST: Missing student id in req body', { expose: false }));
       
       // get student's current mentor _id
-      const currentMentorId = studentData.mentors.find(m => m.currentMentor).mentor._id;
- 
+      const currentMentor = studentData.mentors.find(m => m.currentMentor);
+      let currentMentorId;
+      if (currentMentor) currentMentorId = currentMentor.mentor._id;
+
       if (currentMentorId && currentMentorId.toString() !== request.profile._id.toString()) {
         request.body.mentorIsSubstitute = true;
         request.body.mentor = request.profile._id.toString();
-      } else {
+      } else if (currentMentorId) {
         // submitter isn't a sub. Get mentor ID from student's profile
         const [mentors] = studentData.mentors.filter(m => m.currentMentor);
         request.body.mentor = mentors.mentor._id.toString(); // findById autopopulates so id is the mentor, not just id.
