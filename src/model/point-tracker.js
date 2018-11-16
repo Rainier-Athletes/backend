@@ -42,6 +42,7 @@ const pointTrackerSchema = mongoose.Schema({
       enum: ['', 'A', 'B', 'C', 'D', 'F'],
     },
   }],
+  mentorMadeScheduledCheckin: { type: Number, default: -1 },
   communications: [
     {
       with: { type: String, default: 'Student' },
@@ -119,6 +120,7 @@ const headers = ['title',
   'mentorIsSubstitute',
   'mentor.firstName',
   'mentor.lastName',
+  'mentorMadeScheduledCheckin',
   'comm.student.checkIn',
   'comm.student.raEvent',
   'comm.student.game',
