@@ -73,17 +73,19 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
   if ((role === 'admin' || role === 'mentor') && studentData.mentors.length) {
     let prevMentor;
     const currentMentor = studentData.mentors.find(m => m.currentMentor);
-    try {
-      prevMentor = await Profile.findById(currentMentor.mentor._id);
-    } catch (err) {
-      return next(new HttpErrors(500, 'ATTACH ROUTER GET: unable to retrieve current mentor profile', { expose: false }));
-    }
-    const newStudents = prevMentor.students.filter(s => s._id.toString() !== studentData.student._id.toString());
-    prevMentor.students = newStudents;
-    try {
-      await prevMentor.save();
-    } catch (err) {
-      return next(new HttpErrors(500, 'ATTACH ROUTER GET: unable to save update previous mentor profile', { expose: false }));
+    if (currentMentor) {
+      try {
+        prevMentor = await Profile.findById(currentMentor.mentor._id);
+      } catch (err) {
+        return next(new HttpErrors(500, 'ATTACH ROUTER GET: unable to retrieve current mentor profile', { expose: false }));
+      }
+      const newStudents = prevMentor.students.filter(s => s._id.toString() !== studentData.student._id.toString());
+      prevMentor.students = newStudents;
+      try {
+        await prevMentor.save();
+      } catch (err) {
+        return next(new HttpErrors(500, 'ATTACH ROUTER GET: unable to save update previous mentor profile', { expose: false }));
+      }
     }
   }
 
