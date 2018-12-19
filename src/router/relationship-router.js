@@ -66,7 +66,6 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
   } catch (err) {
     return next(new HttpErrors(404, 'ATTACH ROUTER GET: unable to find support role profile', { expose: false }));
   }
-
   // if we're assigning a new mentor (or admin as mentor) remove student from previous mentor's
   // students array. We do this for mentors/admins because there is a one-to-one relationship between
   // students and current mentors.
