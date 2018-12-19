@@ -120,7 +120,7 @@ relationshipRouter.get('/api/v1/attach', bearerAuthMiddleware, async (request, r
       }
       break;
     case 'teacher':
-      if (!(studentData.teachers.map(v => v.teacher._id.toString()).includes(request.query[role]))) {
+      if (!(studentData.teachers.map(v => v.teacher && v.teacher._id.toString()).includes(request.query[role]))) {
         studentData.teachers.push({ teacher: request.query[role], currentTeacher: true });
       } else {
         studentData.teachers.forEach((c) => {
