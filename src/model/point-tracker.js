@@ -44,6 +44,7 @@ const pointTrackerSchema = mongoose.Schema({
     },
   }],
   mentorMadeScheduledCheckin: { type: Number, default: -1 },
+  studentMissedScheduledCheckin: { type: Number, default: -1 },
   communications: [
     {
       with: { type: String, default: 'Student' },
@@ -128,6 +129,7 @@ const headers = ['title',
   'status.other',
   'status.notes',
   'mentorMadeScheduledCheckin',
+  'studentMissedScheduledCheckin',
   'playingTimeOnly',
   'earnedPlayingTime',
   'mentorGrantedPlayingTime',

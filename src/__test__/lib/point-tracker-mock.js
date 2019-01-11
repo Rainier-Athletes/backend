@@ -42,7 +42,10 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
     student: mockData.profileData.studentProfile._id,
     mentor: mockData.profileData.mentorProfile._id,
     mentorIsSubstitute: false,
+    playingTimeOnly: true,
     subjects: [],
+    mentorMadeScheduledCheckin: true,
+    studentMissedScheduledCheckin: false,
     communications: [
       { with: 'Student', role: 'student' }, 
       { with: 'Family', role: 'family' }, 
@@ -53,6 +56,7 @@ const createPointTrackerMockPromise = async (elementaryStudent = false) => {
     oneTeamNotes: '',
     pointSheetStatus: {},
     pointSheetStatusNotes: '',
+    earnedPlayingTime: 'One quarter',
     mentorGrantedPlayingTime: 'One quarter',
     synopsisComments: {
       mentorGrantedPlayingTimeComments: faker.lorem.words(3),
