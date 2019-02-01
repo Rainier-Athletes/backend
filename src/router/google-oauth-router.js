@@ -1,12 +1,11 @@
 import { Router } from 'express';
 import superagent from 'superagent';
 import HttpErrors from 'http-errors';
+import jwt from 'jsonwebtoken';
 import Profile from '../model/profile';
 import logger from '../lib/logger';
 
 const GOOGLE_OAUTH_URL = 'https://www.googleapis.com/oauth2/v4/token';
-
-const OPEN_ID_URL = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
 
 require('dotenv').config();
 
@@ -39,20 +38,11 @@ googleOAuthRouter.get('/api/v1/oauth/google', async (request, response, next) =>
     return response.redirect(process.env.CLIENT_URL);
   }
 
-  const googleAccessToken = googleTokenResponse.body.access_token;
-
-  let openIdResponse;
-  try {
-    openIdResponse = await superagent.get(OPEN_ID_URL)
-      .set('Authorization', `Bearer ${googleAccessToken}`);
-  } catch (err) {
-    return next(new HttpErrors(err.status, 'OpenId request failed'));
-  }
-
-  const { email } = openIdResponse.body;
-  const firstName = openIdResponse.body.given_name;
-  const lastName = openIdResponse.body.family_name;
-  const { picture } = openIdResponse.body;
+  const goggleUserInfo = jwt.decode(googleTokenResponse.body.id_token);
+  const { email } = goggleUserInfo;
+  const firstName = goggleUserInfo.given_name;
+  const lastName = goggleUserInfo.family_name;
+  const { picture } = goggleUserInfo;
 
   // at this point Oauth is complete. Now we need to see they are
   // in the profile collection
