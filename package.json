@@ -11,7 +11,8 @@
     "start": "npm run build && node index.js",
     "lint": "eslint . --fix",
     "dbon": "mkdir -p ./db && mongod --dbpath ./db",
-    "dboff": "killall mongod"
+    "dboff": "killall mongod",
+    "heroku-postbuild": "echo Skip build on Heroku"
   },
   "jest": {
     "setupFiles": [
@@ -65,5 +66,6 @@
   "bugs": {
     "url": "https://github.com/Rainier-Athletes/backend/issues"
   },
-  "homepage": "https://github.com/Rainier-Athletes/backend#readme"
+  "homepage": "https://github.com/Rainier-Athletes/backend#readme",
+  "heroku-run-build-script": true
 }
