@@ -107,6 +107,8 @@ const pointTrackerSchema = mongoose.Schema({
     sportsUpdate: String,
     additionalComments: String,
   },
+  mentorSupportRequest: { type: String, default: 'No' },
+  mentorSupportRequestNotes: { type: String, default: '' },
 }, { timestamps: true });
 pointTrackerSchema.plugin(autopopulate);
 
@@ -131,6 +133,8 @@ const headers = ['title',
   'playingTimeOnly',
   'earnedPlayingTime',
   'mentorGrantedPlayingTime',
+  'mentorSupportRequest',
+  'mentorSupportRequestNotes',
   'comm.student.checkIn',
   'comm.student.raEvent',
   'comm.student.game',
